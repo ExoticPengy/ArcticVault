@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">ArcticVault</string>
+
+    //Image Contents
     <string name="blue_topbanner_desc">Blue Top Banner</string>
+    <string name="back_button_desc">Back Button</string>
+    <string name="transaction_card_desc">Transaction Card</string>
+
+    //Title Strings
+    <string name="transaction_screen_title">Transactions</string>
+
 </resources>
