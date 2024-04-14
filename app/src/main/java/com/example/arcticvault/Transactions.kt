@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,7 +54,7 @@ fun Transaction() {
         Column(
             modifier = Modifier
         ) {
-            //Box for top banner
+            //Box for top banner and transactions card
             Box() {
                 Image(
                     painter = painterResource(R.drawable.topbanner),
@@ -90,9 +93,6 @@ fun Transaction() {
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .requiredSize(35.dp)
-                            .clickable {
-
-                            }
                     )
                 }
 
@@ -111,6 +111,8 @@ fun Transaction() {
                             .requiredHeight(170.dp)
                             .requiredWidth(300.dp)
                     )
+
+                    //Company name, divider, and add transactions row
                     Column(
                     ) {
                         Text(
@@ -118,15 +120,128 @@ fun Transaction() {
                             fontFamily = montserratFontFamily,
                             color = Color.White,
                             modifier = Modifier
-                                .padding(start = 10.dp, top = 5.dp)
+                                .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
                         )
-                        Spacer(Modifier.padding(bottom = 5.dp))
                         Divider(
                             color = Color.White,
                             thickness = 1.dp
                         )
+
+                        //Add Transactions Row
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 35.dp)
+                        ) {
+                            Text(
+                                text = "Add\nTransactions",
+                                textAlign = TextAlign.Center,
+                                fontFamily = montserratFontFamily,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
+                            )
+                            Divider(
+                                color = Color.White,
+                                thickness = 1.dp,
+                                modifier = Modifier
+                                    .padding(start = 20.dp, top = 12.dp)
+                                    .width(1.dp)
+                                    .height(30.dp)
+                            )
+
+                            //Add Income Button
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 25.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.income),
+                                    contentDescription = stringResource(R.string.income_desc),
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier
+                                        .requiredSize(45.dp)
+                                        .clickable {
+
+                                        }
+                                )
+                                Text(
+                                    text = "Income",
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = montserratFontFamily,
+                                    fontSize = 10.sp,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .padding(top = 5.dp)
+                                )
+                            }
+
+                            //Add Expense Button
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 20.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.expense),
+                                    contentDescription = stringResource(R.string.expense_desc),
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier
+                                        .requiredSize(45.dp)
+                                        .clickable {
+
+                                        }
+                                )
+                                Text(
+                                    text = "Expense",
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = montserratFontFamily,
+                                    fontSize = 10.sp,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .padding(top = 5.dp)
+                                )
+                            }
+                        }
                     }
                 }
+            }
+
+            //Profit card
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 30.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.percentagecard),
+                    contentDescription = stringResource(R.string.percentage_card_desc),
+                    modifier = Modifier
+                        .requiredHeight(50.dp)
+                        .requiredWidth(300.dp)
+                )
+                CircularProgressIndicator(
+                    progress = 0.7f,
+                    color = Color.Green,
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .size(30.dp)
+                        .align(Alignment.CenterStart)
+                )
+            }
+
+            //Loss card
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 30.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.percentagecard),
+                    contentDescription = stringResource(R.string.percentage_card_desc),
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .requiredHeight(50.dp)
+                        .requiredWidth(300.dp)
+                )
             }
         }
     }
