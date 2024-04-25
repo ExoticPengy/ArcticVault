@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -65,6 +66,7 @@ fun Transaction() {
 
                 )
                 Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .padding(top = 40.dp)
                         .align(Alignment.TopCenter)
@@ -79,14 +81,14 @@ fun Transaction() {
 
                             }
                     )
-                    Spacer(Modifier.padding(start = 30.dp))
+                    Spacer(Modifier.width(30.dp))
                     Text(
                         text = stringResource(R.string.transaction_screen_title),
                         fontFamily = montserratFontFamily,
                         fontSize = 30.sp,
                         textAlign = TextAlign.Center
                     )
-                    Spacer(Modifier.padding(start = 30.dp))
+                    Spacer(Modifier.width(30.dp))
                     Image(
                         painter = painterResource(R.drawable.backbutton),
                         contentDescription = stringResource(R.string.back_button_desc),
@@ -101,15 +103,15 @@ fun Transaction() {
                     modifier = Modifier
                         .width(IntrinsicSize.Min)
                         .align(Alignment.TopCenter)
-                        .padding(top = 150.dp)
+                        .padding(top = 135.dp)
                 ) {
                     Image(
                         painter = painterResource(R.drawable.transactioncard),
                         contentDescription = stringResource(R.string.transaction_card_desc),
                         modifier = Modifier
                             .align(Alignment.TopCenter)
-                            .requiredHeight(170.dp)
-                            .requiredWidth(300.dp)
+                            .requiredHeight(180.dp)
+                            .requiredWidth(310.dp)
                     )
 
                     //Company name, divider, and add transactions row
@@ -208,40 +210,151 @@ fun Transaction() {
             //Profit card
             Box(
                 modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Min)
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 30.dp)
+                    .padding(top = 20.dp)
             ) {
                 Image(
                     painter = painterResource(R.drawable.percentagecard),
                     contentDescription = stringResource(R.string.percentage_card_desc),
                     modifier = Modifier
                         .requiredHeight(50.dp)
-                        .requiredWidth(300.dp)
+                        .requiredWidth(310.dp)
                 )
-                CircularProgressIndicator(
-                    progress = 0.7f,
-                    color = Color.Green,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(30.dp)
-                        .align(Alignment.CenterStart)
-                )
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                ) {
+                    Spacer(Modifier.width(10.dp))
+                    CircularProgressIndicator(
+                        progress = 0.7f,
+                        color = Color.Green,
+                        trackColor = Color.DarkGray,
+                        modifier = Modifier
+                            .size(30.dp)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = "Income",
+                        textAlign = TextAlign.Center,
+                        fontFamily = montserratFontFamily,
+                        fontSize = 20.sp,
+                        color = Color.White
+                    )
+                    Spacer(Modifier.width(20.dp))
+                    Divider(
+                        color = Color.White,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(20.dp)
+                    )
+                    Spacer(Modifier.width(20.dp))
+                    Column() {
+                        Text(
+                            text = "RM8901",
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                        Row() {
+                            Text(
+                                text = "+25%",
+                                textAlign = TextAlign.Center,
+                                fontFamily = montserratFontFamily,
+                                fontSize = 12.sp,
+                                color = Color.Green
+                            )
+                            Text(
+                                text = " vs last year",
+                                textAlign = TextAlign.Center,
+                                fontFamily = montserratFontFamily,
+                                fontSize = 12.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+
             }
+
+            Spacer(Modifier.height(20.dp))
 
             //Loss card
             Box(
                 modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Min)
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 30.dp)
             ) {
                 Image(
                     painter = painterResource(R.drawable.percentagecard),
                     contentDescription = stringResource(R.string.percentage_card_desc),
                     modifier = Modifier
-                        .padding(top = 20.dp)
                         .requiredHeight(50.dp)
-                        .requiredWidth(300.dp)
+                        .requiredWidth(310.dp)
                 )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                ) {
+                    Spacer(Modifier.width(10.dp))
+                    CircularProgressIndicator(
+                        progress = 0.7f,
+                        color = Color.Red,
+                        trackColor = Color.DarkGray,
+                        modifier = Modifier
+                            .size(30.dp)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = "Income",
+                        textAlign = TextAlign.Center,
+                        fontFamily = montserratFontFamily,
+                        fontSize = 20.sp,
+                        color = Color.White
+                    )
+                    Spacer(Modifier.width(20.dp))
+                    Divider(
+                        color = Color.White,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(20.dp)
+                    )
+                    Spacer(Modifier.width(20.dp))
+                    Column() {
+                        Text(
+                            text = "RM8901",
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                        Row() {
+                            Text(
+                                text = "-27%",
+                                textAlign = TextAlign.Center,
+                                fontFamily = montserratFontFamily,
+                                fontSize = 12.sp,
+                                color = Color.Red
+                            )
+                            Text(
+                                text = " vs last year",
+                                textAlign = TextAlign.Center,
+                                fontFamily = montserratFontFamily,
+                                fontSize = 12.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
             }
         }
     }
