@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -263,7 +264,7 @@ fun Transaction() {
                         )
                         Row() {
                             Text(
-                                text = "+25%",
+                                text = "+78%",
                                 textAlign = TextAlign.Center,
                                 fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
@@ -314,13 +315,13 @@ fun Transaction() {
                     )
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        text = "Income",
+                        text = "Expense",
                         textAlign = TextAlign.Center,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
                         color = Color.White
                     )
-                    Spacer(Modifier.width(20.dp))
+                    Spacer(Modifier.width(10.dp))
                     Divider(
                         color = Color.White,
                         thickness = 1.dp,
@@ -331,7 +332,7 @@ fun Transaction() {
                     Spacer(Modifier.width(20.dp))
                     Column() {
                         Text(
-                            text = "RM8901",
+                            text = "RM3678",
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 16.sp,
@@ -356,8 +357,83 @@ fun Transaction() {
                     }
                 }
             }
+
+            //Transactions Section
+            Text(
+                text = "Recent transactions",
+                textAlign = TextAlign.Center,
+                fontFamily = montserratFontFamily,
+                fontSize = 12.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(start = 40.dp, top = 30.dp)
+            )
+
+            //5 Recent Transactions
+            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
+            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
+            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
+            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
+            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
         }
+
+        Image(
+            painter = painterResource(R.drawable.viewalltransactionsbutton),
+            contentDescription = stringResource(R.string.expense_desc),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+        )
     }
+}
+
+@Composable
+fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: String, amount: Double) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .padding(start = 40.dp, top = 8.dp, bottom = 8.dp)
+            .width(310.dp)
+    ) {
+        Image(
+            painter = painterResource(icon),
+            contentDescription = stringResource(R.string.expense_desc),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .requiredSize(35.dp)
+        )
+        Column() {
+            Text(
+                text = transaction,
+                textAlign = TextAlign.Center,
+                fontFamily = montserratFontFamily,
+                fontSize = 14.sp,
+                color = Color.Black,
+            )
+            Text(
+                text = "$time - $date",
+                textAlign = TextAlign.Center,
+                fontFamily = montserratFontFamily,
+                fontSize = 10.sp,
+                color = Color.Black,
+            )
+        }
+        Text(
+            text = "RM$amount",
+            textAlign = TextAlign.Center,
+            fontFamily = montserratFontFamily,
+            fontSize = 16.sp,
+            color = Color.Black,
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
+    Divider(
+        color = Color.Gray,
+        thickness = 1.dp,
+        modifier = Modifier
+            .width(350.dp)
+            .height(1.dp)
+            .padding(start = 40.dp)
+    )
 }
 
 @Preview(showBackground = true)
