@@ -214,7 +214,7 @@ fun Transaction() {
                     .height(IntrinsicSize.Min)
                     .width(IntrinsicSize.Min)
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 20.dp)
+                    .padding(top = 15.dp)
             ) {
                 Image(
                     painter = painterResource(R.drawable.percentagecard),
@@ -283,7 +283,7 @@ fun Transaction() {
 
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(15.dp))
 
             //Loss card
             Box(
@@ -365,28 +365,33 @@ fun Transaction() {
                 fontFamily = montserratFontFamily,
                 fontSize = 12.sp,
                 color = Color.Black,
-                modifier = Modifier.padding(start = 40.dp, top = 30.dp)
+                modifier = Modifier.padding(start = 40.dp, top = 20.dp)
             )
 
             //5 Recent Transactions
             RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
-            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
-            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
-            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
-            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
-        }
+            RecentTransactionTexts(R.drawable.income, "Investors", "02.15 PM", "March 8", 3000.0)
+            RecentTransactionTexts(R.drawable.income, "Sales", "02.15 PM", "March 8", 70.0)
+            RecentTransactionTexts(R.drawable.expense, "Office Supplies", "02.15 PM", "March 8", 130.30)
+            RecentTransactionTexts(R.drawable.income, "New Subscriptions", "02.15 PM", "March 8", 500.0)
 
-        Image(
-            painter = painterResource(R.drawable.viewalltransactionsbutton),
-            contentDescription = stringResource(R.string.expense_desc),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-        )
+            Spacer(Modifier.height(20.dp))
+
+            Image(
+                painter = painterResource(R.drawable.viewalltransactionsbutton),
+                contentDescription = stringResource(R.string.expense_desc),
+                modifier = Modifier
+                    .requiredHeight(45.dp)
+                    .requiredWidth(250.dp)
+                    .padding(start = 40.dp)
+            )
+        }
     }
 }
 
 @Composable
 fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: String, amount: Double) {
+    val amountString = String.format("%.2f", amount)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -401,7 +406,9 @@ fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: S
             modifier = Modifier
                 .requiredSize(35.dp)
         )
-        Column() {
+        Column(
+            modifier = Modifier.width(150.dp)
+        ) {
             Text(
                 text = transaction,
                 textAlign = TextAlign.Center,
@@ -418,12 +425,14 @@ fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: S
             )
         }
         Text(
-            text = "RM$amount",
-            textAlign = TextAlign.Center,
+            text = "RM$amountString",
+            textAlign = TextAlign.Right,
             fontFamily = montserratFontFamily,
             fontSize = 16.sp,
             color = Color.Black,
-            modifier = Modifier.padding(start = 10.dp)
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .width(100.dp)
         )
     }
     Divider(
