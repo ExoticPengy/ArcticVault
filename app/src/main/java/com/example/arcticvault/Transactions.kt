@@ -16,9 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
@@ -57,87 +54,72 @@ fun Transaction() {
             modifier = Modifier
         ) {
             //Box for top banner and transactions card
-            Box() {
+            Box(
+                contentAlignment = Alignment.TopCenter
+            ) {
                 Image(
                     painter = painterResource(R.drawable.topbanner),
                     contentDescription = stringResource(R.string.blue_topbanner_desc),
                     modifier = Modifier
-                        .requiredHeight(330.dp)
+                        .height(330.dp)
                         .fillMaxWidth()
-
                 )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(top = 40.dp)
-                        .align(Alignment.TopCenter)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.backbutton),
-                        contentDescription = stringResource(R.string.back_button_desc),
-                        contentScale = ContentScale.Fit,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
-                            .requiredSize(35.dp)
-                            .clickable {
-
-                            }
-                    )
-                    Spacer(Modifier.width(30.dp))
-                    Text(
-                        text = stringResource(R.string.transaction_screen_title),
-                        fontFamily = montserratFontFamily,
-                        fontSize = 30.sp,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(Modifier.width(30.dp))
-                    Image(
-                        painter = painterResource(R.drawable.backbutton),
-                        contentDescription = stringResource(R.string.back_button_desc),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .requiredSize(35.dp)
-                    )
-                }
-
-                //Transaction card
-                Box(
-                    modifier = Modifier
-                        .width(IntrinsicSize.Min)
-                        .align(Alignment.TopCenter)
-                        .padding(top = 135.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.transactioncard),
-                        contentDescription = stringResource(R.string.transaction_card_desc),
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .requiredHeight(180.dp)
-                            .requiredWidth(310.dp)
-                    )
-
-                    //Company name, divider, and add transactions row
-                    Column(
+                            .width(320.dp)
+                            .padding(top = 40.dp)
                     ) {
-                        Text(
-                            text = "Pengu Company",
-                            fontFamily = montserratFontFamily,
-                            color = Color.White,
+                        Image(
+                            painter = painterResource(R.drawable.backbutton),
+                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier
-                                .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
+                                .size(35.dp)
+                                .clickable {
+
+                                }
                         )
-                        Divider(
-                            color = Color.White,
-                            thickness = 1.dp
+                        Text(
+                            text = stringResource(R.string.transaction_screen_title),
+                            fontFamily = montserratFontFamily,
+                            fontSize = 30.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Image(
+                            painter = painterResource(R.drawable.backbutton),
+                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .size(35.dp)
+                        )
+                    }
+
+                    //Transaction card
+                    Box(
+                        modifier = Modifier
+                            .width(IntrinsicSize.Min)
+                            .padding(top = 45.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.transactioncard),
+                            contentDescription = stringResource(R.string.transaction_card_desc),
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .height(180.dp)
+                                .width(310.dp)
                         )
 
-                        //Add Transactions Row
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 35.dp)
+                        //Company name, divider, and add transactions row
+                        Column(
                         ) {
                             Text(
-                                text = "Add\nTransactions",
-                                textAlign = TextAlign.Center,
+                                text = "Pengu Company",
                                 fontFamily = montserratFontFamily,
                                 color = Color.White,
                                 modifier = Modifier
@@ -145,63 +127,82 @@ fun Transaction() {
                             )
                             Divider(
                                 color = Color.White,
-                                thickness = 1.dp,
-                                modifier = Modifier
-                                    .padding(start = 20.dp, top = 12.dp)
-                                    .width(1.dp)
-                                    .height(30.dp)
+                                thickness = 1.dp
                             )
 
-                            //Add Income Button
-                            Column(
+                            //Add Transactions Row
+                            Row(
                                 modifier = Modifier
-                                    .padding(start = 25.dp)
+                                    .padding(top = 35.dp)
                             ) {
-                                Image(
-                                    painter = painterResource(R.drawable.income),
-                                    contentDescription = stringResource(R.string.income_desc),
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .requiredSize(45.dp)
-                                        .clickable {
-
-                                        }
-                                )
                                 Text(
-                                    text = "Income",
+                                    text = "Add\nTransactions",
                                     textAlign = TextAlign.Center,
                                     fontFamily = montserratFontFamily,
-                                    fontSize = 10.sp,
                                     color = Color.White,
                                     modifier = Modifier
-                                        .padding(top = 5.dp)
+                                        .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
                                 )
-                            }
-
-                            //Add Expense Button
-                            Column(
-                                modifier = Modifier
-                                    .padding(start = 20.dp)
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable.expense),
-                                    contentDescription = stringResource(R.string.expense_desc),
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .requiredSize(45.dp)
-                                        .clickable {
-
-                                        }
-                                )
-                                Text(
-                                    text = "Expense",
-                                    textAlign = TextAlign.Center,
-                                    fontFamily = montserratFontFamily,
-                                    fontSize = 10.sp,
+                                Divider(
                                     color = Color.White,
+                                    thickness = 1.dp,
                                     modifier = Modifier
-                                        .padding(top = 5.dp)
+                                        .padding(start = 20.dp, top = 12.dp)
+                                        .width(1.dp)
+                                        .height(30.dp)
                                 )
+
+                                //Add Income Button
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 25.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.income),
+                                        contentDescription = stringResource(R.string.income_desc),
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .size(45.dp)
+                                            .clickable {
+
+                                            }
+                                    )
+                                    Text(
+                                        text = "Income",
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = montserratFontFamily,
+                                        fontSize = 10.sp,
+                                        color = Color.White,
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                    )
+                                }
+
+                                //Add Expense Button
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 20.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.expense),
+                                        contentDescription = stringResource(R.string.expense_desc),
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .size(45.dp)
+                                            .clickable {
+
+                                            }
+                                    )
+                                    Text(
+                                        text = "Expense",
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = montserratFontFamily,
+                                        fontSize = 10.sp,
+                                        color = Color.White,
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -214,14 +215,14 @@ fun Transaction() {
                     .height(IntrinsicSize.Min)
                     .width(IntrinsicSize.Min)
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 15.dp)
+                    .padding(top = 10.dp)
             ) {
                 Image(
                     painter = painterResource(R.drawable.percentagecard),
                     contentDescription = stringResource(R.string.percentage_card_desc),
                     modifier = Modifier
-                        .requiredHeight(50.dp)
-                        .requiredWidth(310.dp)
+                        .height(50.dp)
+                        .width(310.dp)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -296,8 +297,8 @@ fun Transaction() {
                     painter = painterResource(R.drawable.percentagecard),
                     contentDescription = stringResource(R.string.percentage_card_desc),
                     modifier = Modifier
-                        .requiredHeight(50.dp)
-                        .requiredWidth(310.dp)
+                        .height(50.dp)
+                        .width(310.dp)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -381,8 +382,8 @@ fun Transaction() {
                 painter = painterResource(R.drawable.viewalltransactionsbutton),
                 contentDescription = stringResource(R.string.expense_desc),
                 modifier = Modifier
-                    .requiredHeight(45.dp)
-                    .requiredWidth(250.dp)
+                    .height(45.dp)
+                    .width(250.dp)
                     .padding(start = 40.dp)
             )
         }
@@ -404,7 +405,7 @@ fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: S
             contentDescription = stringResource(R.string.expense_desc),
             contentScale = ContentScale.Fit,
             modifier = Modifier
-                .requiredSize(35.dp)
+                .size(35.dp)
         )
         Column(
             modifier = Modifier.width(150.dp)
