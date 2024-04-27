@@ -1,8 +1,5 @@
 package com.example.arcticvault
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,22 +33,12 @@ import androidx.compose.ui.unit.sp
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.montserratFontFamily
 
-class Transactions : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ArcticVaultTheme {
-                Transaction()
-            }
-        }
-    }
-}
-
 @Composable
 fun Transaction() {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
+                .fillMaxSize()
         ) {
             //Box for top banner and transactions card
             Box(
@@ -373,8 +360,6 @@ fun Transaction() {
             RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
             RecentTransactionTexts(R.drawable.income, "Investors", "02.15 PM", "March 8", 3000.0)
             RecentTransactionTexts(R.drawable.income, "Sales", "02.15 PM", "March 8", 70.0)
-            RecentTransactionTexts(R.drawable.expense, "Office Supplies", "02.15 PM", "March 8", 130.30)
-            RecentTransactionTexts(R.drawable.income, "New Subscriptions", "02.15 PM", "March 8", 500.0)
 
             Spacer(Modifier.height(20.dp))
 

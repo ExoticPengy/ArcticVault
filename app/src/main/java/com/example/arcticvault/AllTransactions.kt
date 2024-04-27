@@ -1,6 +1,7 @@
 package com.example.arcticvault
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,20 +9,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,19 +38,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.arcticvault.data.Datasource
+import com.example.arcticvault.model.Transaction
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.montserratFontFamily
 
 @Composable
 fun AllTransaction() {
     Surface(modifier = Modifier.fillMaxSize()) {
-        var incomeOrExpense by remember { mutableStateOf(0) }
+        var isIncome by remember { mutableStateOf(true) }
+        var searchFilter by remember { mutableStateOf("Search") }
+        val titleText = when(isIncome) {
+            true -> "Income"
+            false -> "Expense"
+        }
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .fillMaxSize()
         ) {
             //Box for top banner
             Box(
@@ -81,7 +95,7 @@ fun AllTransaction() {
                                 }
                         )
                         Text(
-                            text = "Income",
+                            text = titleText,
                             fontFamily = montserratFontFamily,
                             fontSize = 30.sp,
                             textAlign = TextAlign.Center
@@ -108,12 +122,14 @@ fun AllTransaction() {
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.SpaceAround,
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
                             Button(
-                                onClick = {},
+                                onClick = {
+                                    isIncome = true
+                                },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
@@ -131,7 +147,9 @@ fun AllTransaction() {
                                     .height(20.dp)
                             )
                             Button(
-                                onClick = {},
+                                onClick = {
+                                          isIncome = false
+                                },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
@@ -143,22 +161,172 @@ fun AllTransaction() {
                             }
                         }
                     }
-                    Spacer(Modifier.height(10.dp))
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        leadingIcon = { Icon(painter = painterResource(R.drawable.magnifyingglassicon), contentDescription = null) },
+                    Spacer(Modifier.height(20.dp))
+                    TextField(
+                        value = searchFilter,
+                        onValueChange = { searchFilter = it },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.magnifyingglassicon),
+                                contentDescription = null,
+                                modifier = Modifier.size(25.dp)
+                            ) },
+                        textStyle = TextStyle(
+                            color = Color.Black,
+                            fontFamily = montserratFontFamily),
                         colors = TextFieldDefaults
                             .colors(
                                 unfocusedContainerColor = Color.Transparent,
                                 focusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
                                 ),
-                        shape = RoundedCornerShape(40)
+                        modifier = Modifier
+                            .height(50.dp)
+                            .border(
+                                width = 3.dp,
+                                color = Color.Black,
+                                shape = RoundedCornerShape(40)
+                            )
                     )
+                    Spacer(Modifier.height(25.dp))
+                    Row(
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.calendaricon),
+                            contentDescription = stringResource(R.string.percentage_card_desc),
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clickable {
+
+                                }
+                        )
+                        Spacer(Modifier.width(30.dp))
+                        Image(
+                            painter = painterResource(R.drawable.filtericon),
+                            contentDescription = stringResource(R.string.percentage_card_desc),
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clickable {
+
+                                }
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(5.dp))
+            Box(
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .height(IntrinsicSize.Min)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.percentagecard),
+                    contentDescription = stringResource(R.string.percentage_card_desc),
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(310.dp)
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+
+                    Text(
+                        text = "Total",
+                        color = Color.White,
+                        fontFamily = montserratFontFamily,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Divider(
+                        color = Color.White,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(20.dp)
+                    )
+
+                    Text(
+                        text = "RMXXX.XX",
+                        color = Color.White,
+                        fontFamily = montserratFontFamily,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            Spacer(Modifier.height(10.dp))
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val transactionList: List<Transaction> = Datasource().loadTransactions()
+                items(transactionList) {transaction ->
+                    TransactionTexts(transaction = transaction)
                 }
             }
         }
     }
+}
+
+@Composable
+fun TransactionTexts(transaction: Transaction) {
+    val amountString = String.format("%.2f", transaction.amount)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .padding(top = 8.dp, bottom = 8.dp)
+            .width(310.dp)
+    ) {
+        Image(
+            painter = painterResource(transaction.icon),
+            contentDescription = stringResource(R.string.expense_desc),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .size(35.dp)
+        )
+        Column(
+            modifier = Modifier.width(150.dp)
+        ) {
+            Text(
+                text = transaction.transaction,
+                textAlign = TextAlign.Center,
+                fontFamily = montserratFontFamily,
+                fontSize = 14.sp,
+                color = Color.Black,
+            )
+            Text(
+                text = String.format("%s - %s", transaction.time, transaction.date),
+                textAlign = TextAlign.Center,
+                fontFamily = montserratFontFamily,
+                fontSize = 10.sp,
+                color = Color.Black,
+            )
+        }
+        Text(
+            text = "RM$amountString",
+            textAlign = TextAlign.Right,
+            fontFamily = montserratFontFamily,
+            fontSize = 16.sp,
+            color = Color.Black,
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .width(100.dp)
+        )
+    }
+    Divider(
+        color = Color.Gray,
+        thickness = 1.dp,
+        modifier = Modifier
+            .width(320.dp)
+            .height(1.dp)
+    )
 }
 
 @Preview(showBackground = true)
