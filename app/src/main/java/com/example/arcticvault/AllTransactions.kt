@@ -21,12 +21,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +51,8 @@ import com.example.arcticvault.data.Datasource
 import com.example.arcticvault.model.Transaction
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.montserratFontFamily
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun AllTransaction() {
@@ -191,17 +197,8 @@ fun AllTransaction() {
                             )
                     )
                     Spacer(Modifier.height(25.dp))
-                    Row(
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.calendaricon),
-                            contentDescription = stringResource(R.string.percentage_card_desc),
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clickable {
-
-                                }
-                        )
+                    Row {
+                        DatePickerDialog()
                         Spacer(Modifier.width(30.dp))
                         Image(
                             painter = painterResource(R.drawable.filtericon),
@@ -209,7 +206,6 @@ fun AllTransaction() {
                             modifier = Modifier
                                 .size(50.dp)
                                 .clickable {
-
                                 }
                         )
                     }
@@ -327,6 +323,86 @@ fun TransactionTexts(transaction: Transaction) {
             .width(320.dp)
             .height(1.dp)
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerDialog(
+    onDateSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+
+    val dateFormat = SimpleDateFormat("dd/mm/yyyy", Locale.US)
+
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        dateFormat.format(it)
+    } ?: ""
+
+    DatePickerDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            Button(onClick = {
+                onDateSelected(selectedDate)
+                onDismiss()
+            }
+
+            ) {
+                Text(
+                    text = "Select",
+                    textAlign = TextAlign.Center,
+                    fontFamily = montserratFontFamily,
+                    color = Color.White
+                )
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                onDismiss()
+            }) {
+                Text(
+                    text = "Cancel",
+                    textAlign = TextAlign.Center,
+                    fontFamily = montserratFontFamily,
+                    color = Color.White
+                )
+            }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState
+        )
+    }
+}
+
+@Composable
+fun DatePickerDialog() {
+    var date by remember {
+        mutableStateOf("Open date picker dialog")
+    }
+
+    var showDatePicker by remember {
+        mutableStateOf(false)
+    }
+
+    Box(contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(R.drawable.calendaricon),
+            contentDescription = stringResource(R.string.percentage_card_desc),
+            modifier = Modifier
+                .size(50.dp)
+                .clickable {
+                    showDatePicker = true
+                }
+        )
+    }
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDateSelected = { date = it },
+            onDismiss = { showDatePicker = false }
+        )
+    }
 }
 
 @Preview(showBackground = true)
