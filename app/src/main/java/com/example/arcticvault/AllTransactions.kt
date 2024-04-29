@@ -198,7 +198,7 @@ fun AllTransaction() {
                     )
                     Spacer(Modifier.height(25.dp))
                     Row {
-                        DatePickerDialog()
+                        DatePickerDialog(50)
                         Spacer(Modifier.width(30.dp))
                         Image(
                             painter = painterResource(R.drawable.filtericon),
@@ -376,7 +376,7 @@ fun DatePickerDialog(
 }
 
 @Composable
-fun DatePickerDialog() {
+fun DatePickerDialog(imgSize: Int) {
     var date by remember {
         mutableStateOf("Open date picker dialog")
     }
@@ -390,7 +390,7 @@ fun DatePickerDialog() {
             painter = painterResource(R.drawable.calendaricon),
             contentDescription = stringResource(R.string.percentage_card_desc),
             modifier = Modifier
-                .size(50.dp)
+                .size(imgSize.dp)
                 .clickable {
                     showDatePicker = true
                 }
