@@ -179,7 +179,8 @@ fun AllTransaction() {
                             ) },
                         textStyle = TextStyle(
                             color = Color.Black,
-                            fontFamily = montserratFontFamily),
+                            fontFamily = montserratFontFamily
+                        ),
                         colors = TextFieldDefaults
                             .colors(
                                 unfocusedContainerColor = Color.Transparent,

@@ -130,7 +130,8 @@ fun EditTransaction() {
                             textAlign = TextAlign.Center,
                             fontSize = 20.sp,
                             color = Color.Black,
-                            fontFamily = montserratFontFamily),
+                            fontFamily = montserratFontFamily
+                        ),
                         maxLines = 1,
                         colors = TextFieldDefaults
                             .colors(
@@ -151,7 +152,8 @@ fun EditTransaction() {
                             textAlign = TextAlign.Center,
                             fontSize = 20.sp,
                             color = Color.Black,
-                            fontFamily = montserratFontFamily),
+                            fontFamily = montserratFontFamily
+                        ),
                         maxLines = 1,
                         colors = TextFieldDefaults
                             .colors(
