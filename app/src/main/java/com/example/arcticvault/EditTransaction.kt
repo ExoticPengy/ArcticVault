@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,12 +38,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.ui.EditTransactionViewModel
 import com.example.arcticvault.ui.theme.montserratFontFamily
 
 @Composable
-fun EditTransaction() {
-    var transactionTitle by remember { mutableStateOf("Transaction") }
-    var transactionAmount by remember { mutableStateOf("RM0.00") }
+fun EditTransaction(
+    editTransactionViewModel: EditTransactionViewModel = viewModel()
+) {
+    val  editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
+
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,8 +123,8 @@ fun EditTransaction() {
                         )
                     }
                     TextField(
-                        value = transactionTitle,
-                        onValueChange = { transactionTitle = it },
+                        value = editTransactionViewModel.transaction,
+                        onValueChange = { editTransactionViewModel.updateTransaction(it) },
                         trailingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.editicon),
@@ -146,8 +151,8 @@ fun EditTransaction() {
                             .widthIn(1.dp, 300.dp)
                     )
                     TextField(
-                        value = transactionAmount,
-                        onValueChange = { transactionAmount = it },
+                        value = editTransactionViewModel.amount.toString(),
+                        onValueChange = { editTransactionViewModel.updateAmount(it) },
                         textStyle = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 20.sp,
