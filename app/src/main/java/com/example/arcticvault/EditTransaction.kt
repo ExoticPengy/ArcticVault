@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,9 +26,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +33,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +46,7 @@ import com.example.arcticvault.ui.theme.montserratFontFamily
 fun EditTransaction(
     editTransactionViewModel: EditTransactionViewModel = viewModel()
 ) {
-    val  editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
+    val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -123,7 +123,7 @@ fun EditTransaction(
                         )
                     }
                     TextField(
-                        value = editTransactionViewModel.transaction,
+                        value = editTransactionUiState.transaction,
                         onValueChange = { editTransactionViewModel.updateTransaction(it) },
                         trailingIcon = {
                             Icon(
@@ -150,29 +150,42 @@ fun EditTransaction(
                         modifier = Modifier
                             .widthIn(1.dp, 300.dp)
                     )
-                    TextField(
-                        value = editTransactionViewModel.amount.toString(),
-                        onValueChange = { editTransactionViewModel.updateAmount(it) },
-                        textStyle = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            color = Color.Black,
-                            fontFamily = montserratFontFamily
-                        ),
-                        maxLines = 1,
-                        colors = TextFieldDefaults
-                            .colors(
-                                unfocusedContainerColor = Color.Transparent,
-                                focusedContainerColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent,
-                                focusedTextColor = Color.Transparent
-                            ),
-                        modifier = Modifier
-                            .widthIn(1.dp, 300.dp)
-                            .padding(bottom = 5.dp)
+                    Row (
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 5.dp)
+                    ){
+                        Text(
+                        text = "RM",
+                        textAlign = TextAlign.Center,
+                        fontFamily = montserratFontFamily,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        modifier = Modifier.padding(start = 20.dp)
                     )
+                        TextField(
+                            value = editTransactionUiState.amount.toString(),
+                            onValueChange = { editTransactionViewModel.updateAmount(it) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword, imeAction = ImeAction.Done),
+                            textStyle = TextStyle(
+                                fontSize = 20.sp,
+                                color = Color.Black,
+                                fontFamily = montserratFontFamily
+                            ),
+                            maxLines = 1,
+                            colors = TextFieldDefaults
+                                .colors(
+                                    unfocusedContainerColor = Color.Transparent,
+                                    focusedContainerColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    disabledIndicatorColor = Color.Transparent,
+                                    focusedTextColor = Color.Transparent
+                                ),
+                            modifier = Modifier
+                                .widthIn(1.dp, editTransactionUiState.amountFieldWidth.dp)
+                        )
+                    }
                 }
             }
             Column(
@@ -261,11 +274,3 @@ fun EditTransaction(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun EditTransactionPreview() {
-//    ArcticVaultTheme {
-//        EditTransaction()
-//    }
-//}
