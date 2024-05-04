@@ -1,50 +1,42 @@
 package com.example.arcticvault.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.arcticvault.model.Transaction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.text.NumberFormat
+import java.util.Locale
 
 class EditTransactionViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(EditTransactionUiState())
     val uiState: StateFlow<EditTransactionUiState> = _uiState.asStateFlow()
 
-    fun updateIcon(newIcon: Int) {
-        _uiState.value = EditTransactionUiState(icon = newIcon)
+    var showDatePicker by mutableStateOf(false)
+
+    fun updateUiState(transaction: Transaction) {
+        _uiState.value = EditTransactionUiState(
+            transaction = transaction
+        )
     }
 
-    fun updateTransaction(newTransaction: String) {
-        _uiState.value = EditTransactionUiState(transaction = newTransaction)
+    fun updateAmount(newAmount: String): Double {
+        var doubleAmount = newAmount.replace("RM", "")
+        doubleAmount = doubleAmount.replace(",", "")
+        return doubleAmount.toDoubleOrNull() ?: 0.0
     }
 
-    fun updateTime(newTime: String) {
-        _uiState.value = EditTransactionUiState(time = newTime)
+    fun formatAmount(amount: Double): String {
+        return NumberFormat.getCurrencyInstance(Locale("en", "MY")).format(amount)
     }
 
-    fun updateDate(newDate: String) {
-        _uiState.value = EditTransactionUiState(date = newDate)
-    }
-
-    fun updateAmount(newAmount: String) {
-        val amountLength: Int = newAmount.length
-        val amountFieldLength = if (50 + (11 * amountLength) >= 230) {
-            230
-        } else {
-            50 + (11 * amountLength)
-        }
-        _uiState.value = EditTransactionUiState(amount = newAmount.toDouble(), amountFieldWidth = amountFieldLength)
-    }
-
-    fun loadTransaction() {
-
-    }
-
-    fun addNewTransaction() {
-
-    }
-
-    fun cancelTransaction() {
-
-    }
+//    suspend fun saveTransaction() {
+//        if (validateInput()) {
+//            itemsRepository.insertTransaction()
+//        }
+//    }
 
 }

@@ -199,7 +199,7 @@ fun AllTransaction() {
                     )
                     Spacer(Modifier.height(25.dp))
                     Row {
-                        DatePickerDialog(50)
+                        DatePicker(50)
                         Spacer(Modifier.width(30.dp))
                         Image(
                             painter = painterResource(R.drawable.filtericon),
@@ -282,7 +282,7 @@ fun TransactionTexts(transaction: Transaction) {
             .width(310.dp)
     ) {
         Image(
-            painter = painterResource(transaction.icon),
+            painter = painterResource(R.drawable.expense),
             contentDescription = stringResource(R.string.expense_desc),
             contentScale = ContentScale.Fit,
             modifier = Modifier
@@ -292,7 +292,7 @@ fun TransactionTexts(transaction: Transaction) {
             modifier = Modifier.width(150.dp)
         ) {
             Text(
-                text = transaction.transaction,
+                text = transaction.title,
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 14.sp,
@@ -334,7 +334,7 @@ fun DatePickerDialog(
 ) {
     val datePickerState = rememberDatePickerState()
 
-    val dateFormat = SimpleDateFormat("dd/mm/yyyy", Locale.US)
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
     val selectedDate = datePickerState.selectedDateMillis?.let {
         dateFormat.format(it)
@@ -377,7 +377,7 @@ fun DatePickerDialog(
 }
 
 @Composable
-fun DatePickerDialog(imgSize: Int) {
+fun DatePicker(imgSize: Int) {
     var date by remember {
         mutableStateOf("Open date picker dialog")
     }

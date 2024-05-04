@@ -1,6 +1,7 @@
 package com.example.arcticvault.data
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -9,6 +10,7 @@ data class Transaction(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @DrawableRes val icon: Int,
+    @StringRes val type: Int,
     val transaction: String,
     val time: String,
     val date: String,

@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.model.Transaction
 import com.example.arcticvault.ui.EditTransactionViewModel
 import com.example.arcticvault.ui.theme.montserratFontFamily
 
@@ -47,6 +48,7 @@ fun EditTransaction(
     editTransactionViewModel: EditTransactionViewModel = viewModel()
 ) {
     val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
+    val transaction: Transaction = editTransactionUiState.transaction
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -107,14 +109,30 @@ fun EditTransaction(
                         modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.income),
+                            painter = painterResource(transaction.icon),
                             contentDescription = stringResource(R.string.expense_desc),
-                            contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
+                                .clickable {
+                                    if (transaction.icon == R.drawable.income) {
+                                        editTransactionViewModel.updateUiState(
+                                            transaction.copy(
+                                                icon = R.drawable.expense,
+                                                type = "Expense"
+                                            )
+                                        )
+                                    } else {
+                                        editTransactionViewModel.updateUiState(
+                                            transaction.copy(
+                                                icon = R.drawable.income,
+                                                type = "Income"
+                                            )
+                                        )
+                                    }
+                                }
                         )
                         Text(
-                            text = "Income",
+                            text = transaction.type ,
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
@@ -123,14 +141,28 @@ fun EditTransaction(
                         )
                     }
                     TextField(
-                        value = editTransactionUiState.transaction,
-                        onValueChange = { editTransactionViewModel.updateTransaction(it) },
+                        value = transaction.title,
+                        onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(title = it)) },
+                        placeholder = {
+                            Text(
+                                text = "Transaction",
+                                textAlign = TextAlign.Center,
+                                fontFamily = montserratFontFamily,
+                                fontSize = 20.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(start = 20.dp)
+                            )
+                        },
                         trailingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.editicon),
                                 contentDescription = null,
                                 modifier = Modifier.size(25.dp)
-                            ) },
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done
+                        ),
                         textStyle = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 20.sp,
@@ -150,42 +182,32 @@ fun EditTransaction(
                         modifier = Modifier
                             .widthIn(1.dp, 300.dp)
                     )
-                    Row (
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = 5.dp)
-                    ){
-                        Text(
-                        text = "RM",
-                        textAlign = TextAlign.Center,
-                        fontFamily = montserratFontFamily,
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
-                        TextField(
-                            value = editTransactionUiState.amount.toString(),
-                            onValueChange = { editTransactionViewModel.updateAmount(it) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword, imeAction = ImeAction.Done),
-                            textStyle = TextStyle(
-                                fontSize = 20.sp,
-                                color = Color.Black,
-                                fontFamily = montserratFontFamily
+                    TextField(
+                        value = editTransactionViewModel.formatAmount(transaction.amount),
+                        onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(amount = editTransactionViewModel.updateAmount(it))) },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        ),
+                        textStyle = TextStyle(
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center,
+                            color = Color.Black,
+                            fontFamily = montserratFontFamily
+                        ),
+                        maxLines = 1,
+                        colors = TextFieldDefaults
+                            .colors(
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                focusedTextColor = Color.Transparent
                             ),
-                            maxLines = 1,
-                            colors = TextFieldDefaults
-                                .colors(
-                                    unfocusedContainerColor = Color.Transparent,
-                                    focusedContainerColor = Color.Transparent,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,
-                                    disabledIndicatorColor = Color.Transparent,
-                                    focusedTextColor = Color.Transparent
-                                ),
-                            modifier = Modifier
-                                .widthIn(1.dp, editTransactionUiState.amountFieldWidth.dp)
-                        )
-                    }
+                        modifier = Modifier
+                            .widthIn(1.dp, 280.dp)
+                    )
                 }
             }
             Column(
@@ -197,9 +219,26 @@ fun EditTransaction(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    DatePickerDialog(30)
+                    Box(contentAlignment = Alignment.Center) {
+                        Image(
+                            painter = painterResource(R.drawable.calendaricon),
+                            contentDescription = stringResource(R.string.percentage_card_desc),
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable {
+                                    editTransactionViewModel.showDatePicker = true
+                                }
+                        )
+                    }
+
+                    if (editTransactionViewModel.showDatePicker) {
+                        DatePickerDialog(
+                            onDateSelected = { editTransactionViewModel.updateUiState(transaction.copy(date = it)) },
+                            onDismiss = { editTransactionViewModel.showDatePicker = false }
+                        )
+                    }
                     Text(
-                        text = "Date",
+                        text = transaction.date,
                         textAlign = TextAlign.Center,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
@@ -274,3 +313,5 @@ fun EditTransaction(
         }
     }
 }
+
+
