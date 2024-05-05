@@ -32,6 +32,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,15 +48,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.arcticvault.data.Datasource
-import com.example.arcticvault.model.TransactionModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.data.Transaction
+import com.example.arcticvault.ui.AllTransactionViewModel
+import com.example.arcticvault.ui.AppViewModelProvider
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.montserratFontFamily
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun AllTransaction() {
+fun AllTransactions(
+    onTransactionClick: (Int) -> Unit,
+    allTransactionsViewModel: AllTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+    val allTransactionsUiState by allTransactionsViewModel.allTransactionsUiState.collectAsState()
+
     Surface(modifier = Modifier.fillMaxSize()) {
         var isIncome by remember { mutableStateOf(true) }
         var searchFilter by remember { mutableStateOf("Search") }
@@ -262,9 +270,9 @@ fun AllTransaction() {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val transactionModelList: List<TransactionModel> = Datasource().loadTransactions()
-                items(transactionModelList) { transaction ->
-                    TransactionTexts(transactionModel = transaction)
+                val transactionList: List<Transaction> = allTransactionsUiState.transactionList
+                items(transactionList) { transaction ->
+                    TransactionTexts(onTransactionClick = { onTransactionClick(it) }, transaction = transaction, viewModel = allTransactionsViewModel)
                 }
             }
         }
@@ -272,18 +280,23 @@ fun AllTransaction() {
 }
 
 @Composable
-fun TransactionTexts(transactionModel: TransactionModel) {
-    val amountString = String.format("%.2f", transactionModel.amount)
+fun TransactionTexts(
+    onTransactionClick: (Int) -> Unit, transaction: Transaction,
+    viewModel: AllTransactionViewModel
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .padding(top = 8.dp, bottom = 8.dp)
             .width(310.dp)
+            .clickable {
+                onTransactionClick(transaction.id)
+            }
     ) {
         Image(
-            painter = painterResource(R.drawable.expense),
-            contentDescription = stringResource(R.string.expense_desc),
+            painter = painterResource(transaction.icon),
+            contentDescription = stringResource(viewModel.updateIconDesc(transaction.icon)),
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .size(35.dp)
@@ -292,14 +305,14 @@ fun TransactionTexts(transactionModel: TransactionModel) {
             modifier = Modifier.width(150.dp)
         ) {
             Text(
-                text = transactionModel.title,
+                text = transaction.title,
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 14.sp,
                 color = Color.Black,
             )
             Text(
-                text = String.format("%s - %s", transactionModel.time, transactionModel.date),
+                text = String.format("%s - %s", transaction.time, transaction.date),
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 10.sp,
@@ -307,7 +320,7 @@ fun TransactionTexts(transactionModel: TransactionModel) {
             )
         }
         Text(
-            text = "RM$amountString",
+            text = viewModel.formatAmount(transaction.amount),
             textAlign = TextAlign.Right,
             fontFamily = montserratFontFamily,
             fontSize = 16.sp,
@@ -410,6 +423,6 @@ fun DatePicker(imgSize: Int) {
 @Composable
 fun AllTransactionPreview() {
     ArcticVaultTheme {
-        AllTransaction()
+        ArcticVaultApp()
     }
 }

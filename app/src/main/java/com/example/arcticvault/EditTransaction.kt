@@ -52,8 +52,16 @@ import com.example.arcticvault.ui.EditTransactionViewModel
 import com.example.arcticvault.ui.theme.montserratFontFamily
 import kotlinx.coroutines.launch
 
+object EditTransactionDestination {
+    val route = "Edit"
+    const val transactionIdArg = "transactionId"
+    val routeWithArgs = "$route/{$transactionIdArg}"
+}
+
 @Composable
 fun EditTransaction(
+    onBackButtonClick: () -> Unit,
+    onConfirmButtonClick: () -> Unit,
     editTransactionViewModel: EditTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
@@ -97,7 +105,7 @@ fun EditTransaction(
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
-
+                                    onBackButtonClick()
                                 }
                         )
                         Text(
@@ -115,6 +123,7 @@ fun EditTransaction(
                                 .clickable {
                                     coroutineScope.launch {
                                         editTransactionViewModel.saveTransaction(editTransactionUiState)
+                                        onConfirmButtonClick()
                                     }
                                 }
                         )
@@ -351,7 +360,7 @@ fun TestingTime(
                     onClick = {
                         editTransactionViewModel.updateUiState(
                             transaction.copy(
-                                time = timePickerState.hour.toString() + ":" + timePickerState.minute.toString()
+                                time = timePickerState.hour.toString() + ":" + if(timePickerState.minute == 0){"00"} else timePickerState.minute.toString()
                             ))
                         editTransactionViewModel.showTimePicker = false
                     }

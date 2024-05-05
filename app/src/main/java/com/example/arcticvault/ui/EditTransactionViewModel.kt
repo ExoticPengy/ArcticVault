@@ -3,7 +3,10 @@ package com.example.arcticvault.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.arcticvault.EditTransactionDestination
 import com.example.arcticvault.R
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
@@ -11,12 +14,38 @@ import com.example.arcticvault.model.TransactionModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
-class EditTransactionViewModel(private val transactionsRepository: TransactionsRepository): ViewModel() {
+class EditTransactionViewModel(
+    savedStateHandle: SavedStateHandle,
+    private val transactionsRepository: TransactionsRepository
+): ViewModel() {
+    private val transactionId: Int = savedStateHandle[EditTransactionDestination.transactionIdArg] ?: -1
+
     private val _uiState = MutableStateFlow(EditTransactionUiState())
+
     val uiState: StateFlow<EditTransactionUiState> = _uiState.asStateFlow()
+
+    init {
+        if (transactionId != -1) {
+            viewModelScope.launch {
+                updateUiState(
+                    transactionsRepository.getTransactionStream(transactionId)
+                        .filterNotNull()
+                        .first()
+                        .transactionToModel()
+                )
+            }
+        }
+    }
+
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
 
     var showDatePicker by mutableStateOf(false)
     var showTimePicker by mutableStateOf(false)
@@ -65,9 +94,21 @@ class EditTransactionViewModel(private val transactionsRepository: TransactionsR
         amount = amount
     )
 
+    private fun Transaction.transactionToModel(): TransactionModel = TransactionModel(
+        id = id,
+        icon = icon,
+        type = type,
+        title = title,
+        time = time,
+        date = date,
+        amount = amount
+    )
+
     suspend fun saveTransaction(uiState: EditTransactionUiState) {
         if (validateInput(uiState)) {
-            transactionsRepository.insertTransaction(_uiState.value.transaction.transactionToData())
+            if (transactionId != -1)
+                transactionsRepository.updateTransaction(_uiState.value.transaction.transactionToData())
+            else transactionsRepository.insertTransaction(_uiState.value.transaction.transactionToData())
         }
     }
 
