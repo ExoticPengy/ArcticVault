@@ -48,7 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.arcticvault.data.Datasource
-import com.example.arcticvault.model.Transaction
+import com.example.arcticvault.model.TransactionModel
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.montserratFontFamily
 import java.text.SimpleDateFormat
@@ -262,9 +262,9 @@ fun AllTransaction() {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val transactionList: List<Transaction> = Datasource().loadTransactions()
-                items(transactionList) {transaction ->
-                    TransactionTexts(transaction = transaction)
+                val transactionModelList: List<TransactionModel> = Datasource().loadTransactions()
+                items(transactionModelList) { transaction ->
+                    TransactionTexts(transactionModel = transaction)
                 }
             }
         }
@@ -272,8 +272,8 @@ fun AllTransaction() {
 }
 
 @Composable
-fun TransactionTexts(transaction: Transaction) {
-    val amountString = String.format("%.2f", transaction.amount)
+fun TransactionTexts(transactionModel: TransactionModel) {
+    val amountString = String.format("%.2f", transactionModel.amount)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -292,14 +292,14 @@ fun TransactionTexts(transaction: Transaction) {
             modifier = Modifier.width(150.dp)
         ) {
             Text(
-                text = transaction.title,
+                text = transactionModel.title,
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 14.sp,
                 color = Color.Black,
             )
             Text(
-                text = String.format("%s - %s", transaction.time, transaction.date),
+                text = String.format("%s - %s", transactionModel.time, transactionModel.date),
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 10.sp,

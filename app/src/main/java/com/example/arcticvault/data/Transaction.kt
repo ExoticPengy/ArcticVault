@@ -11,7 +11,7 @@ data class Transaction(
     val id: Int = 0,
     @DrawableRes val icon: Int,
     @StringRes val type: Int,
-    val transaction: String,
+    val title: String,
     val time: String,
     val date: String,
     val amount: Double

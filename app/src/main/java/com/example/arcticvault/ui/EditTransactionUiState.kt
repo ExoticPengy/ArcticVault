@@ -1,7 +1,7 @@
 package com.example.arcticvault.ui
 
-import com.example.arcticvault.model.Transaction
+import com.example.arcticvault.model.TransactionModel
 
 data class EditTransactionUiState (
-    val transaction: Transaction = Transaction()
+    val transaction: TransactionModel = TransactionModel()
 )

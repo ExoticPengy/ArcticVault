@@ -1,12 +1,13 @@
 package com.example.arcticvault.model
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.example.arcticvault.R
 
-data class Transaction(
+data class TransactionModel(
     val id: Int = 0,
     @DrawableRes val icon: Int = R.drawable.income,
-    val type: String = "Income",
+    @StringRes val type: Int = R.string.income,
     val title: String = "",
     val time: String = "",
     val date: String = "",

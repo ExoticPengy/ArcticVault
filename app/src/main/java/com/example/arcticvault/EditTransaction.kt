@@ -18,14 +18,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,17 +43,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arcticvault.model.Transaction
+import com.example.arcticvault.model.TransactionModel
+import com.example.arcticvault.ui.AppViewModelProvider
 import com.example.arcticvault.ui.EditTransactionViewModel
 import com.example.arcticvault.ui.theme.montserratFontFamily
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditTransaction(
-    editTransactionViewModel: EditTransactionViewModel = viewModel()
+    editTransactionViewModel: EditTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
-    val transaction: Transaction = editTransactionUiState.transaction
+    val transaction: TransactionModel = editTransactionUiState.transaction
+    val coroutineScope = rememberCoroutineScope()
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -102,6 +112,11 @@ fun EditTransaction(
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
+                                .clickable {
+                                    coroutineScope.launch {
+                                        editTransactionViewModel.saveTransaction(editTransactionUiState)
+                                    }
+                                }
                         )
                     }
                     Row(
@@ -110,7 +125,7 @@ fun EditTransaction(
                     ) {
                         Image(
                             painter = painterResource(transaction.icon),
-                            contentDescription = stringResource(R.string.expense_desc),
+                            contentDescription = stringResource(editTransactionViewModel.updateIconDesc(transaction.icon)),
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
@@ -118,21 +133,21 @@ fun EditTransaction(
                                         editTransactionViewModel.updateUiState(
                                             transaction.copy(
                                                 icon = R.drawable.expense,
-                                                type = "Expense"
+                                                type = R.string.expense
                                             )
                                         )
                                     } else {
                                         editTransactionViewModel.updateUiState(
                                             transaction.copy(
                                                 icon = R.drawable.income,
-                                                type = "Income"
+                                                type = R.string.income
                                             )
                                         )
                                     }
                                 }
                         )
                         Text(
-                            text = transaction.type ,
+                            text = stringResource(transaction.type) ,
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
@@ -249,19 +264,7 @@ fun EditTransaction(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.clockicon),
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )
-                    Text(
-                        text = "Time",
-                        textAlign = TextAlign.Center,
-                        fontFamily = montserratFontFamily,
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
+                    TestingTime(transaction = transaction)
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -314,4 +317,118 @@ fun EditTransaction(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TestingTime(
+    transaction: TransactionModel,
+    editTransactionViewModel: EditTransactionViewModel = viewModel()
+) {
+    val timePickerState = rememberTimePickerState(is24Hour = true)
+
+    Image(
+        painter = painterResource(R.drawable.clockicon),
+        contentDescription = null,
+        modifier = Modifier
+            .size(30.dp)
+            .clickable {
+                editTransactionViewModel.showTimePicker = true
+            }
+    )
+    Text(
+        text = transaction.time,
+        textAlign = TextAlign.Center,
+        fontFamily = montserratFontFamily,
+        fontSize = 20.sp,
+        color = Color.Black,
+        modifier = Modifier.padding(start = 20.dp)
+    )
+
+    if (editTransactionViewModel.showTimePicker) {
+        TimePickerDialog(
+            onDismissRequest = {  },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        editTransactionViewModel.updateUiState(
+                            transaction.copy(
+                                time = timePickerState.hour.toString() + ":" + timePickerState.minute.toString()
+                            ))
+                        editTransactionViewModel.showTimePicker = false
+                    }
+                ) { Text(
+                    text = "OK",
+                    textAlign = TextAlign.Center,
+                    fontFamily = montserratFontFamily,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    modifier = Modifier.padding(start = 20.dp)
+                ) }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        editTransactionViewModel.showTimePicker = false
+                    }
+                ) { Text(
+                    text = "Cancel",
+                    textAlign = TextAlign.Center,
+                    fontFamily = montserratFontFamily,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    modifier = Modifier.padding(start = 20.dp)
+                ) }
+            }
+        )
+        {
+            TimePicker(state = timePickerState)
+        }
+    }
+}
+
+@Composable
+fun TimePickerDialog(
+    title: String = "Select Time",
+    onDismissRequest: () -> Unit,
+    confirmButton: @Composable (() -> Unit),
+    dismissButton: @Composable (() -> Unit),
+    content: @Composable () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+    ) {
+        Surface(
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min)
+
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    fontFamily = montserratFontFamily,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+                content()
+                Row(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .fillMaxWidth()
+                ) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    dismissButton()
+                    confirmButton()
+                }
+            }
+        }
+    }
+}
 
