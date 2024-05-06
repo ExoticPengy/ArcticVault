@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
+import com.example.arcticvault.ui.theme.ReminderScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +19,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             ArcticVaultTheme {
                 // A surface container using the 'background' color from the theme
-                HomeScreen(modifier = Modifier, name = "James")
+                //HomeScreen(modifier = Modifier, name = "James")
+                ReminderScreen()
 
             }
         }

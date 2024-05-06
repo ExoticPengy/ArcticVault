@@ -132,6 +132,7 @@ fun FeatureItem(icon: Int, text: String, isLonger: Boolean = false) {
                 )
                 .background(Color.White)
                 .padding(bottom = 10.dp),
+
             contentAlignment = Alignment.TopCenter
         ) {
             Image(
