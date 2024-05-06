@@ -11,14 +11,20 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
 
         initializer {
-            EditTransactionViewModel(
-                this.createSavedStateHandle(),
+            TransactionsViewModel(
                 arcticVaultApplication().container.transactionsRepository
             )
         }
 
         initializer {
-            AllTransactionViewModel(
+            AllTransactionsViewModel(
+                arcticVaultApplication().container.transactionsRepository
+            )
+        }
+
+        initializer {
+            EditTransactionViewModel(
+                this.createSavedStateHandle(),
                 arcticVaultApplication().container.transactionsRepository
             )
         }

@@ -49,11 +49,25 @@ class EditTransactionViewModel(
 
     var showDatePicker by mutableStateOf(false)
     var showTimePicker by mutableStateOf(false)
+    private var firstCheck by mutableStateOf(true)
 
     fun updateUiState(transactionModel: TransactionModel) {
         _uiState.value = EditTransactionUiState(
             transaction = transactionModel
         )
+    }
+
+    fun checkType(transactionModel: TransactionModel, isExpense: Boolean, isIncome: Boolean){
+        var transaction = transactionModel
+        if (isExpense && firstCheck) {
+            transaction = transactionModel.copy(icon = R.drawable.expense, type = R.string.expense)
+            firstCheck = false
+        }
+        else if (isIncome && firstCheck) {
+            transaction = transactionModel.copy(icon = R.drawable.income, type = R.string.income)
+            firstCheck = false
+        }
+        updateUiState(transaction)
     }
 
     fun updateIconDesc(iconId: Int): Int {
@@ -91,6 +105,7 @@ class EditTransactionViewModel(
         title = title,
         time = time,
         date = date,
+        description = description,
         amount = amount
     )
 
@@ -101,8 +116,16 @@ class EditTransactionViewModel(
         title = title,
         time = time,
         date = date,
+        description = description,
         amount = amount
     )
+
+    suspend fun deleteTransaction(uiState: EditTransactionUiState) {
+        if (validateInput(uiState)) {
+            if (transactionId != -1)
+                transactionsRepository.deleteTransaction(_uiState.value.transaction.transactionToData())
+        }
+    }
 
     suspend fun saveTransaction(uiState: EditTransactionUiState) {
         if (validateInput(uiState)) {

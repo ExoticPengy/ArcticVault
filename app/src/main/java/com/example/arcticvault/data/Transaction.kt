@@ -14,5 +14,6 @@ data class Transaction(
     val title: String,
     val time: String,
     val date: String,
+    val description: String,
     val amount: Double
 )

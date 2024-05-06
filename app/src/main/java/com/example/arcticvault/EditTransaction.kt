@@ -60,13 +60,16 @@ object EditTransactionDestination {
 
 @Composable
 fun EditTransaction(
-    onBackButtonClick: () -> Unit,
-    onConfirmButtonClick: () -> Unit,
+    onButtonClick: () -> Unit,
+    addNewExpense: Boolean = false,
+    addNewIncome: Boolean = false,
     editTransactionViewModel: EditTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
     val transaction: TransactionModel = editTransactionUiState.transaction
     val coroutineScope = rememberCoroutineScope()
+    //Check if it is a new transaction: expense/income
+    editTransactionViewModel.checkType(transaction, addNewExpense, addNewIncome)
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -98,6 +101,7 @@ fun EditTransaction(
                             .width(320.dp)
                             .padding(top = 40.dp)
                     ) {
+                        //Back button
                         Image(
                             painter = painterResource(R.drawable.backbutton),
                             contentDescription = stringResource(R.string.back_button_desc),
@@ -105,29 +109,35 @@ fun EditTransaction(
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
-                                    onBackButtonClick()
+                                    onButtonClick()
                                 }
                         )
+                        //Title
                         Text(
                             text = "Edit Transaction",
                             fontFamily = montserratFontFamily,
                             fontSize = 25.sp,
                             textAlign = TextAlign.Center
                         )
+                        //Confirm Button
                         Image(
-                            painter = painterResource(R.drawable.backbutton),
+                            painter = painterResource(R.drawable.confirmicon),
                             contentDescription = stringResource(R.string.back_button_desc),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
                                     coroutineScope.launch {
-                                        editTransactionViewModel.saveTransaction(editTransactionUiState)
-                                        onConfirmButtonClick()
+                                        editTransactionViewModel.saveTransaction(
+                                            editTransactionUiState
+                                        )
                                     }
+                                    onButtonClick()
                                 }
                         )
                     }
+
+                    //Transaction icon & type
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
@@ -156,7 +166,7 @@ fun EditTransaction(
                                 }
                         )
                         Text(
-                            text = stringResource(transaction.type) ,
+                            text = stringResource(transaction.type),
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
@@ -164,6 +174,8 @@ fun EditTransaction(
                             modifier = Modifier.padding(start = 20.dp)
                         )
                     }
+
+                    //Transaction title textfield
                     TextField(
                         value = transaction.title,
                         onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(title = it)) },
@@ -193,7 +205,7 @@ fun EditTransaction(
                             color = Color.Black,
                             fontFamily = montserratFontFamily
                         ),
-                        maxLines = 1,
+                        singleLine = true,
                         colors = TextFieldDefaults
                             .colors(
                                 unfocusedContainerColor = Color.Transparent,
@@ -206,6 +218,8 @@ fun EditTransaction(
                         modifier = Modifier
                             .widthIn(1.dp, 300.dp)
                     )
+
+                    //Transaction amount textfield
                     TextField(
                         value = editTransactionViewModel.formatAmount(transaction.amount),
                         onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(amount = editTransactionViewModel.updateAmount(it))) },
@@ -219,7 +233,7 @@ fun EditTransaction(
                             color = Color.Black,
                             fontFamily = montserratFontFamily
                         ),
-                        maxLines = 1,
+                        singleLine = true,
                         colors = TextFieldDefaults
                             .colors(
                                 unfocusedContainerColor = Color.Transparent,
@@ -234,6 +248,7 @@ fun EditTransaction(
                     )
                 }
             }
+
             Column(
                 verticalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
@@ -243,6 +258,8 @@ fun EditTransaction(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+
+                    //Calender button
                     Box(contentAlignment = Alignment.Center) {
                         Image(
                             painter = painterResource(R.drawable.calendaricon),
@@ -254,7 +271,7 @@ fun EditTransaction(
                                 }
                         )
                     }
-
+                    //Date Picker
                     if (editTransactionViewModel.showDatePicker) {
                         DatePickerDialog(
                             onDateSelected = { editTransactionViewModel.updateUiState(transaction.copy(date = it)) },
@@ -270,11 +287,15 @@ fun EditTransaction(
                         modifier = Modifier.padding(start = 20.dp)
                     )
                 }
+
+                //Time Picker
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TestingTime(transaction = transaction)
+                    TimePicker(transaction = transaction)
                 }
+
+                //Category
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -292,11 +313,20 @@ fun EditTransaction(
                         modifier = Modifier.padding(start = 20.dp)
                     )
                 }
-                Image(
-                    painter = painterResource(R.drawable.bluecard),
-                    contentDescription = null,
-                    modifier = Modifier.size(300.dp, 120.dp)
-                )
+                //Category Items
+                Box {
+                    Image(
+                        painter = painterResource(R.drawable.bluecard),
+                        contentScale = ContentScale.FillBounds,
+                        contentDescription = null,
+                        modifier = Modifier.size(300.dp, 60.dp)
+                    )
+//                    LazyRow() {
+//
+//                    }
+                }
+
+                //Attachment button
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -314,13 +344,70 @@ fun EditTransaction(
                         modifier = Modifier.padding(start = 20.dp)
                     )
                 }
+                
+                //Description Box
+                Box {
+                    Image(
+                        painter = painterResource(R.drawable.bluecard),
+                        contentScale = ContentScale.FillBounds,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(300.dp, 60.dp)
+                    )
+                    TextField(
+                        value = transaction.description,
+                        onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(description = it)) },
+                        placeholder = {
+                            Text(
+                                text = "Description",
+                                textAlign = TextAlign.Center,
+                                fontFamily = montserratFontFamily,
+                                fontSize = 20.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(start = 20.dp)
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done
+                        ),
+                        textStyle = TextStyle(
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            fontFamily = montserratFontFamily
+                        ),
+                        singleLine = true,
+                        colors = TextFieldDefaults
+                            .colors(
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                focusedTextColor = Color.Transparent
+                            ),
+                        modifier = Modifier
+                            .widthIn(1.dp, 280.dp)
+                            .height(60.dp)
+                            .align(Alignment.TopCenter)
+                    )
+                }
+
+                //Delete button
                 Image(
-                    painter = painterResource(R.drawable.bluecard),
+                    painter = painterResource(R.drawable.trashicon),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(300.dp, 120.dp)
+                        .size(30.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            coroutineScope.launch {
+                                editTransactionViewModel.deleteTransaction(editTransactionUiState)
+                            }
+                            onButtonClick()
+                        }
                 )
-                Spacer(Modifier.height(5.dp))
+                
+                Spacer(modifier = Modifier.height(5.dp))
             }
         }
     }
@@ -328,7 +415,7 @@ fun EditTransaction(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TestingTime(
+fun TimePicker(
     transaction: TransactionModel,
     editTransactionViewModel: EditTransactionViewModel = viewModel()
 ) {

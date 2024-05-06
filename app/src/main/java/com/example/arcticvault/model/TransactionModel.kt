@@ -11,5 +11,6 @@ data class TransactionModel(
     val title: String = "",
     val time: String = "",
     val date: String = "",
+    val description: String = "",
     val amount: Double = 0.0
 )

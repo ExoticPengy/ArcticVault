@@ -28,26 +28,183 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arcticvault.ui.TransactionViewModel
-import com.example.arcticvault.ui.theme.ArcticVaultTheme
+import com.example.arcticvault.ui.TransactionsViewModel
 import com.example.arcticvault.ui.theme.montserratFontFamily
 
+object TransactionsDestination {
+    val route = "Transactions"
+}
+
 @Composable
-fun Transaction(
-    transactionViewModel: TransactionViewModel = viewModel()
+fun Transactions(
+    onAddExpenseClick: () -> Unit,
+    onAddIncomeClick: () -> Unit,
+    onViewAllClick: () -> Unit,
+    transactionViewModel: TransactionsViewModel = viewModel()
 ) {
-    val transactionUiState = transactionViewModel.uiState.collectAsState()
+    val transactionsUiState = transactionViewModel.uiState.collectAsState()
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             //top banner and transactions card
-            TopBanner()
+            Box(
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.topbanner),
+                    contentDescription = stringResource(R.string.blue_topbanner_desc),
+                    modifier = Modifier
+                        .height(330.dp)
+                        .fillMaxWidth()
+                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .width(320.dp)
+                            .padding(top = 40.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.backbutton),
+                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clickable {
+
+                                }
+                        )
+                        Text(
+                            text = stringResource(R.string.transaction_screen_title),
+                            fontFamily = montserratFontFamily,
+                            fontSize = 30.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Image(
+                            painter = painterResource(R.drawable.backbutton),
+                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .size(35.dp)
+                        )
+                    }
+
+                    //Transaction card
+                    Box(
+                        modifier = Modifier
+                            .width(IntrinsicSize.Min)
+                            .padding(top = 45.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.transactioncard),
+                            contentDescription = stringResource(R.string.transaction_card_desc),
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .height(180.dp)
+                                .width(310.dp)
+                        )
+
+                        //Company name, divider, and add transactions row
+                        Column {
+                            Text(
+                                text = "Pengu Company",
+                                fontFamily = montserratFontFamily,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
+                            )
+                            Divider(
+                                color = Color.White,
+                                thickness = 1.dp
+                            )
+
+                            //Add Transactions Row
+                            Row(
+                                modifier = Modifier
+                                    .padding(top = 35.dp)
+                            ) {
+                                Text(
+                                    text = "Add\nTransactions",
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = montserratFontFamily,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
+                                )
+                                Divider(
+                                    color = Color.White,
+                                    thickness = 1.dp,
+                                    modifier = Modifier
+                                        .padding(start = 20.dp, top = 12.dp)
+                                        .width(1.dp)
+                                        .height(30.dp)
+                                )
+
+                                //Add Income Button
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 25.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.income),
+                                        contentDescription = stringResource(R.string.income_desc),
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .size(45.dp)
+                                            .clickable {
+                                                onAddIncomeClick()
+                                            }
+                                    )
+                                    Text(
+                                        text = "Income",
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = montserratFontFamily,
+                                        fontSize = 10.sp,
+                                        color = Color.White,
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                    )
+                                }
+
+                                //Add Expense Button
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 20.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.expense),
+                                        contentDescription = stringResource(R.string.expense_desc),
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .size(45.dp)
+                                            .clickable {
+                                                onAddExpenseClick()
+                                            }
+                                    )
+                                    Text(
+                                        text = "Expense",
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = montserratFontFamily,
+                                        fontSize = 10.sp,
+                                        color = Color.White,
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             //Profit card
             Box(
@@ -216,169 +373,17 @@ fun Transaction(
 
             Spacer(Modifier.height(20.dp))
 
-            ViewAllTransactionsButton()
-        }
-    }
-}
-
-@Composable
-fun TopBanner() {
-    Box(
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Image(
-            painter = painterResource(R.drawable.topbanner),
-            contentDescription = stringResource(R.string.blue_topbanner_desc),
-            modifier = Modifier
-                .height(330.dp)
-                .fillMaxWidth()
-        )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Image(
+                painter = painterResource(R.drawable.viewalltransactionsbutton),
+                contentDescription = stringResource(R.string.expense_desc),
                 modifier = Modifier
-                    .width(320.dp)
-                    .padding(top = 40.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.backbutton),
-                    contentDescription = stringResource(R.string.back_button_desc),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .size(35.dp)
-                        .clickable {
-
-                        }
-                )
-                Text(
-                    text = stringResource(R.string.transaction_screen_title),
-                    fontFamily = montserratFontFamily,
-                    fontSize = 30.sp,
-                    textAlign = TextAlign.Center
-                )
-                Image(
-                    painter = painterResource(R.drawable.backbutton),
-                    contentDescription = stringResource(R.string.back_button_desc),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .size(35.dp)
-                )
-            }
-
-            //Transaction card
-            TransactionCard()
-        }
-    }
-}
-
-@Composable
-fun TransactionCard() {
-    Box(
-        modifier = Modifier
-            .width(IntrinsicSize.Min)
-            .padding(top = 45.dp)
-    ) {
-        Image(
-            painter = painterResource(R.drawable.transactioncard),
-            contentDescription = stringResource(R.string.transaction_card_desc),
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .height(180.dp)
-                .width(310.dp)
-        )
-
-        //Company name, divider, and add transactions row
-        Column {
-            Text(
-                text = "Pengu Company",
-                fontFamily = montserratFontFamily,
-                color = Color.White,
-                modifier = Modifier
-                    .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
+                    .height(45.dp)
+                    .width(250.dp)
+                    .padding(start = 40.dp)
+                    .clickable {
+                        onViewAllClick()
+                    }
             )
-            Divider(
-                color = Color.White,
-                thickness = 1.dp
-            )
-
-            //Add Transactions Row
-            Row(
-                modifier = Modifier
-                    .padding(top = 35.dp)
-            ) {
-                Text(
-                    text = "Add\nTransactions",
-                    textAlign = TextAlign.Center,
-                    fontFamily = montserratFontFamily,
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
-                )
-                Divider(
-                    color = Color.White,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .padding(start = 20.dp, top = 12.dp)
-                        .width(1.dp)
-                        .height(30.dp)
-                )
-
-                //Add Income Button
-                Column(
-                    modifier = Modifier
-                        .padding(start = 25.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.income),
-                        contentDescription = stringResource(R.string.income_desc),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .clickable {
-
-                            }
-                    )
-                    Text(
-                        text = "Income",
-                        textAlign = TextAlign.Center,
-                        fontFamily = montserratFontFamily,
-                        fontSize = 10.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .padding(top = 5.dp)
-                    )
-                }
-
-                //Add Expense Button
-                Column(
-                    modifier = Modifier
-                        .padding(start = 20.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.expense),
-                        contentDescription = stringResource(R.string.expense_desc),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .clickable {
-
-                            }
-                    )
-                    Text(
-                        text = "Expense",
-                        textAlign = TextAlign.Center,
-                        fontFamily = montserratFontFamily,
-                        fontSize = 10.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .padding(top = 5.dp)
-                    )
-                }
-            }
         }
     }
 }
@@ -437,24 +442,4 @@ fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: S
             .height(1.dp)
             .padding(start = 40.dp)
     )
-}
-
-@Composable
-fun ViewAllTransactionsButton() {
-    Image(
-        painter = painterResource(R.drawable.viewalltransactionsbutton),
-        contentDescription = stringResource(R.string.expense_desc),
-        modifier = Modifier
-            .height(45.dp)
-            .width(250.dp)
-            .padding(start = 40.dp)
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TransactionPreview() {
-    ArcticVaultTheme {
-        Transaction()
-    }
 }

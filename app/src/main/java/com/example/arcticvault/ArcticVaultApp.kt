@@ -8,26 +8,32 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
-enum class ArcticVault() {
-    Start,
-    All,
-    Add,
-    Edit
-}
-
 @Composable
 fun ArcticVaultApp() {
     val navController: NavHostController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = ArcticVault.Start.name
+        startDestination = TransactionsDestination.route
     ) {
-        composable(route = ArcticVault.Start.name) {
-            AllTransactions(onTransactionClick = {  navController.navigate("${EditTransactionDestination.route}/$it") } )
+        composable(route = TransactionsDestination.route) {
+            Transactions(
+                onAddExpenseClick = { navController.navigate("${EditTransactionDestination.route}/Expense") },
+                onAddIncomeClick = { navController.navigate("${EditTransactionDestination.route}/Income") },
+                onViewAllClick = { navController.navigate(AllTransactionsDestination.route) }
+            )
         }
-        composable(route = ArcticVault.Edit.name) {
-            EditTransaction(onBackButtonClick = { navController.navigateUp() }, onConfirmButtonClick = { navController.navigateUp() })
+        composable(route = AllTransactionsDestination.route) {
+            AllTransactions(
+                onTransactionClick = {  navController.navigate("${EditTransactionDestination.route}/$it") },
+                onBackButtonClick = { navController.navigateUp() }
+            )
+        }
+        composable(route = "${EditTransactionDestination.route}/Expense") {
+            EditTransaction(addNewExpense = true, onButtonClick = { navController.navigateUp() })
+        }
+        composable(route = "${EditTransactionDestination.route}/Income") {
+            EditTransaction(addNewIncome = true, onButtonClick = { navController.navigateUp() })
         }
         composable(
             route = EditTransactionDestination.routeWithArgs,
@@ -35,10 +41,7 @@ fun ArcticVaultApp() {
                 type = NavType.IntType
             })
         ) {
-            EditTransaction(
-                onBackButtonClick = { navController.navigateUp() },
-                onConfirmButtonClick = { navController.navigateUp() }
-            )
+            EditTransaction(onButtonClick = { navController.navigateUp() })
         }
     }
 }

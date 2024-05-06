@@ -1,6 +1,7 @@
 package com.example.arcticvault.ui
 
+import com.example.arcticvault.data.Transaction
+
 data class TransactionUiState(
-    val incomeAmount: Double = 0.0,
-    val expenseAmount: Double = 0.0
+    val transactionList: List<Transaction> = listOf()
 )

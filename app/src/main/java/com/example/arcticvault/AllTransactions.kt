@@ -45,22 +45,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.data.Transaction
-import com.example.arcticvault.ui.AllTransactionViewModel
+import com.example.arcticvault.ui.AllTransactionsViewModel
 import com.example.arcticvault.ui.AppViewModelProvider
-import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.montserratFontFamily
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+object AllTransactionsDestination {
+    val route = "All"
+}
+
+
 @Composable
 fun AllTransactions(
     onTransactionClick: (Int) -> Unit,
-    allTransactionsViewModel: AllTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    onBackButtonClick: () -> Unit,
+    allTransactionsViewModel: AllTransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val allTransactionsUiState by allTransactionsViewModel.allTransactionsUiState.collectAsState()
 
@@ -105,7 +109,7 @@ fun AllTransactions(
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
-
+                                    onBackButtonClick()
                                 }
                         )
                         Text(
@@ -282,7 +286,7 @@ fun AllTransactions(
 @Composable
 fun TransactionTexts(
     onTransactionClick: (Int) -> Unit, transaction: Transaction,
-    viewModel: AllTransactionViewModel
+    viewModel: AllTransactionsViewModel
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -416,13 +420,5 @@ fun DatePicker(imgSize: Int) {
             onDateSelected = { date = it },
             onDismiss = { showDatePicker = false }
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AllTransactionPreview() {
-    ArcticVaultTheme {
-        ArcticVaultApp()
     }
 }
