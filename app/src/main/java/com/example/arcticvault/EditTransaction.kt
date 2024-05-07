@@ -275,7 +275,8 @@ fun EditTransaction(
                     if (editTransactionViewModel.showDatePicker) {
                         DatePickerDialog(
                             onDateSelected = { editTransactionViewModel.updateUiState(transaction.copy(date = it)) },
-                            onDismiss = { editTransactionViewModel.showDatePicker = false }
+                            onDismiss = { editTransactionViewModel.showDatePicker = false },
+                            dismissButtonText = R.string.cancel
                         )
                     }
                     Text(

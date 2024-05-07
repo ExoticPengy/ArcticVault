@@ -13,6 +13,10 @@
     <string name="income">Income</string>
     <string name="expense">Expense</string>
 
+    //Calender
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+
     //Title Strings
     <string name="transaction_screen_title">Transactions</string>
 
