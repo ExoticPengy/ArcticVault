@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,9 +29,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.data.Transaction
+import com.example.arcticvault.ui.AppViewModelProvider
 import com.example.arcticvault.ui.TransactionsViewModel
 import com.example.arcticvault.ui.theme.montserratFontFamily
 
@@ -43,9 +47,9 @@ fun Transactions(
     onAddExpenseClick: () -> Unit,
     onAddIncomeClick: () -> Unit,
     onViewAllClick: () -> Unit,
-    transactionViewModel: TransactionsViewModel = viewModel()
+    transactionsViewModel: TransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val transactionsUiState = transactionViewModel.uiState.collectAsState()
+    val transactionsUiState by transactionsViewModel.transactionsUiState.collectAsState()
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -366,10 +370,20 @@ fun Transactions(
                 modifier = Modifier.padding(start = 40.dp, top = 20.dp)
             )
 
-            //5 Recent Transactions
-            RecentTransactionTexts(R.drawable.expense, "Facility Repairs", "02.15 PM", "March 8", 1000.0)
-            RecentTransactionTexts(R.drawable.income, "Investors", "02.15 PM", "March 8", 3000.0)
-            RecentTransactionTexts(R.drawable.income, "Sales", "02.15 PM", "March 8", 70.0)
+            //3 Recent Transactions
+            val transactionList: List<Transaction> = transactionsUiState.transactionList
+            for (items in 0..2) {
+                if (transactionList.getOrNull(items) != null) {
+                    RecentTransactionTexts(
+                        icon = transactionList[items].icon,
+                        iconDesc = transactionsViewModel.updateIconDesc(transactionList[items].icon),
+                        title = transactionList[items].title,
+                        time = transactionList[items].time,
+                        date = transactionList[items].date,
+                        amount = transactionsViewModel.formatAmount(transactionList[items].amount)
+                    )
+                }
+            }
 
             Spacer(Modifier.height(20.dp))
 
@@ -389,8 +403,7 @@ fun Transactions(
 }
 
 @Composable
-fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: String, amount: Double) {
-    val amountString = String.format("%.2f", amount)
+fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String, date: String, amount: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -400,7 +413,7 @@ fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: S
     ) {
         Image(
             painter = painterResource(icon),
-            contentDescription = stringResource(R.string.expense_desc),
+            contentDescription = stringResource(iconDesc),
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .size(35.dp)
@@ -409,26 +422,30 @@ fun RecentTransactionTexts(icon: Int, transaction: String, time: String, date: S
             modifier = Modifier.width(150.dp)
         ) {
             Text(
-                text = transaction,
+                text = title,
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 14.sp,
                 color = Color.Black,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = "$time - $date",
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 10.sp,
-                color = Color.Black,
+                color = Color.Black
             )
         }
         Text(
-            text = "RM$amountString",
+            text = amount,
             textAlign = TextAlign.Right,
             fontFamily = montserratFontFamily,
             fontSize = 16.sp,
             color = Color.Black,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .padding(start = 10.dp)
                 .width(100.dp)

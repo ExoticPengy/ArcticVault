@@ -1,5 +1,8 @@
 package com.example.arcticvault.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.arcticvault.R
@@ -28,6 +31,12 @@ class AllTransactionsViewModel(transactionRepository: TransactionsRepository): V
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
                 initialValue = AllTransactionUiState()
             )
+
+    var typeFilter by mutableStateOf(R.string.income)
+
+    fun changeTypeFilter(type: Int) {
+        typeFilter = type
+    }
 
     fun updateIconDesc(iconId: Int): Int {
         return if (iconId == R.drawable.expense) {

@@ -45,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -69,12 +70,6 @@ fun AllTransactions(
     val allTransactionsUiState by allTransactionsViewModel.allTransactionsUiState.collectAsState()
 
     Surface(modifier = Modifier.fillMaxSize()) {
-        var isIncome by remember { mutableStateOf(true) }
-        var searchFilter by remember { mutableStateOf("Search") }
-        val titleText = when(isIncome) {
-            true -> "Income"
-            false -> "Expense"
-        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -113,7 +108,7 @@ fun AllTransactions(
                                 }
                         )
                         Text(
-                            text = titleText,
+                            text = stringResource(allTransactionsViewModel.typeFilter),
                             fontFamily = montserratFontFamily,
                             fontSize = 30.sp,
                             textAlign = TextAlign.Center
@@ -146,12 +141,12 @@ fun AllTransactions(
                         ) {
                             Button(
                                 onClick = {
-                                    isIncome = true
+                                        allTransactionsViewModel.changeTypeFilter(R.string.income)
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
-                                    text = "Income",
+                                    text = stringResource(R.string.income),
                                     fontFamily = montserratFontFamily,
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center
@@ -166,12 +161,12 @@ fun AllTransactions(
                             )
                             Button(
                                 onClick = {
-                                          isIncome = false
+                                        allTransactionsViewModel.changeTypeFilter(R.string.expense)
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
-                                    text = "Expense",
+                                    text = stringResource(R.string.expense),
                                     fontFamily = montserratFontFamily,
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center
@@ -181,8 +176,8 @@ fun AllTransactions(
                     }
                     Spacer(Modifier.height(20.dp))
                     TextField(
-                        value = searchFilter,
-                        onValueChange = { searchFilter = it },
+                        value = "Search",
+                        onValueChange = {  },
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.magnifyingglassicon),
@@ -276,7 +271,8 @@ fun AllTransactions(
             ) {
                 val transactionList: List<Transaction> = allTransactionsUiState.transactionList
                 items(transactionList) { transaction ->
-                    TransactionTexts(onTransactionClick = { onTransactionClick(it) }, transaction = transaction, viewModel = allTransactionsViewModel)
+                    if (allTransactionsViewModel.typeFilter == transaction.type)
+                        TransactionTexts(onTransactionClick = { onTransactionClick(it) }, transaction = transaction, viewModel = allTransactionsViewModel)
                 }
             }
         }
@@ -285,7 +281,8 @@ fun AllTransactions(
 
 @Composable
 fun TransactionTexts(
-    onTransactionClick: (Int) -> Unit, transaction: Transaction,
+    onTransactionClick: (Int) -> Unit,
+    transaction: Transaction,
     viewModel: AllTransactionsViewModel
 ) {
     Row(
@@ -314,13 +311,15 @@ fun TransactionTexts(
                 fontFamily = montserratFontFamily,
                 fontSize = 14.sp,
                 color = Color.Black,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = String.format("%s - %s", transaction.time, transaction.date),
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 10.sp,
-                color = Color.Black,
+                color = Color.Black
             )
         }
         Text(
@@ -329,6 +328,8 @@ fun TransactionTexts(
             fontFamily = montserratFontFamily,
             fontSize = 16.sp,
             color = Color.Black,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .padding(start = 10.dp)
                 .width(100.dp)

@@ -43,10 +43,6 @@ class EditTransactionViewModel(
         }
     }
 
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
-
     var showDatePicker by mutableStateOf(false)
     var showTimePicker by mutableStateOf(false)
     private var firstCheck by mutableStateOf(true)
@@ -60,11 +56,11 @@ class EditTransactionViewModel(
     fun checkType(transactionModel: TransactionModel, isExpense: Boolean, isIncome: Boolean){
         var transaction = transactionModel
         if (isExpense && firstCheck) {
-            transaction = transactionModel.copy(icon = R.drawable.expense, type = R.string.expense)
+            transaction = transactionModel.copy(icon = R.drawable.expense, type = R.string.expense, time = "Time", date = "Date")
             firstCheck = false
         }
         else if (isIncome && firstCheck) {
-            transaction = transactionModel.copy(icon = R.drawable.income, type = R.string.income)
+            transaction = transactionModel.copy(icon = R.drawable.income, type = R.string.income, time = "Time", date = "Date")
             firstCheck = false
         }
         updateUiState(transaction)

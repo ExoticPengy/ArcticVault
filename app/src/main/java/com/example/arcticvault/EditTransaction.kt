@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 
 object EditTransactionDestination {
     val route = "Edit"
-    const val transactionIdArg = "transactionId"
+    val transactionIdArg = "transactionId"
     val routeWithArgs = "$route/{$transactionIdArg}"
 }
 
@@ -219,7 +219,7 @@ fun EditTransaction(
                             .widthIn(1.dp, 300.dp)
                     )
 
-                    //Transaction amount textfield
+                    //Transaction amount text field
                     TextField(
                         value = editTransactionViewModel.formatAmount(transaction.amount),
                         onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(amount = editTransactionViewModel.updateAmount(it))) },
