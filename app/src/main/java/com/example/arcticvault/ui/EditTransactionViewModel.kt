@@ -51,18 +51,27 @@ class EditTransactionViewModel(
                 )
             }
         }
+        viewModelScope.launch {
+            categoryRepository.getAllCategoriesStream().collect {
+                categoryList = it
+            }
+        }
     }
+
+    var categoryList: List<Category> = listOf()
 
     var showCreateCategory by mutableStateOf(false)
 
     var showColorPicker by mutableStateOf(false)
-    var colorPicked by mutableLongStateOf(Color.White.value.toLong())
 
     var showDatePicker by mutableStateOf(false)
 
     var showTimePicker by mutableStateOf(false)
 
     private var firstCheck by mutableStateOf(true)
+
+    var colorPicked by mutableLongStateOf(Color.White.value.toLong())
+    var categoryTitle by mutableStateOf("")
 
     fun updateUiState(transactionModel: TransactionModel) {
         _uiState.value = EditTransactionUiState(
@@ -99,6 +108,11 @@ class EditTransactionViewModel(
         return NumberFormat.getCurrencyInstance(Locale("en", "MY")).format(amount)
     }
 
+    fun resetCategory() {
+        categoryTitle = ""
+        colorPicked = Color.White.value.toLong()
+    }
+
     private fun validateInput(uiState: EditTransactionUiState): Boolean {
         return with(uiState) {
             transaction.id.toString().isNotBlank() &&
@@ -110,6 +124,10 @@ class EditTransactionViewModel(
             transaction.amount != 0.00 &&
             transaction.categoryId.toString().isNotBlank()
         }
+    }
+
+    private fun validateCategory(category: Category): Boolean {
+        return category.id.toString().isNotBlank() && category.title.isNotBlank() && category.color.toString().isNotBlank()
     }
 
     private fun TransactionModel.transactionToData(): Transaction = Transaction(
@@ -163,4 +181,8 @@ class EditTransactionViewModel(
         }
     }
 
+    suspend fun addCategory(category: Category) {
+        if (validateCategory(category))
+            categoryRepository.insertCategory(category)
+    }
 }

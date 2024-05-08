@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,10 +35,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.data.Category
 import com.example.arcticvault.model.TransactionModel
 import com.example.arcticvault.ui.AppViewModelProvider
 import com.example.arcticvault.ui.EditTransactionViewModel
@@ -264,7 +264,6 @@ fun EditTransaction(
             Column(
                 verticalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
-                    .width(IntrinsicSize.Min)
                     .fillMaxHeight()
             ) {
                 Row(
@@ -334,25 +333,42 @@ fun EditTransaction(
                         contentDescription = null,
                         modifier = Modifier.size(300.dp, 60.dp)
                     )
-                    Image(
-                        painter = painterResource(R.drawable.addbutton),
-                        contentDescription = stringResource(R.string.back_button_desc),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .clickable {
-                                editTransactionViewModel.showCreateCategory = true
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        LazyRow(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            modifier = Modifier
+                                .size(240.dp, 60.dp)
+                        ) {
+                            items(editTransactionViewModel.categoryList) { category ->
+                                Spacer(Modifier.width(10.dp))
+                                DisplayCategory(category = category)
                             }
-                    )
-//                    LazyRow() {
-//
-//                    }
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Image(
+                            painter = painterResource(R.drawable.addbutton),
+                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clickable {
+                                    editTransactionViewModel.showCreateCategory = true
+                                }
+                        )
+                    }
                 }
                 if (editTransactionViewModel.showCreateCategory) {
                     CreateCategoryDialog(
                         editTransactionViewModel = editTransactionViewModel,
                         onDismissRequest = { editTransactionViewModel.showCreateCategory = false },
-                        onDismiss = { editTransactionViewModel.showCreateCategory = false } )
+                        onDismiss = { editTransactionViewModel.showCreateCategory = false },
+                        onOk = { coroutineScope.launch {
+                            editTransactionViewModel.addCategory(it)
+                        } }
+                    )
                 }
 
                 //Attachment button
@@ -558,10 +574,25 @@ fun TimePickerDialog(
 }
 
 @Composable
+fun DisplayCategory(category: Category) {
+    Text(
+        text = category.title,
+        textAlign = TextAlign.Center,
+        fontFamily = montserratFontFamily,
+        fontSize = 20.sp,
+        color = Color.Black,
+        modifier = Modifier
+            .background(color = Color(category.color.toULong()), shape = RoundedCornerShape(50))
+            .padding(5.dp)
+    )
+}
+
+@Composable
 fun CreateCategoryDialog(
     editTransactionViewModel: EditTransactionViewModel,
     onDismissRequest: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onOk: (Category) -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -569,7 +600,6 @@ fun CreateCategoryDialog(
             usePlatformDefaultWidth = false
         ),
     ) {
-        var test by remember { mutableStateOf("") }
         Surface(
             modifier = Modifier
                 .width(IntrinsicSize.Min)
@@ -593,8 +623,8 @@ fun CreateCategoryDialog(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 TextField(
-                    value = test,
-                    onValueChange = { test = it },
+                    value = editTransactionViewModel.categoryTitle,
+                    onValueChange = { editTransactionViewModel.categoryTitle = it },
                     placeholder = {
                         Text(
                             text = "Category",
@@ -663,6 +693,7 @@ fun CreateCategoryDialog(
                 ) {
                     TextButton(
                         onClick = {
+                            editTransactionViewModel.resetCategory()
                             onDismiss()
                         }
                     ) {
@@ -679,6 +710,8 @@ fun CreateCategoryDialog(
 
                     TextButton(
                         onClick = {
+                            onOk(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked))
+                            editTransactionViewModel.resetCategory()
                             onDismiss()
                         }
                     ) {
@@ -752,7 +785,7 @@ fun ColorPicker(
             }
         ) {
             Text(
-                text = "Ok",
+                text = stringResource(R.string.ok),
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 20.sp,

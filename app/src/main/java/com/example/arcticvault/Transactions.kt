@@ -448,7 +448,7 @@ fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .padding(start = 10.dp)
-                .width(100.dp)
+                .width(110.dp)
         )
     }
     Divider(
