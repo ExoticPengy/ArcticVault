@@ -1,15 +1,20 @@
 package com.example.arcticvault.ui
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.arcticvault.EditTransactionDestination
 import com.example.arcticvault.R
+import com.example.arcticvault.data.Category
+import com.example.arcticvault.data.CategoryRepository
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
+import com.example.arcticvault.model.CategoryModel
 import com.example.arcticvault.model.TransactionModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,13 +27,18 @@ import java.util.Locale
 
 class EditTransactionViewModel(
     savedStateHandle: SavedStateHandle,
-    private val transactionsRepository: TransactionsRepository
+    private val transactionsRepository: TransactionsRepository,
+    private val categoryRepository: CategoryRepository
 ): ViewModel() {
     private val transactionId: Int = savedStateHandle[EditTransactionDestination.transactionIdArg] ?: -1
 
     private val _uiState = MutableStateFlow(EditTransactionUiState())
 
     val uiState: StateFlow<EditTransactionUiState> = _uiState.asStateFlow()
+
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
 
     init {
         if (transactionId != -1) {
@@ -43,8 +53,15 @@ class EditTransactionViewModel(
         }
     }
 
+    var showCreateCategory by mutableStateOf(false)
+
+    var showColorPicker by mutableStateOf(false)
+    var colorPicked by mutableLongStateOf(Color.White.value.toLong())
+
     var showDatePicker by mutableStateOf(false)
+
     var showTimePicker by mutableStateOf(false)
+
     private var firstCheck by mutableStateOf(true)
 
     fun updateUiState(transactionModel: TransactionModel) {
@@ -90,7 +107,8 @@ class EditTransactionViewModel(
             transaction.title.isNotBlank() &&
             transaction.time.isNotBlank() &&
             transaction.date.isNotBlank() &&
-            transaction.amount != 0.00
+            transaction.amount != 0.00 &&
+            transaction.categoryId.toString().isNotBlank()
         }
     }
 
@@ -102,7 +120,14 @@ class EditTransactionViewModel(
         time = time,
         date = date,
         description = description,
-        amount = amount
+        amount = amount,
+        categoryId = categoryId
+    )
+
+    private fun Category.categoryToData(): Category = Category(
+        id = id,
+        title = title,
+        color = color
     )
 
     private fun Transaction.transactionToModel(): TransactionModel = TransactionModel(
@@ -113,7 +138,14 @@ class EditTransactionViewModel(
         time = time,
         date = date,
         description = description,
-        amount = amount
+        amount = amount,
+        categoryId = categoryId
+    )
+
+    private fun Category.categoryToModel(): CategoryModel = CategoryModel(
+        id = id,
+        title = title,
+        color = color
     )
 
     suspend fun deleteTransaction(uiState: EditTransactionUiState) {

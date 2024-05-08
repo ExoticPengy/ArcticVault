@@ -25,7 +25,8 @@ object AppViewModelProvider {
         initializer {
             EditTransactionViewModel(
                 this.createSavedStateHandle(),
-                arcticVaultApplication().container.transactionsRepository
+                arcticVaultApplication().container.transactionsRepository,
+                arcticVaultApplication().container.categoryRepository
             )
         }
     }

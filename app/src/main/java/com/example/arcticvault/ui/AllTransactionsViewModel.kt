@@ -9,19 +9,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.arcticvault.R
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.text.NumberFormat
 import java.util.Locale
 
 class AllTransactionsViewModel(transactionRepository: TransactionsRepository): ViewModel() {
-    private val _uiState = MutableStateFlow(AllTransactionUiState())
-    val uiState: StateFlow<AllTransactionUiState> = _uiState.asStateFlow()
-
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
@@ -46,7 +41,7 @@ class AllTransactionsViewModel(transactionRepository: TransactionsRepository): V
 
     fun checkTitleFilter(title: String): Boolean {
         if(titleFilter != "") {
-            return title == titleFilter
+            return title.contains(titleFilter, ignoreCase = true)
         }
         return true
     }

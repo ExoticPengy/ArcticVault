@@ -1,6 +1,8 @@
 package com.example.arcticvault
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,9 +33,13 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -50,6 +57,11 @@ import com.example.arcticvault.model.TransactionModel
 import com.example.arcticvault.ui.AppViewModelProvider
 import com.example.arcticvault.ui.EditTransactionViewModel
 import com.example.arcticvault.ui.theme.montserratFontFamily
+import com.github.skydoves.colorpicker.compose.AlphaSlider
+import com.github.skydoves.colorpicker.compose.AlphaTile
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import kotlinx.coroutines.launch
 
 object EditTransactionDestination {
@@ -322,9 +334,25 @@ fun EditTransaction(
                         contentDescription = null,
                         modifier = Modifier.size(300.dp, 60.dp)
                     )
+                    Image(
+                        painter = painterResource(R.drawable.addbutton),
+                        contentDescription = stringResource(R.string.back_button_desc),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .clickable {
+                                editTransactionViewModel.showCreateCategory = true
+                            }
+                    )
 //                    LazyRow() {
 //
 //                    }
+                }
+                if (editTransactionViewModel.showCreateCategory) {
+                    CreateCategoryDialog(
+                        editTransactionViewModel = editTransactionViewModel,
+                        onDismissRequest = { editTransactionViewModel.showCreateCategory = false },
+                        onDismiss = { editTransactionViewModel.showCreateCategory = false } )
                 }
 
                 //Attachment button
@@ -528,4 +556,210 @@ fun TimePickerDialog(
         }
     }
 }
+
+@Composable
+fun CreateCategoryDialog(
+    editTransactionViewModel: EditTransactionViewModel,
+    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+    ) {
+        var test by remember { mutableStateOf("") }
+        Surface(
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min)
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Add new category",
+                    textAlign = TextAlign.Center,
+                    fontFamily = montserratFontFamily,
+                    fontSize = 20.sp,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                TextField(
+                    value = test,
+                    onValueChange = { test = it },
+                    placeholder = {
+                        Text(
+                            text = "Category",
+                            textAlign = TextAlign.Start,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            modifier = Modifier.padding(start = 20.dp)
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                    textStyle = TextStyle(
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontFamily = montserratFontFamily
+                    ),
+                    singleLine = true,
+                    colors = TextFieldDefaults
+                        .colors(
+
+                        ),
+                    modifier = Modifier
+                        .width(280.dp)
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .background(color = Color(editTransactionViewModel.colorPicked.toULong()))
+                            .border(width = 2.dp, color = Color.Black)
+                    )
+                    TextButton(
+                        onClick = {
+                            editTransactionViewModel.showColorPicker = true
+                        }
+                    ) {
+                        Text(
+                            text = "Pick Color",
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black
+                        )
+                    }
+                }
+
+                if (editTransactionViewModel.showColorPicker) {
+                    ColorPicker(
+                        editTransactionViewModel = editTransactionViewModel,
+                        onDismiss = { editTransactionViewModel.showColorPicker = false }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .fillMaxWidth()
+                ) {
+                    TextButton(
+                        onClick = {
+                            onDismiss()
+                        }
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    TextButton(
+                        onClick = {
+                            onDismiss()
+                        }
+                    ) {
+                        Text(
+                            text = "Ok",
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ColorPicker(
+    editTransactionViewModel: EditTransactionViewModel,
+    onDismiss: () -> Unit
+) {
+    val controller = rememberColorPickerController()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AlphaTile(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+                    .clip(RoundedCornerShape(6.dp)),
+                controller = controller
+            )
+        }
+        HsvColorPicker(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(10.dp),
+            controller = controller,
+            onColorChanged = {
+                editTransactionViewModel.colorPicked = it.color.value.toLong()
+            }
+        )
+        AlphaSlider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .height(35.dp),
+            controller = controller,
+            tileOddColor = Color.White,
+            tileEvenColor = Color.Black
+        )
+        BrightnessSlider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .height(35.dp),
+            controller = controller,
+        )
+        TextButton(
+            onClick = {
+                onDismiss()
+            }
+        ) {
+            Text(
+                text = "Ok",
+                textAlign = TextAlign.Center,
+                fontFamily = montserratFontFamily,
+                fontSize = 20.sp,
+                color = Color.Black
+            )
+        }
+    }
+}
+
 

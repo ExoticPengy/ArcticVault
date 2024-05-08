@@ -12,5 +12,6 @@ data class TransactionModel(
     val time: String = "",
     val date: String = "",
     val description: String = "",
-    val amount: Double = 0.0
+    val amount: Double = 0.0,
+    val categoryId: Int = 0
 )

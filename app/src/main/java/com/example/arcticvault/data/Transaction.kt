@@ -3,9 +3,12 @@ package com.example.arcticvault.data
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "transactions")
+@Entity(tableName = "transactions", foreignKeys = [
+    ForeignKey(entity = Category::class, parentColumns = ["id"], childColumns = ["categoryId"], onDelete = ForeignKey.SET_NULL, onUpdate = ForeignKey.CASCADE)
+])
 data class Transaction(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
@@ -15,5 +18,6 @@ data class Transaction(
     val time: String,
     val date: String,
     val description: String,
-    val amount: Double
+    val amount: Double,
+    val categoryId: Int
 )
