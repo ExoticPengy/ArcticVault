@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,8 +42,6 @@ import com.example.arcticvault.R
 
 @Composable
 fun ReminderScreen() {
-    Surface {
-    }
     Column {
         ReminderTopUi()
         BillScreen()
@@ -194,7 +193,9 @@ fun BillItem(bill: Bill, onClick: (Bill) -> Unit) {
                     fontSize = 16.sp,
                     textAlign = TextAlign.End
                 )
+
             }
+            Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
             if (bill.status == "Done") {
                 Text("Next Payment:", fontSize = 14.sp)
             } else {
