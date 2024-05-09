@@ -144,6 +144,7 @@ fun EditTransaction(
                                             editTransactionUiState
                                         )
                                     }
+                                    editTransactionViewModel.checkCategoryInUse()
                                     onButtonClick()
                                 }
                         )
@@ -385,7 +386,7 @@ fun EditTransaction(
                             editTransactionViewModel.showCategory = false
                         },
                         onDelete = {
-                            if (transaction.categoryId != editTransactionViewModel.category.id) {
+                            if (!editTransactionViewModel.category.inUse) {
                                 coroutineScope.launch {
                                     editTransactionViewModel.deleteCategory(editTransactionViewModel.category)
                                 }
@@ -750,7 +751,7 @@ fun CreateCategoryDialog(
 
                     TextButton(
                         onClick = {
-                            onOk(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked))
+                            onOk(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked, inUse = false))
                             editTransactionViewModel.resetCategory()
                             onDismissRequest()
                         }

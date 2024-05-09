@@ -7,7 +7,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "transactions", foreignKeys = [
-    ForeignKey(entity = Category::class, parentColumns = ["id"], childColumns = ["categoryId"], onDelete = ForeignKey.SET_NULL, onUpdate = ForeignKey.SET_NULL)
+    ForeignKey(entity = Category::class, parentColumns = ["id"], childColumns = ["categoryId"], onDelete = ForeignKey.RESTRICT, onUpdate = ForeignKey.CASCADE)
 ])
 data class Transaction(
     @PrimaryKey(autoGenerate = true)

@@ -15,6 +15,7 @@ import com.example.arcticvault.data.CategoryRepository
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
 import com.example.arcticvault.model.TransactionModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,11 +48,24 @@ class EditTransactionViewModel(
                 )
             }
         }
+        viewModelScope.launch {
+            categoryRepository.getAllCategoriesStream().collect {
+                categoryList = it
+            }
+        }
+        viewModelScope.launch {
+            transactionsRepository.getAllTransactionsStream().collect {
+                transactionsList = it
+            }
+        }
     }
+
+    private var transactionsList: List<Transaction> = listOf()
+    private var categoryList: List<Category> = listOf()
 
     var showCreateCategory by mutableStateOf(false)
     var showCategory by mutableStateOf(false)
-    var category by mutableStateOf(Category(0,"",0))
+    var category by mutableStateOf(Category(0,"",0, false))
 
     var showColorPicker by mutableStateOf(false)
 
@@ -65,10 +79,32 @@ class EditTransactionViewModel(
     var categoryTitle by mutableStateOf("")
 
     fun updateUiState(transactionModel: TransactionModel) {
-        viewModelScope.launch {
+        viewModelScope.async {
             categoryRepository.getAllCategoriesStream().collect {
-                _uiState.value = EditTransactionUiState(
-                    transaction = transactionModel, categoryList = it)
+                categoryList = it
+            }
+        }
+        _uiState.value = EditTransactionUiState(
+            transaction = transactionModel, categoryList)
+    }
+
+    fun checkCategoryInUse() {
+        for (category in categoryList) {
+            var inUse = false
+            for (transaction in transactionsList) {
+                if (transaction.categoryId == category.id) {
+                    inUse = true
+                }
+            }
+            if (inUse) {
+                viewModelScope.launch {
+                    updateCategory(category.copy(inUse = true))
+                }
+            }
+            else {
+                viewModelScope.launch {
+                    updateCategory(category.copy(inUse = false))
+                }
             }
         }
     }
