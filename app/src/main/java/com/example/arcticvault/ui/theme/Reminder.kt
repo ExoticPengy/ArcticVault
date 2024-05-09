@@ -42,7 +42,6 @@ import com.example.arcticvault.R
 @Composable
 fun ReminderScreen() {
     Surface {
-
     }
     Column {
         ReminderTopUi()
