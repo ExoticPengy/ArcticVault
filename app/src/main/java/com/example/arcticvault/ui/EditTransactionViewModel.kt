@@ -14,7 +14,6 @@ import com.example.arcticvault.data.Category
 import com.example.arcticvault.data.CategoryRepository
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
-import com.example.arcticvault.model.CategoryModel
 import com.example.arcticvault.model.TransactionModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,9 +35,6 @@ class EditTransactionViewModel(
 
     val uiState: StateFlow<EditTransactionUiState> = _uiState.asStateFlow()
 
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
 
     init {
         if (transactionId != -1) {
@@ -51,16 +47,11 @@ class EditTransactionViewModel(
                 )
             }
         }
-        viewModelScope.launch {
-            categoryRepository.getAllCategoriesStream().collect {
-                categoryList = it
-            }
-        }
     }
 
-    var categoryList: List<Category> = listOf()
-
     var showCreateCategory by mutableStateOf(false)
+    var showCategory by mutableStateOf(false)
+    var category by mutableStateOf(Category(0,"",0))
 
     var showColorPicker by mutableStateOf(false)
 
@@ -74,9 +65,12 @@ class EditTransactionViewModel(
     var categoryTitle by mutableStateOf("")
 
     fun updateUiState(transactionModel: TransactionModel) {
-        _uiState.value = EditTransactionUiState(
-            transaction = transactionModel
-        )
+        viewModelScope.launch {
+            categoryRepository.getAllCategoriesStream().collect {
+                _uiState.value = EditTransactionUiState(
+                    transaction = transactionModel, categoryList = it)
+            }
+        }
     }
 
     fun checkType(transactionModel: TransactionModel, isExpense: Boolean, isIncome: Boolean){
@@ -142,12 +136,6 @@ class EditTransactionViewModel(
         categoryId = categoryId
     )
 
-    private fun Category.categoryToData(): Category = Category(
-        id = id,
-        title = title,
-        color = color
-    )
-
     private fun Transaction.transactionToModel(): TransactionModel = TransactionModel(
         id = id,
         icon = icon,
@@ -158,12 +146,6 @@ class EditTransactionViewModel(
         description = description,
         amount = amount,
         categoryId = categoryId
-    )
-
-    private fun Category.categoryToModel(): CategoryModel = CategoryModel(
-        id = id,
-        title = title,
-        color = color
     )
 
     suspend fun deleteTransaction(uiState: EditTransactionUiState) {
@@ -184,5 +166,13 @@ class EditTransactionViewModel(
     suspend fun addCategory(category: Category) {
         if (validateCategory(category))
             categoryRepository.insertCategory(category)
+    }
+
+    suspend fun updateCategory(category: Category) {
+        categoryRepository.updateCategory(category)
+    }
+
+    suspend fun deleteCategory(category: Category) {
+        categoryRepository.deleteCategory(category)
     }
 }

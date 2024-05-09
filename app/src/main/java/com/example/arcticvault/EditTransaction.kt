@@ -342,9 +342,26 @@ fun EditTransaction(
                             modifier = Modifier
                                 .size(240.dp, 60.dp)
                         ) {
-                            items(editTransactionViewModel.categoryList) { category ->
+                            items(editTransactionUiState.categoryList) { category ->
                                 Spacer(Modifier.width(10.dp))
-                                DisplayCategory(category = category)
+                                Box {
+                                    DisplayCategory(
+                                        category = category,
+                                        categoryClick = {
+                                            editTransactionViewModel.category = category
+                                            editTransactionViewModel.showCategory = true
+                                        })
+                                    if (transaction.categoryId == category.id) {
+                                        Image(
+                                            painter = painterResource(R.drawable.confirmicon),
+                                            contentDescription = stringResource(R.string.back_button_desc),
+                                            alpha = 0.5f,
+                                            modifier = Modifier
+                                                .size(30.dp)
+                                                .align(Alignment.Center)
+                                        )
+                                    }
+                                }
                             }
                         }
                         Spacer(Modifier.width(10.dp))
@@ -360,14 +377,37 @@ fun EditTransaction(
                         )
                     }
                 }
+
+                if (editTransactionViewModel.showCategory) {
+                    CategoryDialog(
+                        category = editTransactionViewModel.category,
+                        onDismissRequest = {
+                            editTransactionViewModel.showCategory = false
+                        },
+                        onDelete = {
+                            if (transaction.categoryId != editTransactionViewModel.category.id) {
+                                coroutineScope.launch {
+                                    editTransactionViewModel.deleteCategory(editTransactionViewModel.category)
+                                }
+                            }
+                        },
+                        onSelect = {
+                            editTransactionViewModel.updateUiState(transaction.copy(categoryId = editTransactionViewModel.category.id))
+                        }
+                    )
+                }
+
                 if (editTransactionViewModel.showCreateCategory) {
                     CreateCategoryDialog(
                         editTransactionViewModel = editTransactionViewModel,
-                        onDismissRequest = { editTransactionViewModel.showCreateCategory = false },
-                        onDismiss = { editTransactionViewModel.showCreateCategory = false },
+                        onDismissRequest = {
+                            editTransactionViewModel.showCreateCategory = false
+                            },
                         onOk = { coroutineScope.launch {
                             editTransactionViewModel.addCategory(it)
-                        } }
+                        }
+                            editTransactionViewModel.updateUiState(transaction)
+                        }
                     )
                 }
 
@@ -431,7 +471,7 @@ fun EditTransaction(
                                 focusedTextColor = Color.Transparent
                             ),
                         modifier = Modifier
-                            .widthIn(1.dp, 280.dp)
+                            .width(280.dp)
                             .height(60.dp)
                             .align(Alignment.TopCenter)
                     )
@@ -574,7 +614,7 @@ fun TimePickerDialog(
 }
 
 @Composable
-fun DisplayCategory(category: Category) {
+fun DisplayCategory(category: Category, categoryClick: () -> Unit) {
     Text(
         text = category.title,
         textAlign = TextAlign.Center,
@@ -584,6 +624,7 @@ fun DisplayCategory(category: Category) {
         modifier = Modifier
             .background(color = Color(category.color.toULong()), shape = RoundedCornerShape(50))
             .padding(5.dp)
+            .clickable { categoryClick() }
     )
 }
 
@@ -591,7 +632,6 @@ fun DisplayCategory(category: Category) {
 fun CreateCategoryDialog(
     editTransactionViewModel: EditTransactionViewModel,
     onDismissRequest: () -> Unit,
-    onDismiss: () -> Unit,
     onOk: (Category) -> Unit
 ) {
     Dialog(
@@ -694,7 +734,7 @@ fun CreateCategoryDialog(
                     TextButton(
                         onClick = {
                             editTransactionViewModel.resetCategory()
-                            onDismiss()
+                            onDismissRequest()
                         }
                     ) {
                         Text(
@@ -712,7 +752,7 @@ fun CreateCategoryDialog(
                         onClick = {
                             onOk(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked))
                             editTransactionViewModel.resetCategory()
-                            onDismiss()
+                            onDismissRequest()
                         }
                     ) {
                         Text(
@@ -721,6 +761,89 @@ fun CreateCategoryDialog(
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CategoryDialog(
+    category: Category,
+    onDismissRequest: () -> Unit,
+    onDelete: () -> Unit,
+    onSelect: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+    ) {
+        Surface(
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min)
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = category.title,
+                    textAlign = TextAlign.Center,
+                    fontFamily = montserratFontFamily,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    modifier = Modifier
+                        .background(
+                            color = Color(category.color.toULong()),
+                            shape = RoundedCornerShape(50)
+                        )
+                        .padding(5.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .fillMaxWidth()
+                ) {
+                    TextButton(
+                        onClick = {
+                            onDelete()
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.delete),
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {
+                            onSelect()
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.select),
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            modifier = Modifier.width(80.dp)
                         )
                     }
                 }
