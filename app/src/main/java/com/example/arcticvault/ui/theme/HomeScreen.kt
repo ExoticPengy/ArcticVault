@@ -2,6 +2,7 @@ package com.example.arcticvault
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,36 +22,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.arcticvault.ui.theme.ReminderScreen
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, name:String) {
+fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, name:String) {
     Surface (
         Modifier.fillMaxSize(),
         color = Color(231,245,255)){
 
     }
     Column {
-        TopBanner()
+        Surface(modifier = Modifier
+            .fillMaxWidth(),
+            color = Color(0,0,0)
+        ){
+            Row (modifier = Modifier.padding(vertical = 10.dp),
+                horizontalArrangement = Arrangement.Center){
+                Text(text = "Arctic Vault", color = Color.White, fontSize = 25.sp, textAlign = TextAlign.Center)
+            }
+        }
         GreetingMessage(modifier = Modifier,name = name)
-        HomeScreenUI()
+        HomeScreenUI(navController)
         UpcomingBills()
     }
 
 }
 
-@Composable
-fun TopBanner(){
-    Surface(modifier = Modifier
-        .fillMaxWidth(),
-        color = Color(0,0,0)
-    ){
-        Row (modifier = Modifier.padding(vertical = 10.dp),
-            horizontalArrangement = Arrangement.Center){
-            Text(text = "Arctic Vault", color = Color.White, fontSize = 25.sp, textAlign = TextAlign.Center)
-        }
-    }
-}
-
+//User profile and user name
 @Composable
 fun GreetingMessage(modifier: Modifier = Modifier, name:String){
     Surface(modifier = Modifier
@@ -81,8 +83,9 @@ fun GreetingMessage(modifier: Modifier = Modifier, name:String){
     }
 }
 
+//All features Ui
 @Composable
-fun HomeScreenUI() {
+fun HomeScreenUI(navController: NavController) {
     Surface(
         modifier = Modifier
             .fillMaxWidth(),
@@ -104,7 +107,7 @@ fun HomeScreenUI() {
             ) {
                 FeatureItem(R.drawable.trans_icon, "Transactions")
                 FeatureItem(R.drawable.budget_icon, "Budgeting")
-                FeatureItem(R.drawable.bill_icon, "Bills & Payments")
+                FeatureItem(R.drawable.bill_icon, "Bills & Payments", onClick = {navController.navigate("reminder")})
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -119,10 +122,11 @@ fun HomeScreenUI() {
 }
 
 @Composable
-fun FeatureItem(icon: Int, text: String, isLonger: Boolean = false) {
+fun FeatureItem(icon: Int, text: String, isLonger: Boolean = false, onClick: () -> Unit = {}) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(10.dp)
+            .clickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
@@ -151,6 +155,8 @@ fun FeatureItem(icon: Int, text: String, isLonger: Boolean = false) {
     }
 }
 
+
+//upcoming bill
 @Composable
 fun UpcomingBills(){
     Surface (modifier = Modifier.padding(20.dp), color = Color(231,245,255)){

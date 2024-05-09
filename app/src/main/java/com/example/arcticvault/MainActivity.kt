@@ -10,6 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.ReminderScreen
 
@@ -18,12 +21,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArcticVaultTheme {
-                // A surface container using the 'background' color from the theme
-                //HomeScreen(modifier = Modifier, name = "James")
-                ReminderScreen()
-
+                MainScreen()
+                //ReminderScreen()
             }
         }
+    }
+}
+
+//Main Screen Controller
+@Composable
+fun MainScreen() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") { HomeScreen(navController, Modifier, "James") }
+        composable("reminder") { ReminderScreen() }
     }
 }
 
