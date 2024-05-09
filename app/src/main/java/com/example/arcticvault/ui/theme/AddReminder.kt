@@ -1,5 +1,8 @@
 package com.example.arcticvault.ui.theme
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,19 +38,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
+import com.example.arcticvault.R
+import java.util.Calendar
 
 @Composable
 fun ReminderDialog(onDismiss: () -> Unit) {
     var title by remember { mutableStateOf("") }
     var desc by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("") }
+
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -55,10 +65,20 @@ fun ReminderDialog(onDismiss: () -> Unit) {
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier.padding(10.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Image(painter = painterResource(R.drawable.closeicon),
+                    contentDescription = "Close",
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .size(40.dp)
+                        .clickable(onClick = onDismiss))
+            }
+            Column (modifier = Modifier.padding(10.dp)){
+
                 Text(
                     "New Reminder", fontSize = 20.sp, fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
+
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Row {
@@ -74,7 +94,6 @@ fun ReminderDialog(onDismiss: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Description
                 Row {
                     Text(text = "Desc: ")
                     TextField(value = desc, onValueChange = { desc = it },
@@ -98,14 +117,9 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Date
                 Row {
                     Text(text = "Date: ")
-                    TextField(value = "", onValueChange = {},
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(RoundedCornerShape(40.dp))
-                            .size(45.dp))
+                    DatePickerField(value = date, onDateSelected = { newDate -> date = newDate })
 
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -119,15 +133,18 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                 
                 Text(text = "Set Category")
 
-                // Categories
-                Row(modifier = Modifier.fillMaxWidth()
+                Row(modifier = Modifier
+                    .fillMaxWidth()
                     .padding(top = 10.dp)
-                    .background(color = Color(231,245,255))
+                    .background(color = Color(231, 245, 255))
                     .padding(vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
 
                 ) {
-                    Button( onClick = {  },
+                    CategoryButton("Utility", selectedCategory, onCategorySelected = { selectedCategory = it })
+                    CategoryButton("Payroll", selectedCategory, onCategorySelected = { selectedCategory = it })
+                    CategoryButton("Taxes", selectedCategory, onCategorySelected = { selectedCategory = it })
+                    /*Button( onClick = {  },
                         colors = ButtonDefaults.buttonColors(Color(199, 234, 255))) {
                         Text("Utility", color = Color.Black)
                     }
@@ -138,11 +155,10 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                     Button( onClick = {  },
                         colors = ButtonDefaults.buttonColors(Color(199, 234, 255))) {
                         Text("Taxes", color = Color.Black)
-                    }
+                    }*/
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Add button
                 Button(
                     onClick = onDismiss,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -155,7 +171,22 @@ fun ReminderDialog(onDismiss: () -> Unit) {
 }
 
 @Composable
-fun DropDownMenu() {
+fun CategoryButton(category: String, selectedCategory: String, onCategorySelected: (String) -> Unit) {
+    Button(
+        onClick = { onCategorySelected(category) },
+        colors = ButtonDefaults.buttonColors(
+            containerColor =
+            if (category == selectedCategory) Color(118, 180, 255)
+            else Color(199, 234, 255)
+        )
+    ) {
+        Text(category, color = Color.Black)
+    }
+}
+
+//repeat frequency option function
+@Composable
+fun DropDownMenu(modifier: Modifier = Modifier) {
 
     var expanded by remember { mutableStateOf(false) }
     val suggestions = listOf("Once", "Daily", "Monthly", "Yearly")
@@ -199,4 +230,41 @@ fun DropDownMenu() {
         }
     }
 
+}
+
+
+//date picker function
+@Composable
+fun DatePickerField(modifier: Modifier = Modifier, value: String, onDateSelected: (String) -> Unit) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    fun showDatePicker() {
+        DatePickerDialog(
+            context,
+            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                onDateSelected("$dayOfMonth/${month + 1}/$year")
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = { },
+        readOnly = true,
+        modifier = Modifier.clickable { showDatePicker() },
+        label = { Text("DD/MM/YYYY") },
+        trailingIcon = {
+            Image(
+                painter = painterResource(R.drawable.calendaricon),
+                contentDescription = "Select Date",
+                modifier = Modifier
+                    .clickable { showDatePicker() }
+                    .size(30.dp)
+            )
+        }
+    )
 }
