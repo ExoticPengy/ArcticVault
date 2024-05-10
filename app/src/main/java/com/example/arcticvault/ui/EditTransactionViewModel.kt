@@ -148,8 +148,7 @@ class EditTransactionViewModel(
             transaction.title.isNotBlank() &&
             transaction.time.isNotBlank() &&
             transaction.date.isNotBlank() &&
-            transaction.amount != 0.00 &&
-            transaction.categoryId.toString().isNotBlank()
+            transaction.amount != 0.00
         }
     }
 

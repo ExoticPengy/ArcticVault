@@ -7,16 +7,23 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.arcticvault.R
+import com.example.arcticvault.data.Category
+import com.example.arcticvault.data.CategoryRepository
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
-class AllTransactionsViewModel(transactionRepository: TransactionsRepository): ViewModel() {
+class AllTransactionsViewModel(
+    transactionRepository: TransactionsRepository,
+    categoryRepository: CategoryRepository
+
+): ViewModel() {
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
@@ -29,11 +36,22 @@ class AllTransactionsViewModel(transactionRepository: TransactionsRepository): V
                 initialValue = AllTransactionUiState()
             )
 
+    init {
+        viewModelScope.launch {
+            categoryRepository.getAllCategoriesStream().collect {
+                categoryList = it
+            }
+        }
+    }
+
+    var categoryList: List<Category> = listOf()
     var typeFilter by mutableIntStateOf(R.string.income)
     var dateFilter by mutableStateOf("Select a date")
     var titleFilter by mutableStateOf("")
     var showDatePicker by mutableStateOf(false)
-
+    var showFilterDialog by mutableStateOf(false)
+    var selectedCategoryId by mutableIntStateOf(0)
+    var selectedCategoryFilter by mutableIntStateOf(0)
 
     fun changeTypeFilter(type: Int) {
         typeFilter = type
@@ -49,6 +67,13 @@ class AllTransactionsViewModel(transactionRepository: TransactionsRepository): V
     fun checkDateFilter(date: String): Boolean {
         if(dateFilter != "Select a date") {
             return date == dateFilter
+        }
+        return true
+    }
+
+    fun checkCategoryFilter(categoryId: Int?): Boolean {
+        if(selectedCategoryFilter != 0) {
+            return categoryId == selectedCategoryFilter
         }
         return true
     }

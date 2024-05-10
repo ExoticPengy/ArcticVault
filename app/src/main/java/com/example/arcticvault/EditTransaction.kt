@@ -338,12 +338,11 @@ fun EditTransaction(
                     ) {
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceAround,
                             modifier = Modifier
                                 .size(240.dp, 60.dp)
                         ) {
                             items(editTransactionUiState.categoryList) { category ->
-                                Spacer(Modifier.width(10.dp))
+                                Spacer(Modifier.width(20.dp))
                                 Box {
                                     DisplayCategory(
                                         category = category,

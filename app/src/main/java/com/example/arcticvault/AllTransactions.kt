@@ -1,6 +1,7 @@
 package com.example.arcticvault
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
@@ -45,7 +47,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.data.Category
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.ui.AllTransactionsViewModel
 import com.example.arcticvault.ui.AppViewModelProvider
@@ -245,8 +250,16 @@ fun AllTransactions(
                             modifier = Modifier
                                 .size(50.dp)
                                 .clickable {
+                                    allTransactionsViewModel.showFilterDialog = true
                                 }
                         )
+                        if (allTransactionsViewModel.showFilterDialog) {
+                            FilterDialog(
+                                allTransactionsViewModel = allTransactionsViewModel ,
+                                onSelect = { allTransactionsViewModel.selectedCategoryId = it },
+                                onDismissRequest = { allTransactionsViewModel.showFilterDialog = false }
+                            )
+                        }
                     }
                 }
             }
@@ -307,7 +320,12 @@ fun AllTransactions(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(transactionList) { transaction ->
-                    if (allTransactionsViewModel.typeFilter == transaction.type && allTransactionsViewModel.checkTitleFilter(transaction.title) && allTransactionsViewModel.checkDateFilter(transaction.date))
+                    if (
+                        allTransactionsViewModel.typeFilter == transaction.type &&
+                        allTransactionsViewModel.checkTitleFilter(transaction.title) &&
+                        allTransactionsViewModel.checkDateFilter(transaction.date) &&
+                        allTransactionsViewModel.checkCategoryFilter(transaction.categoryId)
+                        )
                         TransactionTexts(onTransactionClick = { onTransactionClick(it) }, transaction = transaction, viewModel = allTransactionsViewModel)
                 }
             }
@@ -431,6 +449,139 @@ fun DatePickerDialog(
             state = datePickerState
         )
     }
+}
+
+@Composable
+fun FilterDialog(
+    allTransactionsViewModel: AllTransactionsViewModel,
+    onSelect: (Int) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+    ) {
+        Surface(
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min)
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Filters",
+                    textAlign = TextAlign.Center,
+                    fontFamily = montserratFontFamily,
+                    fontSize = 20.sp,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .size(200.dp, 300.dp)
+                ) {
+                    items(allTransactionsViewModel.categoryList) {category ->
+                        Spacer(Modifier.height(20.dp))
+                        Box {
+                            Categories(category = category, categoryClick = { onSelect(it) })
+                            if (allTransactionsViewModel.selectedCategoryId == category.id) {
+                                Image(
+                                    painter = painterResource(R.drawable.confirmicon),
+                                    contentDescription = stringResource(R.string.back_button_desc),
+                                    alpha = 0.5f,
+                                    modifier = Modifier
+                                        .size(30.dp)
+                                        .align(Alignment.Center)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .fillMaxWidth()
+                ) {
+                    TextButton(
+                        onClick = {
+                            allTransactionsViewModel.selectedCategoryId = allTransactionsViewModel.selectedCategoryFilter
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancel),
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {
+                            allTransactionsViewModel.selectedCategoryFilter = 0
+                            allTransactionsViewModel.selectedCategoryId = 0
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.clear),
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            modifier = Modifier.width(80.dp)
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {
+                            allTransactionsViewModel.selectedCategoryFilter = allTransactionsViewModel.selectedCategoryId
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.ok),
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            modifier = Modifier.width(80.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Categories(category: Category, categoryClick: (Int) -> Unit) {
+    Text(
+        text = category.title,
+        textAlign = TextAlign.Center,
+        fontFamily = montserratFontFamily,
+        fontSize = 20.sp,
+        color = Color.Black,
+        modifier = Modifier
+            .background(color = Color(category.color.toULong()), shape = RoundedCornerShape(50))
+            .padding(5.dp)
+            .clickable { categoryClick(category.id) }
+    )
 }
 
 //@Preview(showBackground = true)

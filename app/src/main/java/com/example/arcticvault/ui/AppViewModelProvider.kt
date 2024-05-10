@@ -18,7 +18,8 @@ object AppViewModelProvider {
 
         initializer {
             AllTransactionsViewModel(
-                arcticVaultApplication().container.transactionsRepository
+                arcticVaultApplication().container.transactionsRepository,
+                arcticVaultApplication().container.categoryRepository
             )
         }
 
