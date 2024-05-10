@@ -144,7 +144,6 @@ fun EditTransaction(
                                             editTransactionUiState
                                         )
                                     }
-                                    editTransactionViewModel.checkCategoryInUse()
                                     onButtonClick()
                                 }
                         )
@@ -188,7 +187,7 @@ fun EditTransaction(
                         )
                     }
 
-                    //Transaction title textfield
+                    //Transaction title text field
                     TextField(
                         value = transaction.title,
                         onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(title = it)) },
@@ -386,13 +385,14 @@ fun EditTransaction(
                             editTransactionViewModel.showCategory = false
                         },
                         onDelete = {
-                            if (!editTransactionViewModel.category.inUse) {
+                            if (editTransactionViewModel.category.inUse == 0) {
                                 coroutineScope.launch {
                                     editTransactionViewModel.deleteCategory(editTransactionViewModel.category)
                                 }
                             }
                         },
                         onSelect = {
+                            editTransactionViewModel.setCategoryInUse(transaction.categoryId)
                             editTransactionViewModel.updateUiState(transaction.copy(categoryId = editTransactionViewModel.category.id))
                         }
                     )
@@ -478,21 +478,41 @@ fun EditTransaction(
                     )
                 }
 
-                //Delete button
-                Image(
-                    painter = painterResource(R.drawable.trashicon),
-                    contentDescription = null,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
-                        .size(30.dp)
+                        .width(100.dp)
                         .align(Alignment.CenterHorizontally)
-                        .clickable {
-                            coroutineScope.launch {
-                                editTransactionViewModel.deleteTransaction(editTransactionUiState)
+                ) {
+                    //Delete button
+                    Image(
+                        painter = painterResource(R.drawable.trashicon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable {
+                                coroutineScope.launch {
+                                    editTransactionViewModel.deleteTransaction(editTransactionUiState)
+                                }
+                                onButtonClick()
                             }
-                            onButtonClick()
-                        }
-                )
-                
+                    )
+
+                    //Refresh button
+                    Image(
+                        painter = painterResource(R.drawable.refreshbutton),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .clickable {
+                                coroutineScope.launch {
+                                    editTransactionViewModel.updateUiState(transaction)
+                                }
+                            }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(5.dp))
             }
         }
@@ -751,7 +771,7 @@ fun CreateCategoryDialog(
 
                     TextButton(
                         onClick = {
-                            onOk(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked, inUse = false))
+                            onOk(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked, inUse = 0))
                             editTransactionViewModel.resetCategory()
                             onDismissRequest()
                         }

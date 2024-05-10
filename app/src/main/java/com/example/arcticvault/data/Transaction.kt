@@ -7,7 +7,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "transactions", foreignKeys = [
-    ForeignKey(entity = Category::class, parentColumns = ["id"], childColumns = ["categoryId"], onDelete = ForeignKey.RESTRICT, onUpdate = ForeignKey.CASCADE)
+    ForeignKey(entity = Category::class, parentColumns = ["id"], childColumns = ["categoryId"], onDelete = ForeignKey.SET_NULL, onUpdate = ForeignKey.NO_ACTION)
 ])
 data class Transaction(
     @PrimaryKey(autoGenerate = true)
@@ -19,5 +19,5 @@ data class Transaction(
     val date: String,
     val description: String,
     val amount: Double,
-    val categoryId: Int
+    val categoryId: Int?
 )

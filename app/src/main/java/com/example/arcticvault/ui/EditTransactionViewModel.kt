@@ -15,7 +15,6 @@ import com.example.arcticvault.data.CategoryRepository
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
 import com.example.arcticvault.model.TransactionModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -65,7 +64,7 @@ class EditTransactionViewModel(
 
     var showCreateCategory by mutableStateOf(false)
     var showCategory by mutableStateOf(false)
-    var category by mutableStateOf(Category(0,"",0, false))
+    var category by mutableStateOf(Category(0,"",0, 0))
 
     var showColorPicker by mutableStateOf(false)
 
@@ -88,23 +87,21 @@ class EditTransactionViewModel(
             transaction = transactionModel, categoryList)
     }
 
-    fun checkCategoryInUse() {
-        for (category in categoryList) {
-            var inUse = false
-            for (transaction in transactionsList) {
-                if (transaction.categoryId == category.id) {
-                    inUse = true
-                }
+    fun setCategoryInUse(categoryId: Int?) {
+        var currentCategory by mutableStateOf(Category(0,"",0, 0))
+        for(category in categoryList) {
+            if (categoryId == category.id) {
+                currentCategory = category
             }
-            if (inUse) {
-                viewModelScope.launch {
-                    updateCategory(category.copy(inUse = true))
-                }
-            }
-            else {
-                viewModelScope.launch {
-                    updateCategory(category.copy(inUse = false))
-                }
+        }
+        viewModelScope.launch {
+            updateCategory(category.copy(inUse = category.inUse.plus(1)))
+            if (categoryId != null)
+                updateCategory(currentCategory.copy(inUse = currentCategory.inUse.minus(1)))
+        }
+        viewModelScope.launch {
+            categoryRepository.getAllCategoriesStream().collect {
+                categoryList = it
             }
         }
     }
@@ -204,7 +201,7 @@ class EditTransactionViewModel(
             categoryRepository.insertCategory(category)
     }
 
-    suspend fun updateCategory(category: Category) {
+    private suspend fun updateCategory(category: Category) {
         categoryRepository.updateCategory(category)
     }
 

@@ -9,5 +9,5 @@ data class Category(
     val id: Int = 0,
     val title: String,
     val color: Long,
-    val inUse: Boolean
+    val inUse: Int
 )
