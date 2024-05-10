@@ -79,7 +79,7 @@ class EditTransactionViewModel(
     var categoryTitle by mutableStateOf("")
 
     fun updateUiState(transactionModel: TransactionModel) {
-        viewModelScope.async {
+        viewModelScope.launch {
             categoryRepository.getAllCategoriesStream().collect {
                 categoryList = it
             }
