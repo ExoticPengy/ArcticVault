@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -41,7 +43,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,7 +84,9 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                     modifier = Modifier.align(Alignment.CenterHorizontally)
 
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+
+                Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     Text(text = "Title: ")
                     TextField(value = title, onValueChange = { title = it },
@@ -88,7 +94,9 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                             .weight(1f)
                             .clip(RoundedCornerShape(40.dp))
                             .size(45.dp)
-                            .background(color = Color(231, 245, 255)))
+                            .background(color = Color(231, 245, 255)),
+                        textStyle = TextStyle(fontSize = 12.sp)
+                    )
                 }
 
 
@@ -100,7 +108,8 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(20.dp))
-                            .size(60.dp))
+                            .size(60.dp),
+                        textStyle = TextStyle(fontSize = 12.sp))
 
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -112,7 +121,10 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(40.dp))
-                            .size(45.dp))
+                            .size(45.dp),
+                        textStyle = TextStyle(fontSize = 12.sp),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
 
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -144,18 +156,7 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                     CategoryButton("Utility", selectedCategory, onCategorySelected = { selectedCategory = it })
                     CategoryButton("Payroll", selectedCategory, onCategorySelected = { selectedCategory = it })
                     CategoryButton("Taxes", selectedCategory, onCategorySelected = { selectedCategory = it })
-                    /*Button( onClick = {  },
-                        colors = ButtonDefaults.buttonColors(Color(199, 234, 255))) {
-                        Text("Utility", color = Color.Black)
-                    }
-                    Button( onClick = {  },
-                        colors = ButtonDefaults.buttonColors(Color(199, 234, 255))) {
-                        Text("Payroll", color = Color.Black)
-                    }
-                    Button( onClick = {  },
-                        colors = ButtonDefaults.buttonColors(Color(199, 234, 255))) {
-                        Text("Taxes", color = Color.Black)
-                    }*/
+
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 

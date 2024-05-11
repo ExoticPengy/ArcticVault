@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,23 +34,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import com.example.arcticvault.R
 
 @Composable
-fun ReminderScreen() {
+fun ReminderScreen(/*navController: NavController*/) {
     Column {
-        ReminderTopUi()
+        ReminderTopUi(/*navController*/)
         BillScreen()
     }
 }
 
 @Composable
-fun ReminderTopUi(){
+fun ReminderTopUi(/*navController: NavController*/){
     var search by remember { mutableStateOf("") }
 
     var showDialog by remember {
@@ -67,22 +70,35 @@ fun ReminderTopUi(){
         Column {
 
             Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 16.dp)
             ) {
-
+                Image(
+                    painter = painterResource(R.drawable.backbutton),
+                    contentDescription = "back",
+                    modifier = Modifier.size(30.dp)
+                        .clickable { /*navController.navigate("home")*/ }
+                )
                 Text(
                     text = "Bills and Payments",
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
                     lineHeight = 40.sp,
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .padding(horizontal = 100.dp)
+                        .padding(horizontal = 30.dp)
+                        .width(IntrinsicSize.Min)
+                )
+                Image(
+                    painter = painterResource(R.drawable.profilepic),
+                    contentDescription = "Profile",
+                    modifier = Modifier.size(50.dp)
                 )
             }
 
-            //search bar
+            //search and add reminder
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,10 +107,12 @@ fun ReminderTopUi(){
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                //search bar
                 TextField(
                     value = search,
                     onValueChange = { search = it },
                     placeholder = { Text("Search...", fontSize = 10.sp) },
+                    textStyle = TextStyle(fontSize = 10.sp),
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(40.dp))
@@ -127,14 +145,18 @@ fun BillScreen() {
             BillItem(Bill("Payroll", 10000.00, "1 March 2024","Upcoming")){
                 selectedBill = it
             }
+            Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(8.dp))
             Text("Completed:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             BillItem(Bill("Electricity Bills", 150.00, "1 March 2024","Done")){
                 selectedBill = it
             }
+            Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(8.dp))
             Text("Late:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             BillItem(Bill("House Rent", 1050.00, "1 March 2024","Late")){
                 selectedBill = it
@@ -142,6 +164,7 @@ fun BillScreen() {
 
         }
     }
+
 
     selectedBill?.let {
         BillDetailsDialog(bill = it, onDismiss = { selectedBill = null })
@@ -195,7 +218,7 @@ fun BillItem(bill: Bill, onClick: (Bill) -> Unit) {
                 )
 
             }
-            Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
+            Divider(color = Color.White, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
             if (bill.status == "Done") {
                 Text("Next Payment:", fontSize = 14.sp)
             } else {
@@ -213,7 +236,11 @@ fun BillItem(bill: Bill, onClick: (Bill) -> Unit) {
             }
 
         }
+
     }
+
+
+
 }
 
 
