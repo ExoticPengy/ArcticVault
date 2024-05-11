@@ -21,8 +21,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArcticVaultTheme {
-                MainScreen()
-                //ReminderScreen()
+                //MainScreen()
+                ReminderScreen()
             }
         }
     }
@@ -34,7 +34,7 @@ fun MainScreen() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { HomeScreen(navController, Modifier, "James") }
-        composable("reminder") { ReminderScreen() }
+        composable("reminder") { ReminderScreen(/*navController*/) }
     }
 }
 
@@ -50,6 +50,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     ArcticVaultTheme {
-        Greeting("Android")
+        //MainScreen()
+        //ReminderScreen()
+        //Greeting("Android")
     }
 }
