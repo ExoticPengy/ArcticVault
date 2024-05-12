@@ -21,9 +21,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -159,7 +164,7 @@ fun TransactionsAnalysis(
                     ) {
                         TextButton(
                             onClick = {
-
+                                transactionsAnalysisViewModel.selection = "Income"
                             },
                         ) {
                             Text(
@@ -179,7 +184,7 @@ fun TransactionsAnalysis(
                         )
                         TextButton(
                             onClick = {
-
+                                transactionsAnalysisViewModel.selection = "Expense"
                             },
 
                             ) {
@@ -223,15 +228,15 @@ fun TransactionsAnalysis(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
-                        .size(240.dp, 60.dp)
+                        .size(300.dp, 60.dp)
                 ) {
-                    items(transactionsAnalysisViewModel.categoryList) { category ->
+                    items(transactionsAnalysisUiState.categoryList) { category ->
                         Spacer(Modifier.width(10.dp))
                         Box {
                             DisplayCategory(
                                 category = category,
-                                categoryClick = { })
-                            if (false) {
+                                categoryClick = { transactionsAnalysisViewModel.changeSelection(category.id) })
+                            if (transactionsAnalysisUiState.selectionList.contains(category.id)) {
                                 Image(
                                     painter = painterResource(R.drawable.confirmicon),
                                     contentDescription = stringResource(R.string.back_button_desc),
@@ -272,14 +277,14 @@ fun TransactionsAnalysis(
                         modifier = Modifier
                     )
                 }
-                Checkbox(checked = false, onCheckedChange = { } )
+                Checkbox(checked = transactionsAnalysisViewModel.yearOnly, onCheckedChange = { transactionsAnalysisViewModel.yearOnly = !transactionsAnalysisViewModel.yearOnly } )
             }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 40.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -298,36 +303,34 @@ fun TransactionsAnalysis(
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(65.dp, 35.dp)
+                                    .size(80.dp, 60.dp)
                                     .clip(RoundedCornerShape(50))
                             )
-                            Text(
-                                text = "2023",
-                                textAlign = TextAlign.Center,
-                                fontFamily = montserratFontFamily,
-                                fontSize = 20.sp,
-                                color = Color.White,
-                                modifier = Modifier
+                            DateDropdownBox(
+                                expand = transactionsAnalysisViewModel.date1YearExpand,
+                                expandChange = { transactionsAnalysisViewModel.date1YearExpand = !transactionsAnalysisViewModel.date1YearExpand },
+                                value = transactionsAnalysisViewModel.date1Year,
+                                valueChange = { transactionsAnalysisViewModel.date1Year = it },
+                                options = transactionsAnalysisViewModel.findYearOptions()
                             )
                         }
                         Box(
                             contentAlignment = Alignment.Center
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.datebackgroundinactive),
+                                painter = painterResource(transactionsAnalysisViewModel.getMonthBackground()),
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(65.dp, 35.dp)
+                                    .size(80.dp, 60.dp)
                                     .clip(RoundedCornerShape(50))
                             )
-                            Text(
-                                text = "JAN",
-                                textAlign = TextAlign.Center,
-                                fontFamily = montserratFontFamily,
-                                fontSize = 20.sp,
-                                color = Color.White,
-                                modifier = Modifier
+                            DateDropdownBox(
+                                expand = transactionsAnalysisViewModel.date1MonthExpand,
+                                expandChange = { transactionsAnalysisViewModel.date1MonthExpand = !transactionsAnalysisViewModel.date1MonthExpand },
+                                value = transactionsAnalysisViewModel.date1Month,
+                                valueChange = { transactionsAnalysisViewModel.date1Month = it },
+                                options = transactionsAnalysisViewModel.findMonthOptions()
                             )
                         }
                     }
@@ -340,7 +343,6 @@ fun TransactionsAnalysis(
                         modifier = Modifier
                     )
                 }
-                Spacer(modifier = Modifier.width(50.dp))
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -358,36 +360,34 @@ fun TransactionsAnalysis(
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(65.dp, 35.dp)
+                                    .size(80.dp, 60.dp)
                                     .clip(RoundedCornerShape(50))
                             )
-                            Text(
-                                text = "2023",
-                                textAlign = TextAlign.Center,
-                                fontFamily = montserratFontFamily,
-                                fontSize = 20.sp,
-                                color = Color.White,
-                                modifier = Modifier
+                            DateDropdownBox(
+                                expand = transactionsAnalysisViewModel.date2YearExpand,
+                                expandChange = { transactionsAnalysisViewModel.date2YearExpand = !transactionsAnalysisViewModel.date2YearExpand },
+                                value = transactionsAnalysisViewModel.date2Year,
+                                valueChange = { transactionsAnalysisViewModel.date2Year = it },
+                                options = transactionsAnalysisViewModel.findYearOptions()
                             )
                         }
                         Box(
                             contentAlignment = Alignment.Center
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.datebackgroundinactive),
+                                painter = painterResource(transactionsAnalysisViewModel.getMonthBackground()),
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(65.dp, 35.dp)
+                                    .size(80.dp, 60.dp)
                                     .clip(RoundedCornerShape(50))
                             )
-                            Text(
-                                text = "JAN",
-                                textAlign = TextAlign.Center,
-                                fontFamily = montserratFontFamily,
-                                fontSize = 20.sp,
-                                color = Color.White,
-                                modifier = Modifier
+                            DateDropdownBox(
+                                expand = transactionsAnalysisViewModel.date2MonthExpand,
+                                expandChange = { transactionsAnalysisViewModel.date2MonthExpand = !transactionsAnalysisViewModel.date2MonthExpand },
+                                value = transactionsAnalysisViewModel.date2Month,
+                                valueChange = { transactionsAnalysisViewModel.date2Month = it },
+                                options = transactionsAnalysisViewModel.findMonthOptions()
                             )
                         }
                     }
@@ -409,12 +409,70 @@ fun TransactionsAnalysis(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateDropdownBox(
+    expand: Boolean,
+    expandChange: () -> Unit,
+    value: String,
+    valueChange: (String) -> Unit,
+    options: List<String>
+) {
+    ExposedDropdownMenuBox(
+        expanded = expand,
+        onExpandedChange = { expandChange() }
+    ) {
+        TextField(
+            readOnly = true,
+            value = value,
+            onValueChange = { },
+            textStyle = TextStyle(fontFamily = montserratFontFamily, color = Color.White, fontSize = 20.sp),
+            singleLine = true,
+            colors = TextFieldDefaults
+                .colors(
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedTextColor = Color.Transparent
+                ),
+            modifier = Modifier
+                .size(80.dp, 60.dp)
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expand,
+            onDismissRequest = { expandChange() }
+        ) {
+            options.forEach { year ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = year,
+                            textAlign = TextAlign.Center,
+                            fontFamily = montserratFontFamily,
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            modifier = Modifier
+                        )
+                    },
+                    onClick = {
+                        valueChange(year)
+                        expandChange()
+                    }
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun GroupBarChart(
     transactionsAnalysisViewModel: TransactionsAnalysisViewModel,
     transactionsAnalysisUiState: TransactionsAnalysisUiState
 ) {
-    transactionsAnalysisViewModel.updateUiState(transactionsAnalysisViewModel.transactionsList, transactionsAnalysisViewModel.categoryList)
+    transactionsAnalysisViewModel.filterTransactionByCategory()
     val maxRange = transactionsAnalysisViewModel.findMaxRange().roundToInt()
     val barSize = 2
     val groupBarData = mutableListOf<GroupBar>()
