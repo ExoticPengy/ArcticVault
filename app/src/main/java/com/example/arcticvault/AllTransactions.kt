@@ -488,7 +488,8 @@ fun FilterDialog(
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .size(200.dp, 300.dp)
+                        .size(300.dp, 300.dp)
+                        .background(color = Color.LightGray, shape = RoundedCornerShape(10))
                 ) {
                     items(allTransactionsViewModel.categoryList) {category ->
                         Spacer(Modifier.height(20.dp))
@@ -560,7 +561,7 @@ fun FilterDialog(
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black,
-                            modifier = Modifier.width(80.dp)
+                            modifier = Modifier.width(60.dp)
                         )
                     }
                 }

@@ -15,6 +15,7 @@ import com.example.arcticvault.data.CategoryRepository
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
 import com.example.arcticvault.model.TransactionModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,7 +39,7 @@ class EditTransactionViewModel(
 
     init {
         if (transactionId != -1) {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 updateUiState(
                     transactionsRepository.getTransactionStream(transactionId)
                         .filterNotNull()
@@ -47,12 +48,12 @@ class EditTransactionViewModel(
                 )
             }
         }
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             categoryRepository.getAllCategoriesStream().collect {
                 categoryList = it
             }
         }
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             transactionsRepository.getAllTransactionsStream().collect {
                 transactionsList = it
             }
@@ -78,7 +79,7 @@ class EditTransactionViewModel(
     var categoryTitle by mutableStateOf("")
 
     fun updateUiState(transactionModel: TransactionModel) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             categoryRepository.getAllCategoriesStream().collect {
                 categoryList = it
             }

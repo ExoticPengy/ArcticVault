@@ -30,6 +30,13 @@ object AppViewModelProvider {
                 arcticVaultApplication().container.categoryRepository
             )
         }
+
+        initializer {
+            TransactionsAnalysisViewModel(
+                arcticVaultApplication().container.transactionsRepository,
+                arcticVaultApplication().container.categoryRepository
+            )
+        }
     }
 }
 
