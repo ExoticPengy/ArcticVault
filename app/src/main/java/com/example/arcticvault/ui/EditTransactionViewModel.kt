@@ -141,7 +141,7 @@ class EditTransactionViewModel(
         colorPicked = Color.White.value.toLong()
     }
 
-    private fun validateInput(uiState: EditTransactionUiState): Boolean {
+    fun validateInput(uiState: EditTransactionUiState): Boolean {
         return with(uiState) {
             transaction.id.toString().isNotBlank() &&
             transaction.icon.toString().isNotBlank() &&
@@ -153,7 +153,7 @@ class EditTransactionViewModel(
         }
     }
 
-    private fun validateCategory(category: Category): Boolean {
+    fun validateCategory(category: Category): Boolean {
         return category.id.toString().isNotBlank() && category.title.isNotBlank() && category.color.toString().isNotBlank()
     }
 
@@ -188,17 +188,14 @@ class EditTransactionViewModel(
         }
     }
 
-    suspend fun saveTransaction(uiState: EditTransactionUiState) {
-        if (validateInput(uiState)) {
-            if (transactionId != -1)
-                transactionsRepository.updateTransaction(_uiState.value.transaction.transactionToData())
-            else transactionsRepository.insertTransaction(_uiState.value.transaction.transactionToData())
-        }
+    suspend fun saveTransaction() {
+        if (transactionId != -1)
+            transactionsRepository.updateTransaction(_uiState.value.transaction.transactionToData())
+        else transactionsRepository.insertTransaction(_uiState.value.transaction.transactionToData())
     }
 
     suspend fun addCategory(category: Category) {
-        if (validateCategory(category))
-            categoryRepository.insertCategory(category)
+        categoryRepository.insertCategory(category)
     }
 
     private suspend fun updateCategory(category: Category) {

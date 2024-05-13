@@ -1,5 +1,7 @@
 package com.example.arcticvault
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -62,6 +65,7 @@ import com.github.skydoves.colorpicker.compose.AlphaTile
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 object EditTransactionDestination {
@@ -77,6 +81,7 @@ fun EditTransaction(
     addNewIncome: Boolean = false,
     editTransactionViewModel: EditTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val context = LocalContext.current
     val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
     val transaction: TransactionModel = editTransactionUiState.transaction
     val coroutineScope = rememberCoroutineScope()
@@ -139,12 +144,15 @@ fun EditTransaction(
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
-                                    coroutineScope.launch {
-                                        editTransactionViewModel.saveTransaction(
-                                            editTransactionUiState
-                                        )
+                                    if(editTransactionViewModel.validateInput(editTransactionUiState)) {
+                                        coroutineScope.launch {
+                                            editTransactionViewModel.saveTransaction()
+                                        }
+                                        onButtonClick()
                                     }
-                                    onButtonClick()
+                                    else {
+                                        Toast.makeText(context, "Please fill in all fields and pick a category!", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                         )
                     }
@@ -385,10 +393,15 @@ fun EditTransaction(
                         },
                         onDelete = {
                             if (editTransactionViewModel.category.inUse == 0) {
-                                coroutineScope.launch {
+                                coroutineScope.launch() {
                                     editTransactionViewModel.deleteCategory(editTransactionViewModel.category)
                                 }
+                                Toast.makeText(context, "Deleted Successfully, Please Refresh.", Toast.LENGTH_SHORT).show()
                             }
+                            else {
+                                Toast.makeText(context, "This category is in use by another transaction!", Toast.LENGTH_SHORT).show()
+                            }
+                            editTransactionViewModel.updateUiState(transaction)
                         },
                         onSelect = {
                             editTransactionViewModel.setCategoryInUse(transaction.categoryId)
@@ -398,16 +411,15 @@ fun EditTransaction(
                 }
 
                 if (editTransactionViewModel.showCreateCategory) {
+                    editTransactionViewModel.resetCategory()
                     CreateCategoryDialog(
                         editTransactionViewModel = editTransactionViewModel,
+                        coroutineScope = coroutineScope,
                         onDismissRequest = {
                             editTransactionViewModel.showCreateCategory = false
                             },
-                        onOk = { coroutineScope.launch {
-                            editTransactionViewModel.addCategory(it)
-                        }
-                            editTransactionViewModel.updateUiState(transaction)
-                        }
+                        context = context,
+                        transaction = transaction
                     )
                 }
 
@@ -651,8 +663,10 @@ fun DisplayCategory(category: Category, categoryClick: () -> Unit) {
 @Composable
 fun CreateCategoryDialog(
     editTransactionViewModel: EditTransactionViewModel,
-    onDismissRequest: () -> Unit,
-    onOk: (Category) -> Unit
+    coroutineScope: CoroutineScope,
+    context: Context,
+    transaction: TransactionModel,
+    onDismissRequest: () -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -770,9 +784,17 @@ fun CreateCategoryDialog(
 
                     TextButton(
                         onClick = {
-                            onOk(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked, inUse = 0))
-                            editTransactionViewModel.resetCategory()
-                            onDismissRequest()
+                            if(editTransactionViewModel.validateCategory(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked, inUse = 0))) {
+                                coroutineScope.launch {
+                                    editTransactionViewModel.addCategory(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked, inUse = 0))
+                                }
+                                Toast.makeText(context, "Created Successfully, Please Refresh.", Toast.LENGTH_SHORT).show()
+                                onDismissRequest()
+                            }
+                            else {
+                                Toast.makeText(context, "Please enter a category title!", Toast.LENGTH_SHORT).show()
+                            }
+                            editTransactionViewModel.updateUiState(transaction)
                         }
                     ) {
                         Text(

@@ -50,6 +50,7 @@ fun Transactions(
     transactionsViewModel: TransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val transactionsUiState by transactionsViewModel.transactionsUiState.collectAsState()
+    val transactionList: List<Transaction> = transactionsUiState.transactionList
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -227,19 +228,18 @@ fun Transactions(
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth()
                 ) {
-                    Spacer(Modifier.width(10.dp))
                     CircularProgressIndicator(
-                        progress = 0.7f,
+                        progress = (transactionsViewModel.calculateProfit(transactionList, false)/100).toFloat(),
                         color = Color.Green,
                         trackColor = Color.DarkGray,
                         modifier = Modifier
                             .size(30.dp)
                     )
-                    Spacer(Modifier.width(10.dp))
                     Text(
                         text = "Income",
                         textAlign = TextAlign.Center,
@@ -247,7 +247,6 @@ fun Transactions(
                         fontSize = 20.sp,
                         color = Color.White
                     )
-                    Spacer(Modifier.width(20.dp))
                     Divider(
                         color = Color.White,
                         thickness = 1.dp,
@@ -255,22 +254,28 @@ fun Transactions(
                             .width(1.dp)
                             .height(20.dp)
                     )
-                    Spacer(Modifier.width(20.dp))
                     Column {
                         Text(
-                            text = "RM8901",
+                            text = transactionsViewModel.formatAmount(
+                                transactionsViewModel.calculateProfit(transactionList, true)
+                            ),
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 16.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
                             color = Color.White
                         )
                         Row {
                             Text(
-                                text = "+78%",
+                                text = "${transactionsViewModel.positiveOrNegative(transactionsViewModel.profitIsPositive)}${transactionsViewModel.calculateProfit(transactionList, false)}%",
                                 textAlign = TextAlign.Center,
                                 fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
-                                color = Color.Green
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                color = transactionsViewModel.changeColor(transactionsViewModel.profitIsPositive, true),
+                                modifier = Modifier.width(65.dp)
                             )
                             Text(
                                 text = " vs last year",
@@ -303,19 +308,18 @@ fun Transactions(
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth()
                 ) {
-                    Spacer(Modifier.width(10.dp))
                     CircularProgressIndicator(
-                        progress = 0.7f,
+                        progress = (transactionsViewModel.calculateLoss(transactionList, false)/100).toFloat(),
                         color = Color.Red,
                         trackColor = Color.DarkGray,
                         modifier = Modifier
                             .size(30.dp)
                     )
-                    Spacer(Modifier.width(10.dp))
                     Text(
                         text = "Expense",
                         textAlign = TextAlign.Center,
@@ -323,7 +327,6 @@ fun Transactions(
                         fontSize = 20.sp,
                         color = Color.White
                     )
-                    Spacer(Modifier.width(10.dp))
                     Divider(
                         color = Color.White,
                         thickness = 1.dp,
@@ -331,22 +334,26 @@ fun Transactions(
                             .width(1.dp)
                             .height(20.dp)
                     )
-                    Spacer(Modifier.width(20.dp))
                     Column {
                         Text(
-                            text = "RM3678",
+                            text = transactionsViewModel.formatAmount(transactionsViewModel.calculateLoss(transactionList, true)),
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 16.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
                             color = Color.White
                         )
                         Row {
                             Text(
-                                text = "-27%",
+                                text = "${transactionsViewModel.positiveOrNegative(transactionsViewModel.lossIsPositive)}${transactionsViewModel.calculateLoss(transactionList, false)}%",
                                 textAlign = TextAlign.Center,
                                 fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
-                                color = Color.Red
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                color = transactionsViewModel.changeColor(transactionsViewModel.lossIsPositive, false),
+                                modifier = Modifier.width(65.dp)
                             )
                             Text(
                                 text = " vs last year",
@@ -371,7 +378,6 @@ fun Transactions(
             )
 
             //3 Recent Transactions
-            val transactionList: List<Transaction> = transactionsUiState.transactionList
             for (items in 0..2) {
                 if (transactionList.getOrNull(items) != null) {
                     RecentTransactionTexts(
