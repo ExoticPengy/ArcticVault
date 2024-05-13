@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "714789137342",
+    "project_id": "arcticvault-07635",
+    "storage_bucket": "arcticvault-07635.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714789137342:android:b75763bbf48a3ca0c667ef",
+        "android_client_info": {
+          "package_name": "com.example.arcticvault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ6hwX5HPJcn2QqGEx6-aPl65UCx_QQeY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
