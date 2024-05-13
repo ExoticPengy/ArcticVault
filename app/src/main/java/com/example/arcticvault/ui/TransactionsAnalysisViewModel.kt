@@ -69,7 +69,13 @@ class TransactionsAnalysisViewModel(
         updateUiState(transactionsList, categoryList, selectedCategoryList)
     }
 
-    fun filterTransactionByCategory() {
+    fun getBarchartDataList() {
+        val transactionByCategory = filterTransactionByCategory()
+        val transactionByDate1 = filterByDate1(transactionByCategory)
+        val transactionByDate2 = filterByDate2(transactionByCategory)
+    }
+
+    fun filterTransactionByCategory(): List<List<Transaction>> {
         val transactionListByCategory = mutableListOf<List<Transaction>>()
         for (i in 0 until selectedCategoryList.size) {
             val filteredTransactionsList = mutableListOf<Transaction>()
@@ -80,6 +86,7 @@ class TransactionsAnalysisViewModel(
             }
             transactionListByCategory.add(filteredTransactionsList)
         }
+        return transactionListByCategory
     }
 
     private fun filterByDate1(transactionListByCategory: List<List<Transaction>>) {
@@ -132,6 +139,10 @@ class TransactionsAnalysisViewModel(
             }
             filteredByDate2.add(date2List)
         }
+    }
+
+    fun makeGroupedBarchartList(date1Data: List<List<Transaction>>, date2Data: List<List<Transaction>> ): List<List<Transaction>> {
+        val finalBarchartData = mutableListOf<>()
     }
 
     fun findMaxRange(): Double {
