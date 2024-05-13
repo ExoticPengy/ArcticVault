@@ -184,6 +184,7 @@ fun Budgeting(
 
     val monthlyBudgeting:Double = monthly(yearlyBudgeting)
     val monthlyExpense:Double = budgetingViewModel.calculateExpense(transactionList)
+    val percentageOfMonthly:Double = percentageOfLinear(monthlyExpense,monthlyBudgeting)
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -197,7 +198,7 @@ fun Budgeting(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
         )
-        PercentageBarForBudgeting(percentage = 0.0)
+        PercentageBarForBudgeting(percentage = percentageOfMonthly)
         Row {
             Text(
                 text = "RM${"%.2f".format(monthlyExpense)} of RM${"%.2f".format(monthlyBudgeting)}",
