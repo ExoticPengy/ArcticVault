@@ -1,6 +1,7 @@
 package com.example.arcticvault.Model
 
 data class BudgetingInputModel(
+    val id:Int =0,
     val yearlyBudgeting: Double = 0.0,
     var percentageYearlyBudgeting: Double = 0.0,
     val yearlyExpense: Double = 0.0,

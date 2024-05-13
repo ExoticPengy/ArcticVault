@@ -15,8 +15,20 @@ fun ArcticVaultApp(){
 
     NavHost(
         navController = navController,
-        startDestination = FinancialGoalsDestination.route
+        startDestination = BudgetingDestination.route
     ){
+        composable(route = BudgetingDestination.route){
+            Budgeting(
+                onPreviousButton = { navController.navigateUp() },
+                onBudgetingInputButton = { navController.navigate(BudgetingInputDestination.route) }
+            )
+        }
+        composable(route = BudgetingInputDestination.route) {
+            BudgetingInput(
+                onPreviousButton = { navController.navigateUp() },
+                onCancelButton = { navController.navigateUp() }
+                )
+        }
         composable(route = FinancialGoalsDestination.route) {
             Finance(
                 onGoalClick = { navController.navigate("${EditGoalsDestination.route}/$it") },
@@ -26,7 +38,7 @@ fun ArcticVaultApp(){
         }
         composable(route = EditGoalsDestination.route ){
             Edit_Goals(
-                onTransactionsButton = {},
+                onTransactionsButton = {navController.navigate(AllTransactionsDestination.route)},
                 onEditGoalsButton = {navController.navigate(EditGoalsInputDestination.route)},
                 onPreviousButton = { navController.navigateUp() })
         }
@@ -58,5 +70,28 @@ fun ArcticVaultApp(){
                 onCancelButton = { navController.navigateUp() },
             )
         }
+        composable(
+            route = BudgetingInputDestination.routeWithArgs,
+            arguments = listOf(navArgument(BudgetingInputDestination.budgetIdArg) {
+                type = NavType.IntType
+            })
+        ) {
+            BudgetingInput(
+                onPreviousButton = { navController.navigateUp() },
+                onCancelButton = { navController.navigateUp() }
+            )
+        }
+        composable(
+            route = BudgetingInputDestination.routeWithArgs,
+            arguments = listOf(navArgument(BudgetingInputDestination.budgetIdArg) {
+                type = NavType.IntType
+            })
+        ) {
+            Budgeting(
+                onPreviousButton = { navController.navigateUp() },
+                onBudgetingInputButton = { navController.navigate("${BudgetingInputDestination.route}/$it") }
+            )
+        }
+
     }
 }

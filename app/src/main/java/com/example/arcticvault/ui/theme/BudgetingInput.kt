@@ -5,11 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -33,13 +36,17 @@ import com.example.arcticvault.Model.BudgetingInputModel
 import com.example.arcticvault.R
 import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
 import com.example.arcticvault.ui.theme.theme.BudgetingInputViewModel
+import kotlinx.coroutines.launch
 
-object budgetingInputDestination {
+object BudgetingInputDestination {
     val route = "BudgetingInput"
+    val budgetIdArg = "budgetId"
+    val routeWithArgs = "$route/{$budgetIdArg}"
 }
 @Composable
 fun BudgetingInput(
     onPreviousButton:() ->Unit,
+    onCancelButton:() -> Unit,
     budgetingInputViewModel: BudgetingInputViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ){
     val budgetingInputUiState by budgetingInputViewModel.uiState.collectAsState()
@@ -85,54 +92,81 @@ fun BudgetingInput(
             }
         }
     }
-    Column {
-            TextField(
-        value = budgetingInputViewModel.formatAmount(budgeting.yearlyBudgeting),
-        onValueChange = { budgetingInputViewModel.updateUiState(budgeting.copy(yearlyBudgeting = budgetingInputViewModel.updateAmount(it))) },
-        placeholder = {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column (
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
             Text(
-                text = "Subscription",
-                fontSize = 25.sp,
+                text = "Yearly Budgeting:",
                 textAlign = TextAlign.Center,
+                fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = Color.Black
+            )
+            TextField(
+                value = budgetingInputViewModel.formatAmount(budgeting.yearlyBudgeting),
+                onValueChange = { budgetingInputViewModel.updateUiState(budgeting.copy(yearlyBudgeting = budgetingInputViewModel.updateAmount(it))) },
+                placeholder = {
+                    Text(
+                        text = "Subscription",
+                        fontSize = 25.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Green,
+                        )
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                singleLine = true,
+                textStyle = TextStyle(
+                    fontSize = 25.sp,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Green,
+                ),
+                colors = TextFieldDefaults
+                    .colors(
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                    ),
+            )
+        }
 
-                )
-        },
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done
-        ),
-        singleLine = true,
-        textStyle = TextStyle(
-            fontSize = 25.sp,
-            textAlign = TextAlign.Left,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-        ),
-        colors = TextFieldDefaults
-            .colors(
-                unfocusedContainerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-            ),
-        )
     }
-    budgetingInputViewModel.updateUiState(budgeting.copy(monthlyBudgeting = monthly(budgeting.yearlyBudgeting)))
-    budgetingInputViewModel.updateUiState(budgeting.copy(percentageYearlyBudgeting = percentageOfLinear(budgeting.yearlyBudgeting,budgeting.yearlyExpense)))
-}
-
-fun monthly(monthly:Double):Double{
-    var monthlyExpense:Double = 0.0
-    monthlyExpense = (monthly/12)
-    return monthlyExpense
-}
-
-fun percentageOfLinear(expense: Double, budgeting: Double):Double{
-    var percentage:Double = 0.0
-    percentage = expense/budgeting * 100
-    return percentage
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 120.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(150.dp))
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ){
+            Button(onClick = { onCancelButton() }) {
+                Text(text = "Cancel")
+            }
+            Button(onClick = {
+                coroutineScope.launch {
+                    budgetingInputViewModel.saveEditGoals(budgeting)
+                    onCancelButton()
+                } }) {
+                Text(text = "Save")
+            }
+        }
+    }
 }

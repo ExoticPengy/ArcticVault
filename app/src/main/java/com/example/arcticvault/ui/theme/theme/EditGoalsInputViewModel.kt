@@ -106,11 +106,6 @@ class EditGoalsInputViewModel(
         }
     }
 
-    suspend fun updateEditGoals(editGoalsInputModel: EditGoalsInputModel) {
-        if (validateInput(_uiState.value)) { // Pass uiState parameter to validateInput
-            editGoalsRepository.updateEditGoals(editGoalsInputModel.editGoalsToData())
-        }
-    }
 
 
 }

@@ -19,9 +19,9 @@ interface BudgetingDao {
     @Delete
     suspend fun delete(budgeting: Budgeting)
 
-    @Query("SELECT * from editGoals WHERE id = :id")
+    @Query("SELECT * from budgeting WHERE id = :id")
     fun getBudgeting(id: Int): Flow<Budgeting>
 
-    @Query("SELECT * from editGoals ORDER BY id ASC")
+    @Query("SELECT * from budgeting ORDER BY id ASC")
     fun getAllBudgeting(): Flow<List<Budgeting>>
 }
