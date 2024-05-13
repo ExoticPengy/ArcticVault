@@ -151,7 +151,6 @@ fun Budgeting(
                     .size(30.dp)
                     .clickable { onBudgetingInputButton() }
             )
-
         }
     Column (
         modifier = Modifier
@@ -185,6 +184,7 @@ fun Budgeting(
     val monthlyBudgeting:Double = monthly(yearlyBudgeting)
     val monthlyExpense:Double = budgetingViewModel.calculateExpense(transactionList)
     val percentageOfMonthly:Double = percentageOfLinear(monthlyExpense,monthlyBudgeting)
+
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -246,10 +246,10 @@ fun Budgeting(
                 Spacer(modifier = Modifier.height(10.dp))
                 PieChart(
                     data = mapOf(
-                        Pair("Subscription", 150),
-                        Pair("Invest", 120),
-                        Pair("Sales", 110),
-                        Pair("Others", 170),
+                        Pair("Subscription", 20),
+                        Pair("Invest", 40),
+                        Pair("Sales", 20),
+                        Pair("Others", 20),
                     )
                 )
             }
