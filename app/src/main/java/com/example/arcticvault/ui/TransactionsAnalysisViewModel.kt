@@ -1,10 +1,14 @@
 package com.example.arcticvault.ui
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yml.charts.common.model.Point
+import co.yml.charts.ui.barchart.models.BarData
+import co.yml.charts.ui.barchart.models.GroupBar
 import com.example.arcticvault.R
 import com.example.arcticvault.data.Category
 import com.example.arcticvault.data.CategoryRepository
@@ -24,8 +28,9 @@ class TransactionsAnalysisViewModel(
 
     val uiState: StateFlow<TransactionsAnalysisUiState> = _uiState.asStateFlow()
 
-    var transactionsList: List<Transaction> = listOf()
-    var categoryList: List<Category> = listOf()
+    private var transactionsList: List<Transaction> = listOf()
+    private var categoryList: List<Category> = listOf()
+    private var groupBarList: List<GroupBar> = listOf()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -40,8 +45,8 @@ class TransactionsAnalysisViewModel(
         }
     }
 
-    val selectedCategoryList = mutableListOf<Int>()
-    var selection by mutableStateOf("Income")
+    private val selectedCategoryList = mutableListOf<Int>()
+    var selection by mutableStateOf(0)
     var yearOnly by mutableStateOf(false)
     var date1YearExpand by mutableStateOf(false)
     var date1Year by mutableStateOf("Year")
@@ -51,10 +56,11 @@ class TransactionsAnalysisViewModel(
     var date2Year by mutableStateOf("Year")
     var date2MonthExpand by mutableStateOf(false)
     var date2Month by mutableStateOf("Mon")
+    var maxRange by mutableIntStateOf(0)
 
-    fun updateUiState(transactionsList: List<Transaction>, categoryList: List<Category>, selectedCategoryList: List<Int>) {
+    fun updateUiState(transactionsList: List<Transaction>, categoryList: List<Category>, selectedCategoryList: List<Int>, groupBarList: List<GroupBar>, maxRange: Int) {
         _uiState.value = TransactionsAnalysisUiState(
-            transactionsList, categoryList, selectedCategoryList)
+            transactionsList, categoryList, selectedCategoryList, groupBarList, maxRange)
     }
 
     fun getMonthBackground(): Int {
@@ -66,20 +72,32 @@ class TransactionsAnalysisViewModel(
             selectedCategoryList.add(element = categoryId)
         else
             selectedCategoryList.remove(element = categoryId)
-        updateUiState(transactionsList, categoryList, selectedCategoryList)
+        updateUiState(transactionsList, categoryList, selectedCategoryList, groupBarList, maxRange)
     }
 
-    fun getBarchartDataList() {
-        val transactionByCategory = filterTransactionByCategory()
+    fun updateBarchartDataList() {
+        val transactionByCategory = filterTransactionByCategory(filterTransactionByType())
         val transactionByDate1 = filterByDate1(transactionByCategory)
         val transactionByDate2 = filterByDate2(transactionByCategory)
+        groupBarList = makeGroupedBarchartList(transactionByDate1, transactionByDate2)
+        updateUiState(transactionsList, categoryList, selectedCategoryList, groupBarList, maxRange)
     }
 
-    fun filterTransactionByCategory(): List<List<Transaction>> {
+    private fun filterTransactionByType(): List<Transaction> {
+        val transactionListByType = mutableListOf<Transaction>()
+        for (transaction in transactionsList) {
+            if (transaction.type == selection) {
+                transactionListByType.add(transaction)
+            }
+        }
+        return transactionListByType
+    }
+
+    private fun filterTransactionByCategory(transactionListByType: List<Transaction>): List<List<Transaction>> {
         val transactionListByCategory = mutableListOf<List<Transaction>>()
         for (i in 0 until selectedCategoryList.size) {
             val filteredTransactionsList = mutableListOf<Transaction>()
-            for (transaction in transactionsList) {
+            for (transaction in transactionListByType) {
                 if (transaction.categoryId == selectedCategoryList[i]) {
                     filteredTransactionsList.add(transaction)
                 }
@@ -89,7 +107,7 @@ class TransactionsAnalysisViewModel(
         return transactionListByCategory
     }
 
-    private fun filterByDate1(transactionListByCategory: List<List<Transaction>>) {
+    private fun filterByDate1(transactionListByCategory: List<List<Transaction>>): List<List<Transaction>> {
         val filteredByDate1 = mutableListOf<List<Transaction>>()
        for (transactionLists in transactionListByCategory) {
            val date1List = mutableListOf<Transaction>()
@@ -113,9 +131,10 @@ class TransactionsAnalysisViewModel(
            }
            filteredByDate1.add(date1List)
        }
+        return filteredByDate1
     }
 
-    private fun filterByDate2(transactionListByCategory: List<List<Transaction>>) {
+    private fun filterByDate2(transactionListByCategory: List<List<Transaction>>): List<List<Transaction>> {
         val filteredByDate2 = mutableListOf<List<Transaction>>()
         for (transactionLists in transactionListByCategory) {
             val date2List = mutableListOf<Transaction>()
@@ -130,28 +149,80 @@ class TransactionsAnalysisViewModel(
                     month = month.replace("/", "")
                     month = monthName(month)
                 }
-                if(yearOnly && year == date1Year) {
+                if(yearOnly && year == date2Year) {
                     date2List.add(transaction)
                 }
-                else if(year == date1Year && month == date1Month) {
+                else if(year == date2Year && month == date2Month) {
                     date2List.add(transaction)
                 }
             }
             filteredByDate2.add(date2List)
         }
+        return filteredByDate2
     }
 
-    fun makeGroupedBarchartList(date1Data: List<List<Transaction>>, date2Data: List<List<Transaction>> ): List<List<Transaction>> {
-        val finalBarchartData = mutableListOf<>()
-    }
-
-    fun findMaxRange(): Double {
-        var highest = 0.0
-        for (transaction in transactionsList) {
-            if (transaction.amount > highest)
-                highest = transaction.amount
+    private fun makeGroupedBarchartList(date1Data: List<List<Transaction>>, date2Data: List<List<Transaction>>): List<GroupBar> {
+        val totalTransactionAmountList = mutableListOf<Double>()
+        for(list in date1Data) {
+            var totalTransactionAmount = 0.0
+            for(data in list) {
+                totalTransactionAmount += data.amount
+            }
+            totalTransactionAmountList.add(totalTransactionAmount)
         }
-        return highest
+        val totalTransactionAmountList2 = mutableListOf<Double>()
+        for(list in date2Data) {
+            var totalTransactionAmount2 = 0.0
+            for(data in list) {
+                totalTransactionAmount2 += data.amount
+            }
+            totalTransactionAmountList2.add(totalTransactionAmount2)
+        }
+        findMaxRange(totalTransactionAmountList, totalTransactionAmountList2)
+
+        val groupBarList = mutableListOf<GroupBar>()
+        for(i in 0 until selectedCategoryList.size) {
+            val barList = mutableListOf<BarData>()
+            for(j in 0 until 2) {
+                val barValue = if (j == 0) totalTransactionAmountList[i] else totalTransactionAmountList2[i]
+                var label = ""
+                for (category in categoryList) {
+                    if (selectedCategoryList[i] == category.id )
+                        label = category.title
+                }
+                barList.add(
+                    BarData(
+                        Point(
+                            i.toFloat(),
+                            barValue.toInt().toFloat()
+                        ),
+                        label = label,
+                        description = "Bar at $i with label $label has value ${
+                            String.format(
+                                "%.2f", barValue
+                            )
+                        }"
+                    )
+                )
+            }
+            groupBarList.add(GroupBar(i.toString(), barList))
+        }
+        return groupBarList
+    }
+
+    private fun findMaxRange(amountList1: List<Double>, amountList2: List<Double>) {
+        var highest = 0
+        for (amount in amountList1) {
+            if (amount.toInt() > highest) {
+                highest = amount.toInt()
+            }
+        }
+        for (amount in amountList2) {
+            if (amount.toInt() > highest) {
+                highest = amount.toInt()
+            }
+        }
+        maxRange = highest
     }
 
     fun findYearOptions(): List<String> {

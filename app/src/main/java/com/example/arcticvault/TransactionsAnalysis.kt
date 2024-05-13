@@ -49,13 +49,10 @@ import co.yml.charts.axis.AxisData
 import co.yml.charts.common.components.Legends
 import co.yml.charts.common.model.LegendLabel
 import co.yml.charts.common.model.LegendsConfig
-import co.yml.charts.common.model.Point
 import co.yml.charts.common.utils.DataUtils
 import co.yml.charts.ui.barchart.GroupBarChart
-import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.BarPlotData
 import co.yml.charts.ui.barchart.models.BarStyle
-import co.yml.charts.ui.barchart.models.GroupBar
 import co.yml.charts.ui.barchart.models.GroupBarChartData
 import co.yml.charts.ui.barchart.models.GroupSeparatorConfig
 import com.example.arcticvault.ui.AppViewModelProvider
@@ -63,7 +60,6 @@ import com.example.arcticvault.ui.TransactionsAnalysisUiState
 import com.example.arcticvault.ui.TransactionsAnalysisViewModel
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.montserratFontFamily
-import kotlin.math.roundToInt
 
 object TransactionsAnalysisDestination {
     val route = "Analysis"
@@ -164,7 +160,7 @@ fun TransactionsAnalysis(
                     ) {
                         TextButton(
                             onClick = {
-                                transactionsAnalysisViewModel.selection = "Income"
+                                transactionsAnalysisViewModel.selection = R.string.income
                             },
                         ) {
                             Text(
@@ -184,7 +180,7 @@ fun TransactionsAnalysis(
                         )
                         TextButton(
                             onClick = {
-                                transactionsAnalysisViewModel.selection = "Expense"
+                                transactionsAnalysisViewModel.selection = R.string.expense
                             },
 
                             ) {
@@ -235,7 +231,10 @@ fun TransactionsAnalysis(
                         Box {
                             DisplayCategory(
                                 category = category,
-                                categoryClick = { transactionsAnalysisViewModel.changeSelection(category.id) })
+                                categoryClick = {
+                                    transactionsAnalysisViewModel.changeSelection(category.id)
+                                    transactionsAnalysisViewModel.updateBarchartDataList()
+                                })
                             if (transactionsAnalysisUiState.selectionList.contains(category.id)) {
                                 Image(
                                     painter = painterResource(R.drawable.confirmicon),
@@ -472,39 +471,23 @@ fun GroupBarChart(
     transactionsAnalysisViewModel: TransactionsAnalysisViewModel,
     transactionsAnalysisUiState: TransactionsAnalysisUiState
 ) {
-    transactionsAnalysisViewModel.filterTransactionByCategory()
-    val maxRange = transactionsAnalysisViewModel.findMaxRange().roundToInt()
+    transactionsAnalysisViewModel.updateBarchartDataList()
+    val groupBarData = transactionsAnalysisUiState.groupBarChartDataList
+    val maxRange = transactionsAnalysisUiState.maxRange
     val barSize = 2
-    val groupBarData = mutableListOf<GroupBar>()
-    var i = 0
-    for (transaction in transactionsAnalysisUiState.transactionList) {
-        val barList = mutableListOf<BarData>()
-        for (j in 0 until barSize) {
-            val barValue = transaction.amount
-            barList.add(
-                BarData(
-                    Point(
-                        i.toFloat(),
-                        barValue.toInt().toFloat()
-                    ),
-                    label = transaction.title,
-                    description = "Bar at $i with label ${transaction.title} has value ${
-                        String.format(
-                            "%.2f", barValue
-                        )
-                    }"
-                )
-            )
+    val xLabel = mutableListOf<String>()
+    for (selectedCategory in transactionsAnalysisUiState.selectionList) {
+        for (category in transactionsAnalysisUiState.categoryList) {
+            if (category.id == selectedCategory)
+                xLabel.add(category.title)
         }
-        groupBarData.add(GroupBar(i.toString(), barList))
-        i++
     }
-    val yStepSize = if(maxRange < 10) maxRange else 10
+    val yStepSize = if(maxRange < 10) 1 else 10
     val xAxisData = AxisData.Builder()
         .axisStepSize(30.dp)
         .bottomPadding(5.dp)
         .startDrawPadding(48.dp)
-        .labelData { index -> transactionsAnalysisUiState.transactionList[index].title }
+        .labelData { index -> xLabel[index] }
         .build()
     val yAxisData = AxisData.Builder()
         .steps(yStepSize)
