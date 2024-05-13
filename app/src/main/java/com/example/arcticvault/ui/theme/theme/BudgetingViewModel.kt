@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.Month
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class BudgetingViewModel(
@@ -80,10 +81,11 @@ class BudgetingViewModel(
     }
 
     fun calculateExpense(budgeting: List<Transaction>): Double {
-        val localMonth = getLocalMonth().toUpperCase()
+        val currentMonth = getLocalMonth()
         var total = 0.0
         for (transaction in budgeting) {
-            if (isSameMonth(transaction.date, localMonth)) {
+            val transactionMonth = getMonthFromDateString(transaction.date)
+            if (transactionMonth == currentMonth) {
                 total += transaction.amount
             }
         }
@@ -91,10 +93,14 @@ class BudgetingViewModel(
     }
 
     fun getLocalMonth(): String {
-        return Month.values()[LocalDate.now().monthValue - 1].toString()
+        val currentDateTime = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("MM")
+        return currentDateTime.format(formatter)
     }
 
-    fun isSameMonth(transactionMonth: String, localMonth: String): Boolean {
-        return transactionMonth.equals(localMonth, ignoreCase = true)
+    fun getMonthFromDateString(dateString: String): String {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val date = LocalDate.parse(dateString, formatter)
+        return String.format("%02d", date.monthValue)
     }
 }
