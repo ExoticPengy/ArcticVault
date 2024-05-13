@@ -1,5 +1,6 @@
 package com.example.arcticvault.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import com.example.arcticvault.ui.theme.theme.FinancialGoalsViewModel
 object FinancialGoalsDestination {
     val route = "FinancialGoals"
 }
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun Finance(
     onGoalClick: (Int) -> Unit,

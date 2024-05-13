@@ -26,10 +26,19 @@ object AppViewModelProvider {
         }
 
         initializer {
-            FinancialGoalsViewModel(
-                arcticVaultApplication().container.editGoalsRepository
+            BudgetingViewModel(
+                this.createSavedStateHandle(),
+                arcticVaultApplication().container.budgetingRepository
             )
         }
+
+        initializer {
+            BudgetingInputViewModel(
+                this.createSavedStateHandle(),
+                arcticVaultApplication().container.budgetingRepository
+            )
+        }
+
         initializer {
             FinancialGoalsViewModel(
                 arcticVaultApplication().container.editGoalsRepository
@@ -55,7 +64,6 @@ object AppViewModelProvider {
                 arcticVaultApplication().container.categoryRepository
             )
         }
-
 
     }
 }

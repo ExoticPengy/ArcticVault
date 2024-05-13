@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
@@ -52,25 +53,38 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.Data.Budgeting
+import com.example.arcticvault.Data.EditGoals
+import com.example.arcticvault.Data.Transaction
 import com.example.arcticvault.Model.BudgetingInputModel
 
 import com.example.arcticvault.R
+import com.example.arcticvault.ui.theme.theme.AllTransactionsViewModel
+import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
 import com.example.arcticvault.ui.theme.theme.BudgetingViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+object BudgetingDestination {
+    val route = "Budgeting"
+    val budgetIdArg = "budgetId"
+}
+
 @Composable
 fun Budgeting(
     onPreviousButton:() -> Unit,
-    budgetingViewModel: BudgetingViewModel= viewModel(),
+    onBudgetingInputButton:() -> Unit,
+    budgetingViewModel: BudgetingViewModel= viewModel(factory = AppViewModelProvider.Factory),
+    allTransactionsViewModel: AllTransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val budgetingUiState by budgetingViewModel.uiState.collectAsState()
-    val budgetingFirst:BudgetingInputModel = budgetingUiState.budgeting
-    var budgeting by remember { mutableStateOf("") }
-    val monthlyBudgeting = monthly(budgeting.toDoubleOrNull() ?: 0.0)
+    val budgetingUiState by budgetingViewModel.budgetingUiState.collectAsState()
+    val budgetingList: List<Budgeting> = budgetingUiState.budgetingList
+    val allTransactionsUiState by allTransactionsViewModel.allTransactionsUiState.collectAsState()
+    val transactionList: List<Transaction> = allTransactionsUiState.transactionList
 
-    val monthlyExpense:Int = 5000
-    val yearlyExpense:Int = 5000
-
+    val yearlyBudgeting: Double = if (budgetingList.getOrNull(0) != null) {
+        budgetingList[0].yearlyBudgeting
+    } else {
+        0.0
+    }
 
     Box(
         contentAlignment = Alignment.TopCenter,
@@ -111,136 +125,134 @@ fun Budgeting(
             }
         }
     }
-    Image(
-        painter = painterResource(R.drawable.budgeting_1),
-        contentDescription = null,
+    Column (
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
-    )
-    Box(
-        contentAlignment = Alignment.TopCenter,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
+    ){
+        Image(
+            painter = painterResource(R.drawable.budgeting_1),
+            contentDescription = null,
+            modifier = Modifier.size(600.dp)
+        )
+    }
+        Column (
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 80.dp),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Spacer(modifier = Modifier.height(80.dp))
+            horizontalAlignment = Alignment.End
+        ){
+            Spacer(modifier = Modifier.height(100.dp))
+            Image(
+                painter = painterResource(R.drawable.edit),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable { onBudgetingInputButton() }
+            )
+
+        }
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Spacer(modifier = Modifier.height(130.dp))
+        Text(
+            text = "Yearly Budgeting",
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+        )
+
+        val yearlyExpenses:Double = budgetingViewModel.calculateTotalAmount(transactionList)
+        val percentageOfYearly:Double = percentageOfLinear(yearlyExpenses,yearlyBudgeting)
+        PercentageBarForBudgeting(percentage = percentageOfYearly)
+
+        Row {
             Text(
-                text = "Yearly Budgeting",
+                text = "${budgetingViewModel.calculateTotal(transactionList)} of " +
+                        "RM${"%.2f".format(yearlyBudgeting)}",
                 fontSize = 20.sp,
-                textAlign = TextAlign.Left,
+                textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
             )
-            Spacer(modifier = Modifier.height(5.dp))
-/*            PercentageBarForBudgeting(
-//                percentage = percentageOfMonthly,
-            )*/
-            Spacer(modifier = Modifier.height(5.dp))
-            Row(){
+        }
+    }
+
+    val monthlyBudgeting:Double = monthly(yearlyBudgeting)
+    val monthlyExpense:Double = budgetingViewModel.calculateExpense(transactionList)
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Spacer(modifier = Modifier.height(220.dp))
+        Text(
+            text = "Monthly Budgeting",
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+        )
+        PercentageBarForBudgeting(percentage = 0.0)
+        Row {
+            Text(
+                text = "RM${"%.2f".format(monthlyExpense)} of RM${"%.2f".format(monthlyBudgeting)}",
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+    }
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(50.dp))
                 Text(
-                    text = "RM$yearlyExpense of ",
+                    text = "Monthly Budget",
                     fontSize = 20.sp,
                     textAlign = TextAlign.Left,
                     fontWeight = FontWeight.Bold,
                 )
-                TextField(
-                    value = budgetingViewModel.formatAmount(budgetingFirst.yearlyBudgeting),
-                    onValueChange = { budgetingViewModel.updateUiState(budgetingFirst.copy(yearlyBudgeting = budgetingViewModel.updateAmount(it))) },
-                    placeholder = {
-                        Text(
-                            text = "Subscription",
-                            fontSize = 25.sp,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-
-                            )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done
-                    ),
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontSize = 25.sp,
-                        textAlign = TextAlign.Left,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                    ),
-                    colors = TextFieldDefaults
-                        .colors(
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                        ),
+                Spacer(modifier = Modifier.height(10.dp))
+                PieChart(
+                    data = mapOf(
+                        Pair("Subscription", 150),
+                        Pair("Invest", 120),
+                        Pair("Sales", 110),
+                        Pair("Others", 170),
+                    )
                 )
             }
-        }
-            }
-
-
-            Text(
-                text = "Monthly Budgeting",
-                fontSize = 20.sp,
-                textAlign = TextAlign.Left,
-                fontWeight = FontWeight.Bold,
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-/*            val percentage1 = percentageOfYearly // Example percentage value*//*
-            PercentageBarForBudgeting(
-                percentage = percentage1,
-            )*/
-            Spacer(modifier = Modifier.height(5.dp))
-            Row {
-                Spacer(modifier = Modifier.width(10.dp))
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            )  {
+                Spacer(modifier = Modifier.height(450.dp))
                 Text(
-                    text = "RM$monthlyExpense of RM$monthlyBudgeting",
+                    text = "Yearly Budget",
                     fontSize = 20.sp,
                     textAlign = TextAlign.Left,
                     fontWeight = FontWeight.Bold,
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+                PieChart(
+                    data = mapOf(
+                        Pair("Subscription", 150),
+                        Pair("Invest", 120),
+                        Pair("Sales", 110),
+                        Pair("Others", 170),
+                    )
+                )
             }
-            Spacer(modifier = Modifier.height(50.dp))
-            Text(
-                text = "Monthly Budget",
-                fontSize = 20.sp,
-                textAlign = TextAlign.Left,
-                fontWeight = FontWeight.Bold,
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            PieChart(
-                data = mapOf(
-                    Pair("Sample-1", 150),
-                    Pair("Sample-2", 120),
-                    Pair("Sample-3", 110),
-                    Pair("Sample-4", 170),
-                    Pair("Sample-5", 120),
-                )
-            )
-            Spacer(modifier = Modifier.height(50.dp))
-            Text(
-                text = "Yearly Budget",
-                fontSize = 20.sp,
-                textAlign = TextAlign.Left,
-                fontWeight = FontWeight.Bold,
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            PieChart(
-                data = mapOf(
-                    Pair("Sample-1", 150),
-                    Pair("Sample-2", 120),
-                    Pair("Sample-3", 110),
-                    Pair("Sample-4", 170),
-                    Pair("Sample-5", 120),
-                )
-            )
         }
-
-
 
 @Composable
 fun PercentageBarForBudgeting(percentage: Double) {
@@ -256,7 +268,7 @@ fun PercentageBarForBudgeting(percentage: Double) {
         )
         Spacer(modifier = Modifier.width(13.dp)) // Add space between LinearProgressIndicator and Text
         Text(
-            text = String.format("%.1f", percentage),
+            text = String.format("%.1f", percentage)+ "%",
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
@@ -323,43 +335,51 @@ fun PieChart(
     LaunchedEffect(key1 = true) {
         animationPlayed = true
     }
-
-    Row(
-        modifier = Modifier,
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Pie Chart using Canvas Arc
+    Column (
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(start = 50.dp)
+    ){
         Row(
             modifier = Modifier,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Canvas(
-                modifier = Modifier
-                    .offset { IntOffset.Zero }
-                    .size(radiusOuter * 2f)
-                    .rotate(animateRotation)
+            // Pie Chart using Canvas Arc
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                // draw each Arc for each data entry in Pie Chart
-                floatValue.forEachIndexed { index, value ->
-                    drawArc(
-                        color = colors[index],
-                        lastValue,
-                        value,
-                        useCenter = false,
-                        style = Stroke(chartBarWidth.toPx(), cap = StrokeCap.Butt)
-                    )
-                    lastValue += value
+                Canvas(
+                    modifier = Modifier
+                        .offset { IntOffset.Zero }
+                        .size(radiusOuter * 2f)
+                        .rotate(animateRotation)
+                ) {
+                    // draw each Arc for each data entry in Pie Chart
+                    floatValue.forEachIndexed { index, value ->
+                        drawArc(
+                            color = colors[index],
+                            lastValue,
+                            value,
+                            useCenter = false,
+                            style = Stroke(chartBarWidth.toPx(), cap = StrokeCap.Butt)
+                        )
+                        lastValue += value
+                    }
                 }
             }
+            Spacer(modifier = Modifier.width(40.dp))
+            // To see the data in more structured way
+            // Compose Function in which Items are showing data
+            DetailsPieChart(
+                data = data,
+                colors = colors
+            )
         }
-        Spacer(modifier = Modifier.width(40.dp))
-        // To see the data in more structured way
-        // Compose Function in which Items are showing data
-        DetailsPieChart(
-            data = data,
-            colors = colors
-        )
     }
+
 }
 
 @Composable
@@ -402,7 +422,11 @@ fun DetailsPieChartItem(
                 .size(height)
         )
 
-        Row(modifier = Modifier) {
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Row(
+            modifier = Modifier.weight(1f) // Occupy remaining horizontal space
+        ){
             Row {
                 Text(
                     text = data.first,
@@ -420,4 +444,16 @@ fun DetailsPieChartItem(
 
         }
     }
+}
+
+fun monthly(monthly:Double):Double{
+    var monthlyExpense:Double = 0.0
+    monthlyExpense = (monthly/12)
+    return monthlyExpense
+}
+
+fun percentageOfLinear(expense: Double, budgeting: Double):Double{
+    var percentage:Double = 0.0
+    percentage = expense/budgeting * 100
+    return percentage
 }
