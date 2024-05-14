@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,7 +114,8 @@ fun BudgetingInput(
                 value = budgetingInputViewModel.formatAmount(budgeting.yearlyBudgeting),
                 onValueChange = { budgetingInputViewModel.updateUiState(budgeting.copy(yearlyBudgeting = budgetingInputViewModel.updateAmount(it))) },
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
                 ),
                 singleLine = true,
                 textStyle = TextStyle(
@@ -153,7 +155,7 @@ fun BudgetingInput(
             }
             Button(onClick = {
                 coroutineScope.launch {
-                    budgetingInputViewModel.saveEditGoals(budgeting)
+                    budgetingInputViewModel.saveBudgeting(budgeting)
                     onCancelButton()
                 } }) {
                 Text(text = "Save")

@@ -224,14 +224,19 @@ fun Budgeting(
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                val pieChartData = mapOf(
-                    Pair(categoryList.getOrNull(0)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(0)).toInt()),
-                    Pair(categoryList.getOrNull(1)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(1)).toInt()),
-                    Pair(categoryList.getOrNull(2)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(2)).toInt()),
-                    Pair(categoryList.getOrNull(3)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(3)).toInt()),
-                    Pair(categoryList.getOrNull(4)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(4)).toInt()),
-                )
-                PieChart(data = pieChartData)
+                val pieChartData = categoryList.mapNotNull { category ->
+                    val title = category?.title
+                    val expense = budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList, category).toInt()
+                    if (!title.isNullOrEmpty() && expense > 0) {
+                        title to expense
+                    } else {
+                        null
+                    }
+                }.toMap()
+
+                if (pieChartData.isNotEmpty()) {
+                    PieChart(data = pieChartData)
+                }
             }
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -246,14 +251,19 @@ fun Budgeting(
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                val pieChartData = mapOf(
-                    Pair(categoryList.getOrNull(0)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(0)).toInt()),
-                    Pair(categoryList.getOrNull(1)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(1)).toInt()),
-                    Pair(categoryList.getOrNull(2)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(2)).toInt()),
-                    Pair(categoryList.getOrNull(3)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(3)).toInt()),
-                    Pair(categoryList.getOrNull(4)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(4)).toInt()),
-                )
-                PieChart(data = pieChartData)
+                val pieChartData = categoryList.mapNotNull { category ->
+                    val title = category?.title
+                    val expense = budgetingViewModel.calculateExpenseYearCategory(transactionList, category).toInt()
+                    if (!title.isNullOrEmpty() && expense > 0) {
+                        title to expense
+                    } else {
+                        null
+                    }
+                }.toMap()
+
+                if (pieChartData.isNotEmpty()) {
+                    PieChart(data = pieChartData)
+                }
             }
         }
 
