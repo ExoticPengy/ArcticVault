@@ -12,7 +12,8 @@ data class Reminder(
     val amount: Double,
     val date: String,
     val repeat: String,
-    val category: String
+    val category: String,
+    val status: String
 ){
 
 }
