@@ -54,6 +54,11 @@ import androidx.compose.ui.window.Dialog
 import com.example.arcticvault.R
 import java.util.Calendar
 
+object AddReminderDestination {
+    val route = "AddReminder"
+    val reminderIdArg = "reminderId"
+    val routeWithArgs = "$route/{$reminderIdArg}"
+}
 @Composable
 fun ReminderDialog(onDismiss: () -> Unit) {
     var title by remember { mutableStateOf("") }

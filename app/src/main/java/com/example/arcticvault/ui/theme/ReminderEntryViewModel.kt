@@ -1,5 +1,6 @@
 package com.example.arcticvault.ui.theme
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.arcticvault.data.Reminder
 import com.example.arcticvault.data.ReminderRepository
@@ -8,10 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class ReminderEntryViewModel(private val reminderRepository: ReminderRepository): ViewModel() {
+class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
+                             private val reminderRepository: ReminderRepository): ViewModel() {
     private val _uiState = MutableStateFlow(ReminderEntryUiState())
     val uiState: StateFlow<ReminderEntryUiState> = _uiState.asStateFlow()
-
+    private val reminderId: Int = savedStateHandle[AddReminderDestination.reminderIdArg] ?: -1
 
     fun validateInput(uiState: ReminderEntryUiState): Boolean{
         return with(uiState){
@@ -53,10 +55,21 @@ class ReminderEntryViewModel(private val reminderRepository: ReminderRepository)
         status = status
     )
 
-    /*suspend fun saveReminder(reminderEntryModel: ReminderEntryModel){
+    suspend fun saveReminder(){
         if (validateInput(_uiState.value)){
-            when (reminderId)
+            if (reminderId == 0){
+                reminderRepository.insertReminder(_uiState.value.reminder.reminderToData())
+            }
+            else
+                reminderRepository.updateReminder(_uiState.value.reminder.reminderToData())
         }
-    }*/
+    }
+
+    suspend fun deleteReminder(uiState: ReminderEntryUiState) {
+        if (validateInput(uiState)) {
+            if (reminderId != -1)
+                reminderRepository.deleteReminder(_uiState.value.reminder.reminderToData())
+        }
+    }
 
 }
