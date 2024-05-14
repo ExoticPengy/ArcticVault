@@ -236,7 +236,7 @@ fun Edit_Goals(
         modifier = Modifier.fillMaxSize()
     ){
         Spacer(modifier = Modifier.height(480.dp))
-        for (items in 0..2) {
+        for (items in 0..10) {
             if (transactionList.getOrNull(items)?.categoryId == editGoalsViewModel.selectedCategoryId) {
                 RecentTransactionTexts(
                     icon = transactionList[items].icon,

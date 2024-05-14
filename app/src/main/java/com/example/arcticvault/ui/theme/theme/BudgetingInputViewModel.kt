@@ -25,12 +25,12 @@ class BudgetingInputViewModel(
     private val _uiState = MutableStateFlow(BudgetingUiState())
     val uiState: StateFlow<BudgetingUiState> = _uiState.asStateFlow()
 
-    val budgetID: Int? = savedStateHandle[BudgetingDestination.budgetIdArg] ?: 1
+    val budgetID: Int = savedStateHandle[BudgetingDestination.budgetIdArg] ?: 1
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             updateUiState(
-                budgetingRepository.getBudgetingStream(budgetID ?: 1)
+                budgetingRepository.getBudgetingStream(budgetID)
                     .filterNotNull()
                     .first()
                     .budgetToModel()
@@ -68,12 +68,15 @@ class BudgetingInputViewModel(
             yearlyBudgeting.toString().isNotBlank()
         }
     }
-    suspend fun saveEditGoals(budgetingInputModel: BudgetingInputModel) {
-        if (validateInput(_uiState.value)) { // Pass uiState parameter to validateInput
-            when (budgetID) {
-                1 -> budgetingRepository.updateBudgeting(budgetingInputModel.budgetToData())
-                else -> budgetingRepository.insertBudgeting(budgetingInputModel.budgetToData())
-            }
+    suspend fun saveBudgeting(budgetingInputModel: BudgetingInputModel) {
+        val uiState = _uiState.value
+        if (validateInput(uiState)) {
+            val budgetingData = budgetingInputModel.budgetToData()
+            if (budgetID == budgetingData.id) {
+                budgetingRepository.updateBudgeting(budgetingData)
+            }else
+                budgetingRepository.insertBudgeting(budgetingData)
+
         }
     }
 }
