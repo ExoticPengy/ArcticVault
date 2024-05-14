@@ -1,6 +1,7 @@
 package com.example.arcticvault.ui.theme
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,12 +10,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,12 +34,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.Data.Category
 import com.example.arcticvault.Data.EditGoals
 import com.example.arcticvault.R
 
 import com.example.arcticvault.ui.TransactionsViewModel
 import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
 import com.example.arcticvault.ui.theme.theme.EditGoalsViewModel
+import com.example.arcticvault.ui.theme.theme.EditTransactionViewModel
 
 object EditGoalsDestination {
     val route = "EditGoals"
@@ -50,10 +54,12 @@ fun Edit_Goals(
     onEditGoalsButton: (Int) -> Unit,
     onTransactionsButton:() -> Unit,
     editGoalsViewModel: EditGoalsViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    transactionsViewModel: TransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    transactionsViewModel: TransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    editTransactionViewModel: EditTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
 )  {
     val transactionsUiState by transactionsViewModel.transactionsUiState.collectAsState()
     val editGoalsUiState by editGoalsViewModel.editGoalsUiState.collectAsState()
+    val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
@@ -166,55 +172,45 @@ fun Edit_Goals(
             )
         }
     }
-    Column(
+    Column (
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    )  {
-        Spacer(modifier = Modifier.height(180.dp))
-        Image(
-            painter = painterResource(R.drawable.bluecard),
-            contentDescription = null,
-            modifier = Modifier
-                .size(300.dp)
-        )
-    }
-    Column (
-        modifier = Modifier
-            .padding(start = 70.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Column {
-            Spacer(modifier = Modifier.height(180.dp))
+    ){
+        Spacer(modifier = Modifier.height(200.dp))
+        Box{
+            Image(
+                painter = painterResource(R.drawable.bluecard),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(300.dp)
+            )
+
             Row (
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Sales")
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Invest")
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.height(300.dp))
+                LazyRow (
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .size(240.dp, 60.dp)
+                ) {
+                    val categoryList: List<Category> = editGoalsViewModel.categoryList
+                    items(categoryList.size) {index ->
+                        Spacer(Modifier.width(20.dp))
+                        Box {
+                            DisplayCategory(
+                                category = categoryList[index],
+                                categoryClick = {
+                                    editGoalsViewModel.selectedCategoryId = it
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
-        Column {
-            Row {
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Subscription")
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Other")
-                }
-            }
-        }
-
-
     }
     Column(
         modifier = Modifier
@@ -230,19 +226,18 @@ fun Edit_Goals(
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(start = 60.dp)
-
         )
     }
-
+    val categoryList: List<Category> = editGoalsViewModel.categoryList
     val transactionList = transactionsUiState.transactionList
     Column (
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ){
-        Spacer(modifier = Modifier.height(360.dp))
+        Spacer(modifier = Modifier.height(480.dp))
         for (items in 0..2) {
-            if (transactionList.getOrNull(items) != null) {
+            if (transactionList.getOrNull(items)?.categoryId == editGoalsViewModel.selectedCategoryId) {
                 RecentTransactionTexts(
                     icon = transactionList[items].icon,
                     iconDesc = transactionsViewModel.updateIconDesc(transactionList[items].icon),
@@ -456,7 +451,7 @@ fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(start = 40.dp, top = 8.dp, bottom = 8.dp)
+            .padding(top = 8.dp, bottom = 8.dp)
             .width(310.dp)
     ) {
         Image(
@@ -503,6 +498,20 @@ fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String
             .width(350.dp)
             .height(1.dp)
             .padding(start = 40.dp)
+    )
+}
+
+@Composable
+fun DisplayCategory(category: Category, categoryClick: (Int) -> Unit) {
+    Text(
+        text = category.title,
+        textAlign = TextAlign.Center,
+        fontSize = 20.sp,
+        color = Color.Black,
+        modifier = Modifier
+            .background(color = Color(category.color.toULong()), shape = RoundedCornerShape(50.dp))
+            .padding(5.dp)
+            .clickable { categoryClick(category.id) }
     )
 }
 

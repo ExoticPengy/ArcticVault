@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.Data.Budgeting
+import com.example.arcticvault.Data.Category
 import com.example.arcticvault.Data.EditGoals
 import com.example.arcticvault.Data.Transaction
 import com.example.arcticvault.Model.BudgetingInputModel
@@ -79,6 +80,7 @@ fun Budgeting(
     val budgetingList: List<Budgeting> = budgetingUiState.budgetingList
     val allTransactionsUiState by allTransactionsViewModel.allTransactionsUiState.collectAsState()
     val transactionList: List<Transaction> = allTransactionsUiState.transactionList
+    val categoryList: List<Category> = budgetingViewModel.categoryList
 
     val yearlyBudgeting: Double = if (budgetingList.getOrNull(0) != null) {
         budgetingList[0].yearlyBudgeting
@@ -166,7 +168,7 @@ fun Budgeting(
             fontWeight = FontWeight.Bold,
         )
 
-        val yearlyExpenses:Double = budgetingViewModel.calculateTotalAmount(transactionList)
+        val yearlyExpenses:Double = budgetingViewModel.calculateExpenseYear(transactionList)
         val percentageOfYearly:Double = percentageOfLinear(yearlyExpenses,yearlyBudgeting)
         PercentageBarForBudgeting(percentage = percentageOfYearly)
 
@@ -182,7 +184,7 @@ fun Budgeting(
     }
 
     val monthlyBudgeting:Double = monthly(yearlyBudgeting)
-    val monthlyExpense:Double = budgetingViewModel.calculateExpense(transactionList)
+    val monthlyExpense:Double = budgetingViewModel.calculateExpenseMonthAndYear(transactionList)
     val percentageOfMonthly:Double = percentageOfLinear(monthlyExpense,monthlyBudgeting)
 
     Column (
@@ -222,14 +224,14 @@ fun Budgeting(
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                PieChart(
-                    data = mapOf(
-                        Pair("Subscription", 150),
-                        Pair("Invest", 120),
-                        Pair("Sales", 110),
-                        Pair("Others", 170),
-                    )
+                val pieChartData = mapOf(
+                    Pair(categoryList.getOrNull(0)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(0)).toInt()),
+                    Pair(categoryList.getOrNull(1)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(1)).toInt()),
+                    Pair(categoryList.getOrNull(2)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(2)).toInt()),
+                    Pair(categoryList.getOrNull(3)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(3)).toInt()),
+                    Pair(categoryList.getOrNull(4)?.title ?: "", budgetingViewModel.calculateExpenseMonthAndYearCategory(transactionList,categoryList.getOrNull(4)).toInt()),
                 )
+                PieChart(data = pieChartData)
             }
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -244,14 +246,14 @@ fun Budgeting(
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                PieChart(
-                    data = mapOf(
-                        Pair("Subscription", 20),
-                        Pair("Invest", 40),
-                        Pair("Sales", 20),
-                        Pair("Others", 20),
-                    )
+                val pieChartData = mapOf(
+                    Pair(categoryList.getOrNull(0)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(0)).toInt()),
+                    Pair(categoryList.getOrNull(1)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(1)).toInt()),
+                    Pair(categoryList.getOrNull(2)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(2)).toInt()),
+                    Pair(categoryList.getOrNull(3)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(3)).toInt()),
+                    Pair(categoryList.getOrNull(4)?.title ?: "", budgetingViewModel.calculateExpenseYearCategory(transactionList,categoryList.getOrNull(4)).toInt()),
                 )
+                PieChart(data = pieChartData)
             }
         }
 
@@ -435,6 +437,7 @@ fun DetailsPieChartItem(
                     fontSize = 20.sp,
                     color = Color.Black
                 )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = data.second.toString(),
                     fontWeight = FontWeight.Medium,

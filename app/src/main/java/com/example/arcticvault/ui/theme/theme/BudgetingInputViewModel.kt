@@ -7,6 +7,7 @@ import com.example.arcticvault.Data.Budgeting
 import com.example.arcticvault.Data.BudgetingRepository
 import com.example.arcticvault.Model.BudgetingInputModel
 import com.example.arcticvault.ui.theme.BudgetingDestination
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,13 +25,24 @@ class BudgetingInputViewModel(
     private val _uiState = MutableStateFlow(BudgetingUiState())
     val uiState: StateFlow<BudgetingUiState> = _uiState.asStateFlow()
 
-    val budgetID: Int? = savedStateHandle[BudgetingDestination.budgetIdArg]
+    val budgetID: Int? = savedStateHandle[BudgetingDestination.budgetIdArg] ?: 1
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateUiState(
+                budgetingRepository.getBudgetingStream(budgetID ?: 1)
+                    .filterNotNull()
+                    .first()
+                    .budgetToModel()
+            )
+        }
+    }
+
     fun updateUiState(budgetingInputModel: BudgetingInputModel) {
         _uiState.value = BudgetingUiState(
             budgeting = budgetingInputModel
         )
     }
-    
 
     fun updateAmount(newAmount: String): Double {
         var doubleAmount = newAmount.replace("RM", "")
@@ -59,7 +71,7 @@ class BudgetingInputViewModel(
     suspend fun saveEditGoals(budgetingInputModel: BudgetingInputModel) {
         if (validateInput(_uiState.value)) { // Pass uiState parameter to validateInput
             when (budgetID) {
-                0 -> budgetingRepository.updateBudgeting(budgetingInputModel.budgetToData())
+                1 -> budgetingRepository.updateBudgeting(budgetingInputModel.budgetToData())
                 else -> budgetingRepository.insertBudgeting(budgetingInputModel.budgetToData())
             }
         }

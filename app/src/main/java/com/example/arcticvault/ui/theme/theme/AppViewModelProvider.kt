@@ -21,13 +21,16 @@ object AppViewModelProvider {
         initializer {
             EditGoalsViewModel(
                 this.createSavedStateHandle(),
+                arcticVaultApplication().container.categoryRepository,
                 arcticVaultApplication().container.editGoalsRepository,
+
             )
         }
 
         initializer {
             BudgetingViewModel(
                 this.createSavedStateHandle(),
+                arcticVaultApplication().container.categoryRepository,
                 arcticVaultApplication().container.budgetingRepository
             )
         }
