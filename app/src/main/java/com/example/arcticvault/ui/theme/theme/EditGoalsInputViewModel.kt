@@ -59,7 +59,7 @@ class EditGoalsInputViewModel(
         return NumberFormat.getCurrencyInstance(Locale("en", "MY")).format(amount)
     }
 
-    private fun validateInput(uiState: EditGoalsInputUiState): Boolean {
+     fun validateInput(uiState: EditGoalsInputUiState): Boolean {
         return with(uiState.editGoalsInput) {
             id.toString().isNotBlank() &&
             title.isNotBlank() &&

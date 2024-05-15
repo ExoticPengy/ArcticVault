@@ -1,5 +1,6 @@
 package com.example.arcticvault.ui.theme
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +30,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -71,6 +75,17 @@ fun EditGoalsInput(
     val editGoalsInputUiState by editGoalsInputViewModel.uiState.collectAsState()
     val editGoals: EditGoalsInputModel = editGoalsInputUiState.editGoalsInput
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            errorMessage = null
+        }
+    }
+
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
@@ -358,10 +373,15 @@ fun EditGoalsInput(
                 Text(text = "Cancel")
             }
             Button(onClick = {
-                coroutineScope.launch {
-                    editGoalsInputViewModel.saveEditGoals(editGoals)
+                if(editGoalsInputViewModel.validateInput(editGoalsInputUiState)){
+                    coroutineScope.launch {
+                        editGoalsInputViewModel.saveEditGoals(editGoals)
+                    }
                     onCancelButton()
-            } }) {
+                }else{
+                    errorMessage = "Please fill in all fields!"
+                }
+            }) {
                 Text(text = "Save")
             }
         }
