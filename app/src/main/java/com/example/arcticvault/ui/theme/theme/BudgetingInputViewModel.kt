@@ -62,10 +62,10 @@ class BudgetingInputViewModel(
         id = id,
         yearlyBudgeting = yearlyBudgeting,
     )
-    private fun validateInput(uiState: BudgetingUiState): Boolean {
+     fun validateInput(uiState: BudgetingUiState): Boolean {
         return with(uiState.budgeting) {
             id.toString().isNotBlank() &&
-            yearlyBudgeting.toString().isNotBlank()
+            yearlyBudgeting != 0.00
         }
     }
     suspend fun saveBudgeting(budgetingInputModel: BudgetingInputModel) {
