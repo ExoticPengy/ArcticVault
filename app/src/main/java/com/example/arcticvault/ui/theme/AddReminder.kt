@@ -190,12 +190,13 @@ fun ReminderDialog(
 
                 Button(
                     onClick = {
-                        Log.i("Add Button","Before If")
-//                        if(reminderEntryViewModel.validateInput(reminderEntryUiState)) {
+                        //Log.i("Add Button","Before If")
+                        if(reminderEntryViewModel.validateInput(reminderEntryUiState)) {
+                            reminderEntryViewModel.updateUiState(reminder.copy(status = "Upcoming"))
                             coroutineScope.launch {
                                 reminderEntryViewModel.saveReminder()
-                                Log.i("Add Button Click","Add been clicked")
-//                            }
+                                //Log.i("Add Button Click","Add been clicked")
+                            }
                             onDismiss()
                         }
                     },
@@ -268,6 +269,7 @@ fun DropDownMenu(
                 DropdownMenuItem(text = { Text(text = label) }, onClick = {
                     selectedText = label
                     expanded = false
+                    onItemSelected(label)
                 })
             }
         }

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
+import java.util.Locale
 
 class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
                              private val reminderRepository: ReminderRepository): ViewModel() {
@@ -39,7 +41,7 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
             reminder.id.toString().isNotBlank() &&
                     reminder.title.isNotBlank() &&
                     reminder.desc.isNotBlank() &&
-//                    reminder.amount.toString().isNotBlank() &&
+                    reminder.amount.toString().isNotBlank() &&
                     reminder.date.isNotBlank()
                     //reminder.repeat.isNotBlank() &&
                     //reminder.category.isNotBlank()
@@ -90,5 +92,14 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
                 reminderRepository.deleteReminder(_uiState.value.reminder.reminderToData())
         }
     }
+
+    /*fun formatAmount(amount: Double): String {
+        return NumberFormat.getCurrencyInstance(Locale("en", "MY")).format(amount)
+    }
+    fun updateAmount(newAmount: String): Double {
+        var doubleAmount = newAmount.replace("RM", "")
+        doubleAmount = doubleAmount.replace(",", "")
+        return doubleAmount.toDoubleOrNull() ?: 0.0
+    }*/
 
 }

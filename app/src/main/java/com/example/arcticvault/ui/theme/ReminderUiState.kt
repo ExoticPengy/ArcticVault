@@ -1,6 +1,7 @@
 package com.example.arcticvault.ui.theme
 
-/*
+import com.example.arcticvault.model.ReminderEntryModel
+
 class ReminderUiState {
-    val
-}*/
+    val reminder: ReminderEntryModel = ReminderEntryModel()
+}
