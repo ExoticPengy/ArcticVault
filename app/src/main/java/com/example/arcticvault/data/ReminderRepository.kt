@@ -8,6 +8,7 @@ interface ReminderRepository {
     suspend fun updateReminder(reminder: Reminder)
     fun getAllReminderStream(): Flow<List<Reminder>>
     fun getReminderStream(id: Int): Flow<Reminder?>
+    fun getRemindersByStatus(status: String): Flow<List<Reminder>>
 
 
 }

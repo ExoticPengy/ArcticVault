@@ -20,4 +20,7 @@ interface ReminderDao {
     @Query("SELECT * from reminder WHERE id = :id")
     fun getReminder(id: Int): Flow<Reminder>
 
+    @Query("SELECT * FROM reminder WHERE status = :status ORDER BY date ASC")
+    fun getRemindersByStatus(status: String): Flow<List<Reminder>>
+
 }

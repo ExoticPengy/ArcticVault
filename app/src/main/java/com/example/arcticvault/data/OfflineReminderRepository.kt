@@ -9,5 +9,6 @@ class OfflineReminderRepository(private val reminderDao: ReminderDao): ReminderR
 
     override fun getAllReminderStream(): Flow<List<Reminder>> = reminderDao.getAllReminder()
     override fun getReminderStream(id: Int): Flow<Reminder?> = reminderDao.getReminder(id)
+    override fun getRemindersByStatus(status: String): Flow<List<Reminder>> = reminderDao.getRemindersByStatus(status)
 
 }
