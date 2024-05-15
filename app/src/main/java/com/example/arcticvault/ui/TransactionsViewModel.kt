@@ -66,7 +66,7 @@ class TransactionsViewModel(transactionsRepository: TransactionsRepository): Vie
 
         val lastYear = currentDate.year - 1
         var totalAmountLastYear = 0.0
-        for (transaction in transactionList) {
+        for (transaction in filteredTransactionList) {
             var year = transaction.date
             year = year.replaceBeforeLast("/", "")
             year = year.replace("/", "")
@@ -82,8 +82,12 @@ class TransactionsViewModel(transactionsRepository: TransactionsRepository): Vie
 
         return if (getProfit)
             totalAmountThisYear
+        else if (totalAmountLastYear != 0.0)
+            (((totalAmountThisYear / totalAmountLastYear) * 100.0) - 100).absoluteValue.roundTwoDecimal()
+        else if (totalAmountThisYear != 0.0)
+            100.00
         else
-            ((totalAmountLastYear - totalAmountThisYear) / 100.0).absoluteValue.roundTwoDecimal()
+            0.0
     }
 
     fun calculateLoss(transactionList: List<Transaction>, getLoss: Boolean): Double {
@@ -108,7 +112,7 @@ class TransactionsViewModel(transactionsRepository: TransactionsRepository): Vie
 
         val lastYear = currentDate.year - 1
         var totalAmountLastYear = 0.0
-        for (transaction in transactionList) {
+        for (transaction in filteredTransactionList) {
             var year = transaction.date
             year = year.replaceBeforeLast("/", "")
             year = year.replace("/", "")
@@ -117,15 +121,19 @@ class TransactionsViewModel(transactionsRepository: TransactionsRepository): Vie
             }
         }
 
-        lossIsPositive = if (totalAmountLastYear > totalAmountThisYear) {
+        lossIsPositive = if (totalAmountLastYear < totalAmountThisYear) {
             true
         } else
             false
 
         return if (getLoss)
             totalAmountThisYear
+        else if (totalAmountLastYear != 0.0)
+            (((totalAmountThisYear / totalAmountLastYear) * 100.0) - 100).absoluteValue.roundTwoDecimal()
+        else if (totalAmountThisYear != 0.0)
+            100.00
         else
-            ((totalAmountLastYear - totalAmountThisYear) / 100.0).absoluteValue.roundTwoDecimal()
+            0.0
     }
 
     fun positiveOrNegative(check: Boolean): String {

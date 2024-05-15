@@ -8,10 +8,41 @@
     <string name="expense_desc">Expense Icon</string>
     <string name="transaction_card_desc">Transaction Card</string>
     <string name="percentage_card_desc">Percentage Card</string>
+    <string name="view_all_transactions_desc">View All Transactions Button</string>
+    <string name="magnifying_glass_desc">Magnifying Glass Icon</string>
+    <string name="calendar_desc">Calendar Icon</string>
+    <string name="filter_desc">Filter Icon</string>
+    <string name="confirm_desc">Confirm Icon</string>
+    <string name="month_background_desc">Month Background Card</string>
+    <string name="year_background_desc">Year Background Card</string>
+    <string name="blue_desc">Blue Card</string>
+    <string name="category_desc">Category Icon</string>
+    <string name="edit_desc">Edit Icon</string>
+    <string name="add_desc">Add Icon</string>
+    <string name="attachment_desc">Attachment Icon</string>
+    <string name="trash_desc">Trash Icon</string>
+    <string name="refresh_desc">Refresh Icon</string>
+    <string name="clock_desc">Clock Icon</string>
 
     //Transaction
     <string name="income">Income</string>
     <string name="expense">Expense</string>
+    <string name="total">Total</string>
+    <string name="add_transactions">Add\nTransactions</string>
+    <string name="vs"> vs last year</string>
+    <string name="recent">Recent transactions</string>
+    <string name="date1">Date 1</string>
+    <string name="date2">Date 2</string>
+    <string name="compare_year">Compare by Year Only</string>
+    <string name="set_category">Set Category</string>
+    <string name="description">Description</string>
+    <string name="select_time">Select Time</string>
+    <string name="add_new_category">Add new category</string>
+    <string name="category">Category</string>
+    <string name="pick_color">Pick Color</string>
+
+    //Text Field
+    <string name="search">Search</string>
 
     //Button Texts
     <string name="cancel">Cancel</string>
@@ -22,5 +53,6 @@
 
     //Title Strings
     <string name="transaction_screen_title">Transactions</string>
+    <string name="transaction_analysis_screen_title">Transactions Analysis</string>
 
 </resources>

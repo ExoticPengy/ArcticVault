@@ -112,7 +112,7 @@ fun TransactionsAnalysis(
                                 }
                         )
                         Text(
-                            text = "Transactions Analysis",
+                            text = stringResource(R.string.transaction_analysis_screen_title),
                             fontFamily = montserratFontFamily,
                             fontSize = 25.sp,
                             textAlign = TextAlign.Center,
@@ -200,7 +200,7 @@ fun TransactionsAnalysis(
             ) {
                 Image(
                     painter = painterResource(R.drawable.categoryicon),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.category_desc),
                     modifier = Modifier.size(30.dp)
                 )
                 Text(
@@ -217,7 +217,7 @@ fun TransactionsAnalysis(
                 Image(
                     painter = painterResource(R.drawable.bluecard),
                     contentScale = ContentScale.FillBounds,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.blue_desc),
                     modifier = Modifier.size(300.dp, 60.dp)
                 )
                 LazyRow(
@@ -238,7 +238,7 @@ fun TransactionsAnalysis(
                             if (transactionsAnalysisUiState.selectionList.contains(category.id)) {
                                 Image(
                                     painter = painterResource(R.drawable.confirmicon),
-                                    contentDescription = stringResource(R.string.back_button_desc),
+                                    contentDescription = stringResource(R.string.confirm_desc),
                                     alpha = 0.5f,
                                     modifier = Modifier
                                         .size(30.dp)
@@ -262,13 +262,13 @@ fun TransactionsAnalysis(
                     Image(
                         painter = painterResource(R.drawable.bluecard),
                         contentScale = ContentScale.Crop,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.blue_desc),
                         modifier = Modifier
                             .size(260.dp, 30.dp)
                             .clip(RoundedCornerShape(50))
                     )
                     Text(
-                        text = "Compare by Year Only",
+                        text = stringResource(R.string.compare_year),
                         textAlign = TextAlign.Center,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
@@ -300,7 +300,7 @@ fun TransactionsAnalysis(
                             Image(
                                 painter = painterResource(R.drawable.datebackgroundactive),
                                 contentScale = ContentScale.Crop,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.year_background_desc),
                                 modifier = Modifier
                                     .size(80.dp, 60.dp)
                                     .clip(RoundedCornerShape(50))
@@ -319,7 +319,7 @@ fun TransactionsAnalysis(
                             Image(
                                 painter = painterResource(transactionsAnalysisViewModel.getMonthBackground()),
                                 contentScale = ContentScale.Crop,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.month_background_desc),
                                 modifier = Modifier
                                     .size(80.dp, 60.dp)
                                     .clip(RoundedCornerShape(50))
@@ -334,7 +334,7 @@ fun TransactionsAnalysis(
                         }
                     }
                     Text(
-                        text = "Date 1",
+                        text = stringResource(R.string.date1),
                         textAlign = TextAlign.Center,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
@@ -357,7 +357,7 @@ fun TransactionsAnalysis(
                             Image(
                                 painter = painterResource(R.drawable.datebackgroundactive),
                                 contentScale = ContentScale.Crop,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.year_background_desc),
                                 modifier = Modifier
                                     .size(80.dp, 60.dp)
                                     .clip(RoundedCornerShape(50))
@@ -376,7 +376,7 @@ fun TransactionsAnalysis(
                             Image(
                                 painter = painterResource(transactionsAnalysisViewModel.getMonthBackground()),
                                 contentScale = ContentScale.Crop,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.month_background_desc),
                                 modifier = Modifier
                                     .size(80.dp, 60.dp)
                                     .clip(RoundedCornerShape(50))
@@ -391,7 +391,7 @@ fun TransactionsAnalysis(
                         }
                     }
                     Text(
-                        text = "Date 2",
+                        text = stringResource(R.string.date2),
                         textAlign = TextAlign.Center,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,

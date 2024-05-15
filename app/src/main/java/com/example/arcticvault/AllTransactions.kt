@@ -19,9 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -186,7 +184,7 @@ fun AllTransactions(
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.magnifyingglassicon),
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.magnifying_glass_desc),
                                 modifier = Modifier.size(25.dp)
                             ) },
                         textStyle = TextStyle(
@@ -195,7 +193,7 @@ fun AllTransactions(
                         ),
                         placeholder = {
                             Text(
-                                text = "Search",
+                                text = stringResource(R.string.search),
                                 textAlign = TextAlign.Center,
                                 fontFamily = montserratFontFamily,
                                 color = Color.Black,
@@ -227,7 +225,7 @@ fun AllTransactions(
                         Box(contentAlignment = Alignment.Center) {
                             Image(
                                 painter = painterResource(R.drawable.calendaricon),
-                                contentDescription = stringResource(R.string.percentage_card_desc),
+                                contentDescription = stringResource(R.string.calendar_desc),
                                 modifier = Modifier
                                     .size(50.dp)
                                     .clickable {
@@ -248,7 +246,7 @@ fun AllTransactions(
                         Spacer(Modifier.width(30.dp))
                         Image(
                             painter = painterResource(R.drawable.filtericon),
-                            contentDescription = stringResource(R.string.percentage_card_desc),
+                            contentDescription = stringResource(R.string.filter_desc),
                             modifier = Modifier
                                 .size(50.dp)
                                 .clickable {
@@ -286,7 +284,7 @@ fun AllTransactions(
                 ) {
 
                     Text(
-                        text = "Total",
+                        text = stringResource(R.string.total),
                         color = Color.White,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
@@ -426,7 +424,7 @@ fun DatePickerDialog(
 
             ) {
                 Text(
-                    text = "Select",
+                    text = stringResource(R.string.select),
                     textAlign = TextAlign.Center,
                     fontFamily = montserratFontFamily,
                     color = Color.White
@@ -500,7 +498,7 @@ fun FilterDialog(
                             if (allTransactionsViewModel.selectedCategoryId == category.id) {
                                 Image(
                                     painter = painterResource(R.drawable.confirmicon),
-                                    contentDescription = stringResource(R.string.back_button_desc),
+                                    contentDescription = stringResource(R.string.confirm_desc),
                                     alpha = 0.5f,
                                     modifier = Modifier
                                         .size(30.dp)

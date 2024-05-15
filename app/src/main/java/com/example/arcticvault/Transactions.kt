@@ -141,7 +141,7 @@ fun Transactions(
                                     .padding(top = 35.dp)
                             ) {
                                 Text(
-                                    text = "Add\nTransactions",
+                                    text = stringResource(R.string.add_transactions),
                                     textAlign = TextAlign.Center,
                                     fontFamily = montserratFontFamily,
                                     color = Color.White,
@@ -173,7 +173,7 @@ fun Transactions(
                                             }
                                     )
                                     Text(
-                                        text = "Income",
+                                        text = stringResource(R.string.income),
                                         textAlign = TextAlign.Center,
                                         fontFamily = montserratFontFamily,
                                         fontSize = 10.sp,
@@ -199,7 +199,7 @@ fun Transactions(
                                             }
                                     )
                                     Text(
-                                        text = "Expense",
+                                        text = stringResource(R.string.expense),
                                         textAlign = TextAlign.Center,
                                         fontFamily = montserratFontFamily,
                                         fontSize = 10.sp,
@@ -244,7 +244,7 @@ fun Transactions(
                             .size(30.dp)
                     )
                     Text(
-                        text = "Income",
+                        text = stringResource(R.string.income),
                         textAlign = TextAlign.Center,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
@@ -281,7 +281,7 @@ fun Transactions(
                                 modifier = Modifier.width(65.dp)
                             )
                             Text(
-                                text = " vs last year",
+                                text = stringResource(R.string.vs),
                                 textAlign = TextAlign.Center,
                                 fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
@@ -324,7 +324,7 @@ fun Transactions(
                             .size(30.dp)
                     )
                     Text(
-                        text = "Expense",
+                        text = stringResource(R.string.expense),
                         textAlign = TextAlign.Center,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
@@ -359,7 +359,7 @@ fun Transactions(
                                 modifier = Modifier.width(65.dp)
                             )
                             Text(
-                                text = " vs last year",
+                                text = stringResource(R.string.vs),
                                 textAlign = TextAlign.Center,
                                 fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
@@ -372,7 +372,7 @@ fun Transactions(
 
             //Transactions Section
             Text(
-                text = "Recent transactions",
+                text = stringResource(R.string.recent),
                 textAlign = TextAlign.Center,
                 fontFamily = montserratFontFamily,
                 fontSize = 12.sp,
@@ -398,7 +398,7 @@ fun Transactions(
 
             Image(
                 painter = painterResource(R.drawable.viewalltransactionsbutton),
-                contentDescription = stringResource(R.string.expense_desc),
+                contentDescription = stringResource(R.string.view_all_transactions_desc),
                 modifier = Modifier
                     .height(45.dp)
                     .width(250.dp)

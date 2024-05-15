@@ -148,7 +148,9 @@ class EditTransactionViewModel(
             transaction.type.toString().isNotBlank() &&
             transaction.title.isNotBlank() &&
             transaction.time.isNotBlank() &&
+            transaction.time != "Time" &&
             transaction.date.isNotBlank() &&
+            transaction.date != "Date" &&
             transaction.amount != 0.00
         }
     }

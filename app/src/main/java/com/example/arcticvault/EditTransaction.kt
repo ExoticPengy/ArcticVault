@@ -23,10 +23,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -93,9 +91,9 @@ fun EditTransaction(
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
         ) {
             //Box for top banner
             Box(
@@ -142,7 +140,7 @@ fun EditTransaction(
                         //Confirm Button
                         Image(
                             painter = painterResource(R.drawable.confirmicon),
-                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentDescription = stringResource(R.string.confirm_desc),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
@@ -204,7 +202,7 @@ fun EditTransaction(
                         onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(title = it)) },
                         placeholder = {
                             Text(
-                                text = "Transaction",
+                                text = stringResource(R.string.transaction_screen_title),
                                 textAlign = TextAlign.Center,
                                 fontFamily = montserratFontFamily,
                                 fontSize = 20.sp,
@@ -215,7 +213,7 @@ fun EditTransaction(
                         trailingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.editicon),
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.edit_desc),
                                 modifier = Modifier.size(25.dp)
                             )
                         },
@@ -285,7 +283,7 @@ fun EditTransaction(
                     Box(contentAlignment = Alignment.Center) {
                         Image(
                             painter = painterResource(R.drawable.calendaricon),
-                            contentDescription = stringResource(R.string.percentage_card_desc),
+                            contentDescription = stringResource(R.string.calendar_desc),
                             modifier = Modifier
                                 .size(30.dp)
                                 .clickable {
@@ -324,11 +322,11 @@ fun EditTransaction(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.categoryicon),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.category_desc),
                         modifier = Modifier.size(30.dp)
                     )
                     Text(
-                        text = "Set Category",
+                        text = stringResource(R.string.set_category),
                         textAlign = TextAlign.Center,
                         fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
@@ -341,7 +339,7 @@ fun EditTransaction(
                     Image(
                         painter = painterResource(R.drawable.bluecard),
                         contentScale = ContentScale.FillBounds,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.blue_desc),
                         modifier = Modifier.size(300.dp, 60.dp)
                     )
                     Row (
@@ -364,7 +362,7 @@ fun EditTransaction(
                                     if (transaction.categoryId == category.id) {
                                         Image(
                                             painter = painterResource(R.drawable.confirmicon),
-                                            contentDescription = stringResource(R.string.back_button_desc),
+                                            contentDescription = stringResource(R.string.confirm_desc),
                                             alpha = 0.5f,
                                             modifier = Modifier
                                                 .size(30.dp)
@@ -377,7 +375,7 @@ fun EditTransaction(
                         Spacer(Modifier.width(10.dp))
                         Image(
                             painter = painterResource(R.drawable.addbutton),
-                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentDescription = stringResource(R.string.add_desc),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
@@ -425,32 +423,13 @@ fun EditTransaction(
                         transaction = transaction
                     )
                 }
-
-                //Attachment button
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.attachmenticon),
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )
-                    Text(
-                        text = "Attachments",
-                        textAlign = TextAlign.Center,
-                        fontFamily = montserratFontFamily,
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
-                }
                 
                 //Description Box
                 Box {
                     Image(
                         painter = painterResource(R.drawable.bluecard),
                         contentScale = ContentScale.FillBounds,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.blue_desc),
                         modifier = Modifier
                             .size(300.dp, 60.dp)
                     )
@@ -459,7 +438,7 @@ fun EditTransaction(
                         onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(description = it)) },
                         placeholder = {
                             Text(
-                                text = "Description",
+                                text = stringResource(R.string.description),
                                 textAlign = TextAlign.Center,
                                 fontFamily = montserratFontFamily,
                                 fontSize = 20.sp,
@@ -502,7 +481,7 @@ fun EditTransaction(
                     //Delete button
                     Image(
                         painter = painterResource(R.drawable.trashicon),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.trash_desc),
                         modifier = Modifier
                             .size(30.dp)
                             .clickable {
@@ -516,7 +495,7 @@ fun EditTransaction(
                     //Refresh button
                     Image(
                         painter = painterResource(R.drawable.refreshbutton),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.refresh_desc),
                         modifier = Modifier
                             .size(35.dp)
                             .clickable {
@@ -543,7 +522,7 @@ fun TimePicker(
 
     Image(
         painter = painterResource(R.drawable.clockicon),
-        contentDescription = null,
+        contentDescription = stringResource(R.string.clock_desc),
         modifier = Modifier
             .size(30.dp)
             .clickable {
@@ -572,7 +551,7 @@ fun TimePicker(
                         editTransactionViewModel.showTimePicker = false
                     }
                 ) { Text(
-                    text = "OK",
+                    text = stringResource(R.string.ok),
                     textAlign = TextAlign.Center,
                     fontFamily = montserratFontFamily,
                     fontSize = 20.sp,
@@ -586,7 +565,7 @@ fun TimePicker(
                         editTransactionViewModel.showTimePicker = false
                     }
                 ) { Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.cancel),
                     textAlign = TextAlign.Center,
                     fontFamily = montserratFontFamily,
                     fontSize = 20.sp,
@@ -603,7 +582,7 @@ fun TimePicker(
 
 @Composable
 fun TimePickerDialog(
-    title: String = "Select Time",
+    title: String = stringResource(R.string.select_time),
     onDismissRequest: () -> Unit,
     confirmButton: @Composable (() -> Unit),
     dismissButton: @Composable (() -> Unit),
@@ -690,7 +669,7 @@ fun CreateCategoryDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Add new category",
+                    text = stringResource(R.string.add_new_category),
                     textAlign = TextAlign.Center,
                     fontFamily = montserratFontFamily,
                     fontSize = 20.sp,
@@ -704,7 +683,7 @@ fun CreateCategoryDialog(
                     onValueChange = { editTransactionViewModel.categoryTitle = it },
                     placeholder = {
                         Text(
-                            text = "Category",
+                            text = stringResource(R.string.category),
                             textAlign = TextAlign.Start,
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
@@ -744,7 +723,7 @@ fun CreateCategoryDialog(
                         }
                     ) {
                         Text(
-                            text = "Pick Color",
+                            text = stringResource(R.string.pick_color),
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
@@ -775,7 +754,7 @@ fun CreateCategoryDialog(
                         }
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
@@ -801,7 +780,7 @@ fun CreateCategoryDialog(
                         }
                     ) {
                         Text(
-                            text = "Ok",
+                            text = stringResource(R.string.ok),
                             textAlign = TextAlign.Center,
                             fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
