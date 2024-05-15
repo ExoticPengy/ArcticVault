@@ -1,6 +1,7 @@
 package com.example.arcticvault.ui.theme
 
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,15 +25,18 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +55,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.R
+import com.example.arcticvault.model.ReminderEntryModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 object AddReminderDestination {
@@ -59,14 +67,22 @@ object AddReminderDestination {
     val reminderIdArg = "reminderId"
     val routeWithArgs = "$route/{$reminderIdArg}"
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReminderDialog(onDismiss: () -> Unit) {
+fun ReminderDialog(
+    onDismiss: () -> Unit,
+    reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
     var title by remember { mutableStateOf("") }
     var desc by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+    val reminderEntryUiState by reminderEntryViewModel.uiState.collectAsState()
+    val reminder: ReminderEntryModel = reminderEntryUiState.reminder
+    val coroutineScope = rememberCoroutineScope()
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -94,7 +110,8 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     Text(text = "Title: ")
-                    TextField(value = title, onValueChange = { title = it },
+                    TextField(value = reminder.title,
+                        onValueChange = { reminderEntryViewModel.updateUiState(reminder.copy(title = it)) },
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(40.dp))
@@ -109,7 +126,8 @@ fun ReminderDialog(onDismiss: () -> Unit) {
 
                 Row {
                     Text(text = "Desc: ")
-                    TextField(value = desc, onValueChange = { desc = it },
+                    TextField(value = reminder.desc,
+                        onValueChange = { reminderEntryViewModel.updateUiState(reminder.copy(desc = it)) },
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(20.dp))
@@ -122,7 +140,8 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                 // Amount
                 Row {
                     Text(text = "Amount: ")
-                    TextField(value = amount, onValueChange = { amount = it },
+                    TextField(value = reminder.amount.toString(),
+                        onValueChange = { reminderEntryViewModel.updateUiState(reminder.copy(amount = it.toDouble())) },
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(40.dp))
@@ -136,14 +155,19 @@ fun ReminderDialog(onDismiss: () -> Unit) {
 
                 Row {
                     Text(text = "Date: ")
-                    DatePickerField(value = date, onDateSelected = { newDate -> date = newDate })
+                    DatePickerField(value = reminder.date, onDateSelected = { newDate -> reminderEntryViewModel.updateUiState(reminder.copy(date = newDate)) })
 
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row {
                     Text(text = "Repeat: ")
-                    DropDownMenu()
+                    DropDownMenu(
+                        suggestions = listOf("Once", "Daily", "Monthly", "Yearly"),
+                        onItemSelected = { selectedValue ->
+                            reminderEntryViewModel.updateUiState(reminder.copy(repeat = selectedValue))
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -161,12 +185,20 @@ fun ReminderDialog(onDismiss: () -> Unit) {
                     CategoryButton("Utility", selectedCategory, onCategorySelected = { selectedCategory = it })
                     CategoryButton("Payroll", selectedCategory, onCategorySelected = { selectedCategory = it })
                     CategoryButton("Taxes", selectedCategory, onCategorySelected = { selectedCategory = it })
-
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = onDismiss,
+                    onClick = {
+                        Log.i("Add Button","Before If")
+//                        if(reminderEntryViewModel.validateInput(reminderEntryUiState)) {
+                            coroutineScope.launch {
+                                reminderEntryViewModel.saveReminder()
+                                Log.i("Add Button Click","Add been clicked")
+//                            }
+                            onDismiss()
+                        }
+                    },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text("+ ADD")
@@ -192,7 +224,10 @@ fun CategoryButton(category: String, selectedCategory: String, onCategorySelecte
 
 //repeat frequency option function
 @Composable
-fun DropDownMenu(modifier: Modifier = Modifier) {
+fun DropDownMenu(
+    suggestions: List<String>,
+    onItemSelected: (String) -> Unit,
+    modifier: Modifier = Modifier) {
 
     var expanded by remember { mutableStateOf(false) }
     val suggestions = listOf("Once", "Daily", "Monthly", "Yearly")
@@ -208,12 +243,14 @@ fun DropDownMenu(modifier: Modifier = Modifier) {
     Column {
         OutlinedTextField(
             value = selectedText,
-            onValueChange = { selectedText = it },
+            onValueChange = {  },
+            readOnly = true,
             modifier = Modifier
                 .fillMaxWidth()
                 .onGloballyPositioned { coordinates ->
                     textfieldSize = coordinates.size.toSize()
-                },
+                }
+            ,
             label = {Text("Option")},
             trailingIcon = {
                 Icon(icon,"contentDescription",

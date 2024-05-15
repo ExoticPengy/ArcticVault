@@ -2,6 +2,7 @@ package com.example.arcticvault.ui.theme
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,6 +50,7 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
                         Image(painter = painterResource(R.drawable.editicon),
                             contentDescription = "Edit",
                             modifier = Modifier
+                                .clickable { }
                                 .align(Alignment.End)
                                 .size(20.dp))
                     }
@@ -72,7 +74,7 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Text(text = "Repeats:")
-                        DropDownMenu()
+                        //DropDownMenu()
                     }
                 }
                 Text(text = "Set Category", modifier = Modifier.padding(top = 15.dp))
@@ -88,7 +90,8 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
                     CategoryButton("Taxes", "selectedCategory", onCategorySelected = {  })
                 }
 
-                Row(modifier = Modifier.padding(top = 20.dp)
+                Row(modifier = Modifier
+                    .padding(top = 20.dp)
                     .padding(horizontal = 10.dp)) {
                     Button(onClick = {  }) {
                         Text("View Related Transactions")
@@ -98,8 +101,13 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
                         checked = (bill.status == "Done"),
                         onCheckedChange = {  }
                     )
+                    //Text(text = "Done")
                 }
             }
         }
     }
+}
+
+fun EditReminder(){
+
 }
