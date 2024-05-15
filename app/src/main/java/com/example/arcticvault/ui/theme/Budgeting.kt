@@ -170,7 +170,7 @@ fun Budgeting(
 
         val yearlyExpenses:Double = budgetingViewModel.calculateExpenseYear(transactionList)
         val percentageOfYearly:Double = percentageOfLinear(yearlyExpenses,yearlyBudgeting)
-        PercentageBarForBudgeting(percentage = percentageOfYearly)
+        PercentageBarForBudgeting(percentage = percentageOfYearly ?: 0.0)
 
         Row {
             Text(

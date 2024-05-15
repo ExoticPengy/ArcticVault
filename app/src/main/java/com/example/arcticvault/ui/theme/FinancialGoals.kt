@@ -1,6 +1,7 @@
 package com.example.arcticvault.ui.theme
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,13 +22,18 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,7 +48,6 @@ import com.example.arcticvault.ui.theme.theme.FinancialGoalsViewModel
 object FinancialGoalsDestination {
     val route = "FinancialGoals"
 }
-@SuppressLint("SuspiciousIndentation")
 @Composable
 fun Finance(
     onGoalClick: (Int) -> Unit,
@@ -50,9 +55,19 @@ fun Finance(
     onPreviousButton:() -> Unit,
     financialGoalsViewModel: FinancialGoalsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-
     val financialGoalsUiState by financialGoalsViewModel.financialGoalsUiState.collectAsState()
     val financialGoalsList1: List<EditGoals> = financialGoalsUiState.financialGoalsList
+    val context = LocalContext.current
+
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            errorMessage = null
+        }
+    }
+
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
@@ -174,8 +189,11 @@ fun Finance(
         Column {
             Button(
                 onClick = {
-                    if(financialGoalsList1.getOrNull(0) == null || financialGoalsList1.getOrNull(1) == null || financialGoalsList1.getOrNull(2) == null )
-                    onEditGoalsButton()
+                    if (financialGoalsList1.size >= 3) {
+                        errorMessage = "Cannot add more goals, already have 3 goals!"
+                    } else if (financialGoalsList1.getOrNull(0) == null || financialGoalsList1.getOrNull(1) == null || financialGoalsList1.getOrNull(2) == null) {
+                        onEditGoalsButton()
+                    }
                 },
                 modifier = Modifier
                     .padding(top = 275.dp)
