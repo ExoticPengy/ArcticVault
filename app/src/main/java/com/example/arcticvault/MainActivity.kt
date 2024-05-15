@@ -3,6 +3,7 @@ package com.example.arcticvault
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.arcticvault.ui.theme.Debt
 import com.example.arcticvault.ui.theme.ArcticVaultApp
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 import com.example.arcticvault.ui.theme.Budgeting
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArcticVaultTheme {
-                ArcticVaultApp()
+                Debt()
             }
         }
     }

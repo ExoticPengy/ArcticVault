@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui
+package com.example.arcticvault.ui.theme
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

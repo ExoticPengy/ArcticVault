@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -37,11 +36,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.Data.Category
 import com.example.arcticvault.Data.EditGoals
 import com.example.arcticvault.R
-
-import com.example.arcticvault.ui.TransactionsViewModel
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.EditGoalsViewModel
-import com.example.arcticvault.ui.theme.theme.EditTransactionViewModel
 
 object EditGoalsDestination {
     val route = "EditGoals"

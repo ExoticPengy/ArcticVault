@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.Model.BudgetingInputModel
 import com.example.arcticvault.R
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.BudgetingInputViewModel
 import kotlinx.coroutines.launch
 
 object BudgetingInputDestination {

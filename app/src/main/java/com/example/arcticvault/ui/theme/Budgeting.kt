@@ -23,13 +23,9 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,9 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -55,14 +49,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.Data.Budgeting
 import com.example.arcticvault.Data.Category
-import com.example.arcticvault.Data.EditGoals
 import com.example.arcticvault.Data.Transaction
-import com.example.arcticvault.Model.BudgetingInputModel
 
 import com.example.arcticvault.R
-import com.example.arcticvault.ui.theme.theme.AllTransactionsViewModel
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.BudgetingViewModel
 
 object BudgetingDestination {
     val route = "Budgeting"
@@ -73,7 +62,7 @@ object BudgetingDestination {
 fun Budgeting(
     onPreviousButton:() -> Unit,
     onBudgetingInputButton:() -> Unit,
-    budgetingViewModel: BudgetingViewModel= viewModel(factory = AppViewModelProvider.Factory),
+    budgetingViewModel: BudgetingViewModel = viewModel(factory = AppViewModelProvider.Factory),
     allTransactionsViewModel: AllTransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val budgetingUiState by budgetingViewModel.budgetingUiState.collectAsState()

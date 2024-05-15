@@ -1,8 +1,7 @@
-package com.example.arcticvault.ui
+package com.example.arcticvault.ui.theme
 
 import com.example.arcticvault.Data.Transaction
 
-
-data class TransactionsUiState(
+data class AllTransactionUiState (
     val transactionList: List<Transaction> = listOf()
 )

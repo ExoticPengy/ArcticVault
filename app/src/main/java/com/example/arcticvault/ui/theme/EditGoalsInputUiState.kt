@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui.theme
 
 import com.example.arcticvault.Model.EditGoalsInputModel
 

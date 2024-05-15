@@ -55,8 +55,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.Data.Category
 import com.example.arcticvault.Model.TransactionModel
 import com.example.arcticvault.ui.theme.DatePickerDialog
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.EditTransactionViewModel
+import com.example.arcticvault.ui.theme.AppViewModelProvider
+import com.example.arcticvault.ui.theme.EditTransactionViewModel
 import com.github.skydoves.colorpicker.compose.AlphaSlider
 import com.github.skydoves.colorpicker.compose.AlphaTile
 import com.github.skydoves.colorpicker.compose.BrightnessSlider

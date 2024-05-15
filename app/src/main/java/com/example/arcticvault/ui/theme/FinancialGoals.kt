@@ -23,7 +23,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,12 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.Data.EditGoals
-import com.example.arcticvault.Model.EditGoalsInputModel
 import com.example.arcticvault.R
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.EditGoalsInputViewModel
-import com.example.arcticvault.ui.theme.theme.EditGoalsViewModel
-import com.example.arcticvault.ui.theme.theme.FinancialGoalsViewModel
 
 object FinancialGoalsDestination {
     val route = "FinancialGoals"

@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui.theme
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -6,13 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.arcticvault.Data.BudgetingRepository
 import com.example.arcticvault.Data.Category
 import com.example.arcticvault.Data.CategoryRepository
-import com.example.arcticvault.Data.EditGoals
-import com.example.arcticvault.Data.EditGoalsRepository
 import com.example.arcticvault.Data.Transaction
 import com.example.arcticvault.Model.BudgetingInputModel
 import com.example.arcticvault.R
-import com.example.arcticvault.ui.theme.BudgetingDestination
-import com.example.arcticvault.ui.theme.EditGoalsDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +18,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.LocalDate
-import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 

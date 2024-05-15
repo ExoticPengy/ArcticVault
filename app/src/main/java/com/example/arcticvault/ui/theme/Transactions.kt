@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.Data.Transaction
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.TransactionsViewModel
+import com.example.arcticvault.ui.theme.AppViewModelProvider
+import com.example.arcticvault.ui.theme.TransactionsViewModel
 
 object TransactionsDestination {
     val route = "Transactions"

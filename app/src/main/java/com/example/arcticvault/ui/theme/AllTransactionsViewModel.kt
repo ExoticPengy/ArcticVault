@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui.theme
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf

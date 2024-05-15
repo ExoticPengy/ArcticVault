@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui.theme
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,8 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.arcticvault.Data.EditGoals
 import com.example.arcticvault.Data.EditGoalsRepository
 import com.example.arcticvault.Model.EditGoalsInputModel
-import com.example.arcticvault.ui.theme.EditGoalsDestination
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
