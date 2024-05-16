@@ -185,6 +185,18 @@ fun ReminderDialog(
                     CategoryButton("Utility", selectedCategory, onCategorySelected = { selectedCategory = it })
                     CategoryButton("Payroll", selectedCategory, onCategorySelected = { selectedCategory = it })
                     CategoryButton("Taxes", selectedCategory, onCategorySelected = { selectedCategory = it })
+                    CategoryButton("Subscriptions", selectedCategory, onCategorySelected = { selectedCategory = it })
+                    CategoryButton("Rent", selectedCategory, onCategorySelected = { selectedCategory = it })
+                    Button(
+                        onClick = {  },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(199, 234, 255)),
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .height(40.dp)
+                    ) {
+                        Text("+", color = Color.Black, fontSize = 12.sp)
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -217,9 +229,13 @@ fun CategoryButton(category: String, selectedCategory: String, onCategorySelecte
             containerColor =
             if (category == selectedCategory) Color(118, 180, 255)
             else Color(199, 234, 255)
-        )
+        ),
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+            .height(40.dp)
     ) {
-        Text(category, color = Color.Black)
+        Text(category, color = Color.Black, fontSize = 12.sp)
     }
 }
 

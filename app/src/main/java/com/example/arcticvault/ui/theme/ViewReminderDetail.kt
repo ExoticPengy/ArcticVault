@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.arcticvault.R
+import com.example.arcticvault.data.Reminder
 
 @Composable
 fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){

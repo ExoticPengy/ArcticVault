@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -40,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.arcticvault.R
 
@@ -51,6 +54,7 @@ fun ReminderScreen(/*navController: NavController*/) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderTopUi(/*navController: NavController*/){
     var search by remember { mutableStateOf("") }
@@ -79,7 +83,8 @@ fun ReminderTopUi(/*navController: NavController*/){
                 Image(
                     painter = painterResource(R.drawable.backbutton),
                     contentDescription = "back",
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier
+                        .size(30.dp)
                         .clickable { /*navController.navigate("home")*/ }
                 )
                 Text(
@@ -133,43 +138,55 @@ fun ReminderTopUi(/*navController: NavController*/){
 }
 
 @Composable
-fun BillScreen() {
+fun BillScreen(/*reminderViewModel: ReminderViewModel = viewModel(factory = AppViewModelProvider.Factory)*/) {
     var selectedBill by remember { mutableStateOf<Bill?>(null) }
 
-    Surface (modifier = Modifier
+    /*val upcomingReminders = reminderViewModel.getRemindersByStatus("Upcoming")
+    val completedReminders = reminderViewModel.getRemindersByStatus("Done")
+    val lateReminders = reminderViewModel.getRemindersByStatus("Late")*/
+
+    Surface(modifier = Modifier
         .padding(horizontal = 30.dp)
-        .padding(top = 10.dp)){
-        Column{
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Upcoming:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            BillItem(Bill("Payroll", 10000.00, "1 March 2024","Upcoming")){
-                selectedBill = it
+        .padding(top = 10.dp)) {
+        LazyColumn {
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Upcoming:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
-            Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
-
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Completed:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            BillItem(Bill("Electricity Bills", 150.00, "1 March 2024","Done")){
-                selectedBill = it
+            items(3) {
+                BillItem(Bill("Payroll", 10000.00, "1 March 2024", "Upcoming")) {
+                    selectedBill = it
+                }
             }
-            Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
-
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Late:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            BillItem(Bill("House Rent", 1050.00, "1 March 2024","Late")){
-                selectedBill = it
+            item {
+                Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Completed:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
-
+            item {
+                BillItem(Bill("Electricity Bills", 150.00, "1 March 2024", "Done")) {
+                    selectedBill = it
+                }
+            }
+            item {
+                Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Late:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            }
+            item {
+                BillItem(Bill("House Rent", 1050.00, "1 March 2024", "Late")) {
+                    selectedBill = it
+                }
+            }
+            item {
+                Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
+            }
         }
     }
-
 
     selectedBill?.let {
         BillDetailsDialog(bill = it, onDismiss = { selectedBill = null })
     }
-
 }
 
 data class Bill(
@@ -238,9 +255,6 @@ fun BillItem(bill: Bill, onClick: (Bill) -> Unit) {
         }
 
     }
-
-
-
 }
 
 

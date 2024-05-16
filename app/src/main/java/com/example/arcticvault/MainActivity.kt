@@ -13,7 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.arcticvault.data.Reminder
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
+import com.example.arcticvault.ui.theme.EditScreenDialog
 import com.example.arcticvault.ui.theme.ReminderScreen
 
 class MainActivity : ComponentActivity() {
@@ -21,12 +23,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArcticVaultTheme {
+                /*val sampleReminder = Reminder(
+                    title = "Sample Title",
+                    amount = 100.0,
+                    date = "2024-05-31",
+                    desc = "Sample Description",
+                    category = "Sample Category",
+                    status = "Sample Status",
+                    repeat = ""
+                )*/
+
                 //MainScreen()
                 ReminderScreen()
+                //EditScreenDialog(reminder = sampleReminder, onDismiss = { /*TODO*/ }) {
+                    
+                }
             }
         }
     }
-}
+
 
 //Main Screen Controller
 @Composable
