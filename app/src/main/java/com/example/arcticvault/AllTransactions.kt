@@ -317,7 +317,10 @@ fun AllTransactions(
             }
             Spacer(Modifier.height(10.dp))
             LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
             ) {
                 items(transactionList) { transaction ->
                     if (
@@ -328,6 +331,30 @@ fun AllTransactions(
                         )
                         TransactionTexts(onTransactionClick = { onTransactionClick(it) }, transaction = transaction, viewModel = allTransactionsViewModel)
                 }
+            }
+            Spacer(Modifier.height(10.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.refreshbutton),
+                    contentDescription = stringResource(R.string.refresh_desc),
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            allTransactionsViewModel.onSyncClicked(
+                                categoryList = allTransactionsViewModel.categoryList,
+                                transactionList = transactionList
+                            )
+                        }
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = "Sync with cloud data",
+                    color = Color.Black,
+                    fontFamily = montserratFontFamily,
+                    fontSize = 16.sp
+                )
             }
         }
     }

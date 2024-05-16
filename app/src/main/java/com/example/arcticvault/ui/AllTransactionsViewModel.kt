@@ -11,6 +11,11 @@ import com.example.arcticvault.data.Category
 import com.example.arcticvault.data.CategoryRepository
 import com.example.arcticvault.data.Transaction
 import com.example.arcticvault.data.TransactionsRepository
+import com.example.arcticvault.model.CategoryModel
+import com.example.arcticvault.model.TransactionModel
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -20,10 +25,29 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class AllTransactionsViewModel(
-    transactionRepository: TransactionsRepository,
-    categoryRepository: CategoryRepository
-
+    private val transactionRepository: TransactionsRepository,
+    private val categoryRepository: CategoryRepository
 ): ViewModel() {
+    private val firebaseDb = Firebase.firestore
+    private val categoryRef = firebaseDb.collection("category")
+    private val transactionRef = firebaseDb.collection("transaction")
+    private val onlineTransactionList = mutableListOf<Transaction>()
+    private val onlineCategoryList = mutableListOf<Category>()
+
+    init {
+        categoryRef.get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                onlineCategoryList.add(document.toObject<CategoryModel>().categoryToData())
+            }
+        }
+
+        transactionRef.get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                onlineTransactionList.add(document.toObject<TransactionModel>().transactionToData())
+            }
+        }
+    }
+
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
@@ -96,5 +120,89 @@ class AllTransactionsViewModel(
 
     fun formatAmount(amount: Double): String {
         return NumberFormat.getCurrencyInstance(Locale("en", "MY")).format(amount)
+    }
+
+    private fun CategoryModel.categoryToData(): Category = Category(
+        id = id,
+        title = title,
+        color = color,
+        inUse = inUse
+    )
+
+    private fun TransactionModel.transactionToData(): Transaction = Transaction(
+        id = id,
+        icon = icon,
+        type = type,
+        title = title,
+        time = time,
+        date = date,
+        description = description,
+        amount = amount,
+        categoryId = categoryId
+    )
+
+    fun onSyncClicked(categoryList: List<Category>, transactionList: List<Transaction>) {
+        for (category in categoryList) {
+            var exists = false
+            for (onlineCategory in onlineCategoryList) {
+                if(
+                    onlineCategory.title == category.title &&
+                    onlineCategory.color == category.color &&
+                    onlineCategory.id == category.id
+                    )
+                    exists = true
+            }
+            if(!exists)
+                categoryRef.add(category.copy(inUse = 0))
+        }
+
+        for (transaction in transactionList) {
+            var exists = false
+            for (onlineTransaction in onlineTransactionList) {
+                if(onlineTransaction == transaction)
+                    exists = true
+            }
+            if(!exists)
+                transactionRef.add(transaction.copy(categoryId = null))
+        }
+
+        for (onlineCategory in onlineCategoryList) {
+            var exists = false
+            for (category in categoryList) {
+                if(
+                    onlineCategory.title == category.title &&
+                    onlineCategory.color == category.color &&
+                    onlineCategory.id == category.id
+                    )
+                    exists = true
+            }
+            if(!exists) {
+                viewModelScope.launch {
+                    addCategory(onlineCategory.copy(inUse = 0))
+                }
+            }
+        }
+
+        for (onlineTransaction in onlineTransactionList) {
+            var exists = false
+            for (transaction in transactionList) {
+                if(onlineTransaction == transaction)
+                    exists = true
+            }
+            if(!exists)
+            {
+                viewModelScope.launch {
+                    addTransaction(onlineTransaction.copy(categoryId = null))
+                }
+            }
+        }
+    }
+
+    private suspend fun addCategory(category: Category) {
+        categoryRepository.insertCategory(category)
+    }
+
+    private suspend fun addTransaction(transaction: Transaction) {
+        transactionRepository.insertTransaction(transaction)
     }
 }
