@@ -112,15 +112,6 @@ fun BudgetingInput(
             TextField(
                 value = budgetingInputViewModel.formatAmount(budgeting.yearlyBudgeting),
                 onValueChange = { budgetingInputViewModel.updateUiState(budgeting.copy(yearlyBudgeting = budgetingInputViewModel.updateAmount(it))) },
-                placeholder = {
-                    Text(
-                        text = "Subscription",
-                        fontSize = 25.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Green,
-                        )
-                },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 ),

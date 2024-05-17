@@ -15,7 +15,7 @@ fun ArcticVaultApp(){
 
     NavHost(
         navController = navController,
-        startDestination = BudgetingDestination.route
+        startDestination = FinancialGoalsDestination.route
     ){
         composable(route = BudgetingDestination.route){
             Budgeting(
