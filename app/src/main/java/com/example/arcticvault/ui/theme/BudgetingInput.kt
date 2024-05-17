@@ -42,7 +42,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.Model.BudgetingInputModel
 import com.example.arcticvault.R
 import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
+import com.example.arcticvault.ui.theme.theme.BudgetingInputUiState
 import com.example.arcticvault.ui.theme.theme.BudgetingInputViewModel
+import com.example.arcticvault.ui.theme.theme.BudgetingViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+
 import kotlinx.coroutines.launch
 
 object BudgetingInputDestination {
@@ -54,7 +59,6 @@ object BudgetingInputDestination {
 fun BudgetingInput(
     onPreviousButton:() ->Unit,
     onCancelButton:() -> Unit,
-    enabled: Boolean = true,
     budgetingInputViewModel: BudgetingInputViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ){
     val budgetingInputUiState by budgetingInputViewModel.uiState.collectAsState()
@@ -116,9 +120,7 @@ fun BudgetingInput(
         modifier = Modifier.fillMaxSize()
     ) {
         Column (
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            Modifier.fillMaxSize(), Arrangement.Center, Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Yearly Budgeting:",
@@ -181,6 +183,40 @@ fun BudgetingInput(
                 }
             }) {
                 Text(text = "Save")
+            }
+        }
+    }
+    Column (
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Spacer(modifier = Modifier.height(320.dp))
+        Column {
+            Text(
+                text = "Previous Budgeting Before:",
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            for (i in 0..2) {
+                Row {
+                    Text(
+                        text = "${i.plus(1)}:",
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "${budgetingInputViewModel.budgetingList.getOrNull(i)?.yearlyBudgeting ?: ""}",
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
             }
         }
     }

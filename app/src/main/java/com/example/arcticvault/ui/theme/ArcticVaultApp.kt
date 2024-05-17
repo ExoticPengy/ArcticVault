@@ -19,7 +19,7 @@ fun ArcticVaultApp(){
 
     NavHost(
         navController = navController,
-        startDestination = FinancialGoalsDestination.route
+        startDestination = BudgetingDestination.route
     ){
         composable(route = BudgetingDestination.route){
             Budgeting(
@@ -59,7 +59,7 @@ fun ArcticVaultApp(){
             })
         ) {
             Edit_Goals(
-                onTransactionsButton = {},
+                onTransactionsButton = {navController.navigate(AllTransactionsDestination.route)},
                 onEditGoalsButton = {navController.navigate("${EditGoalsInputDestination.route}/$it") },
                 onPreviousButton = { navController.navigateUp() })
         }

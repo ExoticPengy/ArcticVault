@@ -228,7 +228,6 @@ fun Edit_Goals(
                 .padding(start = 60.dp)
         )
     }
-    val categoryList: List<Category> = editGoalsViewModel.categoryList
     val transactionList = transactionsUiState.transactionList
     Column (
         verticalArrangement = Arrangement.Center,
@@ -236,7 +235,7 @@ fun Edit_Goals(
         modifier = Modifier.fillMaxSize()
     ){
         Spacer(modifier = Modifier.height(480.dp))
-        for (items in 0..10) {
+        for (items in 0..12) {
             if (transactionList.getOrNull(items)?.categoryId == editGoalsViewModel.selectedCategoryId) {
                 RecentTransactionTexts(
                     icon = transactionList[items].icon,

@@ -31,6 +31,7 @@ class EditGoalsViewModel(
     private val _uiState = MutableStateFlow(EditGoalsUiState())
     val numberChanges: Int? = savedStateHandle[EditGoalsDestination.goalIdArg]
 
+
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }

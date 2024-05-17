@@ -1,5 +1,6 @@
 package com.example.arcticvault.ui.theme.theme
 
+import androidx.compose.material3.Text
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,10 @@ import com.example.arcticvault.Data.Budgeting
 import com.example.arcticvault.Data.BudgetingRepository
 import com.example.arcticvault.Model.BudgetingInputModel
 import com.example.arcticvault.ui.theme.BudgetingDestination
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +27,19 @@ class BudgetingInputViewModel(
     private val budgetingRepository: BudgetingRepository,
 
 ) : ViewModel() {
+    private val firebaseDb = Firebase.firestore
+    private val budgetingRef = firebaseDb.collection("budgeting")
+    val budgetingList = mutableListOf<Budgeting>()
+
+    init {
+        budgetingRef.get().addOnSuccessListener{documents ->
+            for(document in documents){
+                budgetingList.add(document.toObject<BudgetingInputModel>().budgetToData())
+            }
+        }
+    }
+
+
     private val _uiState = MutableStateFlow(BudgetingUiState())
     val uiState: StateFlow<BudgetingUiState> = _uiState.asStateFlow()
 
@@ -49,6 +67,7 @@ class BudgetingInputViewModel(
         doubleAmount = doubleAmount.replace(",", "")
         return doubleAmount.toDoubleOrNull() ?: 0.0
     }
+
     fun formatAmount(amount: Double): String {
         return NumberFormat.getCurrencyInstance(Locale("en", "MY")).format(amount)
     }
@@ -62,21 +81,24 @@ class BudgetingInputViewModel(
         id = id,
         yearlyBudgeting = yearlyBudgeting,
     )
-     fun validateInput(uiState: BudgetingUiState): Boolean {
+
+    fun validateInput(uiState: BudgetingUiState): Boolean {
         return with(uiState.budgeting) {
             id.toString().isNotBlank() &&
-            yearlyBudgeting != 0.00
+                    yearlyBudgeting != 0.00
         }
     }
+
     suspend fun saveBudgeting(budgetingInputModel: BudgetingInputModel) {
         val uiState = _uiState.value
         if (validateInput(uiState)) {
             val budgetingData = budgetingInputModel.budgetToData()
             if (budgetID == budgetingData.id) {
                 budgetingRepository.updateBudgeting(budgetingData)
-            }else
+            } else
                 budgetingRepository.insertBudgeting(budgetingData)
-
+                budgetingRef.add(budgetingData)
         }
     }
+
 }
