@@ -10,6 +10,13 @@ import com.example.arcticvault.ArcticVaultApplication
 object AppViewModelProvider {
     val Factory = viewModelFactory {
 
+        initializer {
+            ReminderEntryViewModel(
+                this.createSavedStateHandle(),
+                arcticVaultApplication().container.reminderRepository
+            )
+        }
+
 
         /*initializer {
             TransactionsViewModel(

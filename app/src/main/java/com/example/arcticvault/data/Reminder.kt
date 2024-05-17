@@ -14,6 +14,4 @@ data class Reminder(
     val repeat: String,
     val category: String,
     val status: String
-){
-
-}
+)
