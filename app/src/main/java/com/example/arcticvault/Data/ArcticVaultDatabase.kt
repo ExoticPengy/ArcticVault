@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [EditGoals::class, Transaction::class, Category::class,Budgeting::class], version = 1, exportSchema = false)
+@Database(entities = [EditGoals::class, Transaction::class, Category::class,Budgeting::class], version = 2, exportSchema = false)
 abstract class ArcticVaultDatabase: RoomDatabase() {
     abstract fun editGaolsDao(): EditGaolsDao
     abstract fun transactionDao(): TransactionDao
