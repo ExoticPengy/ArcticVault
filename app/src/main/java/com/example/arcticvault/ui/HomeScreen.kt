@@ -1,4 +1,4 @@
-package com.example.arcticvault
+package com.example.arcticvault.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,31 +21,56 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.arcticvault.ui.theme.ReminderScreen
+import com.example.arcticvault.R
+
+object HomeDestination {
+    val route = "Home"
+}
 
 @Composable
-fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, name:String) {
-    Surface (
+fun HomeScreen(
+    onTransactionClick: () -> Unit,
+    onBudgetClick: () -> Unit,
+    onAnalysisClick: () -> Unit,
+    onGoalClick: () -> Unit,
+    onReminderClick: () -> Unit,
+    onDebtClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    name: String = "User"
+) {
+    Surface(
         Modifier.fillMaxSize(),
-        color = Color(231,245,255)){
+        color = Color(231, 245, 255)
+    ) {
 
     }
     Column {
-        Surface(modifier = Modifier
-            .fillMaxWidth(),
-            color = Color(0,0,0)
-        ){
-            Row (modifier = Modifier.padding(vertical = 10.dp),
-                horizontalArrangement = Arrangement.Center){
-                Text(text = "Arctic Vault", color = Color.White, fontSize = 25.sp, textAlign = TextAlign.Center)
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(),
+            color = Color(0, 0, 0)
+        ) {
+            Row(
+                modifier = Modifier.padding(vertical = 10.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Arctic Vault",
+                    color = Color.White,
+                    fontSize = 25.sp,
+                    textAlign = TextAlign.Center
+                )
             }
         }
-        GreetingMessage(modifier = Modifier,name = name)
-        HomeScreenUI(navController)
+        GreetingMessage(modifier = Modifier, name = name)
+        HomeScreenUI(
+            onTransactionClick = { onTransactionClick() },
+            onBudgetClick = { onBudgetClick() },
+            onAnalysisClick = { onAnalysisClick() },
+            onGoalClick = { onGoalClick() },
+            onReminderClick = { onReminderClick() },
+            onDebtClick = {}
+        )
         UpcomingBills()
     }
 
@@ -54,15 +78,22 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, name
 
 //User profile and user name
 @Composable
-fun GreetingMessage(modifier: Modifier = Modifier, name:String){
-    Surface(modifier = Modifier
-        .padding(top = 10.dp, bottom = 10.dp)
-        .fillMaxWidth(),
-        color = Color(231,245,255)
+fun GreetingMessage(
+    modifier: Modifier = Modifier,
+    name: String
+) {
+    Surface(
+        modifier = Modifier
+            .padding(top = 10.dp, bottom = 10.dp)
+            .fillMaxWidth(),
+        color = Color(231, 245, 255)
     ) {
         Row(modifier = modifier.fillMaxWidth())
         {
-            Image(painter = painterResource(R.drawable.profilepic), contentDescription = "Profile Picture")
+            Image(
+                painter = painterResource(R.drawable.profilepic),
+                contentDescription = "Profile Picture"
+            )
 
             Column {
                 Text(
@@ -85,7 +116,14 @@ fun GreetingMessage(modifier: Modifier = Modifier, name:String){
 
 //All features Ui
 @Composable
-fun HomeScreenUI(navController: NavController) {
+fun HomeScreenUI(
+    onTransactionClick: () -> Unit,
+    onBudgetClick: () -> Unit,
+    onAnalysisClick: () -> Unit,
+    onGoalClick: () -> Unit,
+    onReminderClick: () -> Unit,
+    onDebtClick: () -> Unit
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth(),
@@ -105,17 +143,31 @@ fun HomeScreenUI(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                FeatureItem(R.drawable.trans_icon, "Transactions")
-                FeatureItem(R.drawable.budget_icon, "Budgeting")
-                FeatureItem(R.drawable.bill_icon, "Bills & Payments", onClick = {navController.navigate("reminder")})
+                FeatureItem(
+                    R.drawable.trans_icon,
+                    "Transactions",
+                    onClick = { onTransactionClick() })
+                FeatureItem(R.drawable.budget_icon, "Budgeting", onClick = { onBudgetClick() })
+                FeatureItem(
+                    R.drawable.bill_icon,
+                    "Bills & Payments",
+                    onClick = { onReminderClick() })
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                FeatureItem(R.drawable.goal_icon, "Financial Goals")
-                FeatureItem(R.drawable.t_analysis_icon, "Transactions Analysis", isLonger = true)
-                FeatureItem(R.drawable.loan_icon, "Loan and Debt Management", isLonger = true)
+                FeatureItem(R.drawable.goal_icon, "Financial Goals", onClick = { onGoalClick() })
+                FeatureItem(
+                    R.drawable.t_analysis_icon,
+                    "Transactions Analysis",
+                    isLonger = true,
+                    onClick = { onAnalysisClick() })
+                FeatureItem(
+                    R.drawable.loan_icon,
+                    "Loan and Debt Management",
+                    isLonger = true,
+                    onClick = { onDebtClick() })
             }
         }
     }
@@ -125,7 +177,8 @@ fun HomeScreenUI(navController: NavController) {
 fun FeatureItem(icon: Int, text: String, isLonger: Boolean = false, onClick: () -> Unit = {}) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(10.dp)
+        modifier = Modifier
+            .padding(10.dp)
             .clickable(onClick = onClick)
     ) {
         Box(
@@ -158,11 +211,13 @@ fun FeatureItem(icon: Int, text: String, isLonger: Boolean = false, onClick: () 
 
 //upcoming bill
 @Composable
-fun UpcomingBills(){
-    Surface (modifier = Modifier.padding(20.dp), color = Color(231,245,255)){
+fun UpcomingBills() {
+    Surface(modifier = Modifier.padding(20.dp), color = Color(231, 245, 255)) {
         Row {
-            Text(text = "Reminders",
-                fontSize = 20.sp)
+            Text(
+                text = "Reminders",
+                fontSize = 20.sp
+            )
         }
     }
 }

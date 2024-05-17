@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import com.example.arcticvault.ui.theme.ArcticVaultTheme
 
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

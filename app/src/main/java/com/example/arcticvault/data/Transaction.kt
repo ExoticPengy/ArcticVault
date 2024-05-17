@@ -1,14 +1,23 @@
-package com.example.arcticvault.Data
+package com.example.arcticvault.data
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.arcticvault.data.Category
 
-@Entity(tableName = "transactions", foreignKeys = [
-    ForeignKey(entity = Category::class, parentColumns = ["id"], childColumns = ["categoryId"], onDelete = ForeignKey.SET_NULL, onUpdate = ForeignKey.NO_ACTION)
-])
+@Entity(
+    tableName = "transactions", foreignKeys = [
+        ForeignKey(
+            entity = Category::class,
+            parentColumns = ["id"],
+            childColumns = ["categoryId"],
+            onDelete = ForeignKey.SET_NULL,
+            onUpdate = ForeignKey.NO_ACTION
+        )
+    ]
+)
 data class Transaction(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

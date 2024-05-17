@@ -1,4 +1,4 @@
-package com.example.arcticvault.Data
+package com.example.arcticvault.data
 
 import kotlinx.coroutines.flow.Flow
 

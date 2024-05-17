@@ -1,18 +1,14 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.arcticvault.Data.BudgetingRepository
-import com.example.arcticvault.Data.Category
-import com.example.arcticvault.Data.CategoryRepository
-import com.example.arcticvault.Data.EditGoals
-import com.example.arcticvault.Data.EditGoalsRepository
-import com.example.arcticvault.Data.Transaction
-import com.example.arcticvault.Model.BudgetingInputModel
+import com.example.arcticvault.data.BudgetingRepository
+import com.example.arcticvault.data.Category
+import com.example.arcticvault.data.CategoryRepository
+import com.example.arcticvault.data.Transaction
+import com.example.arcticvault.model.BudgetingInputModel
 import com.example.arcticvault.R
-import com.example.arcticvault.ui.theme.BudgetingDestination
-import com.example.arcticvault.ui.theme.EditGoalsDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +18,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.LocalDate
-import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -30,7 +25,7 @@ class BudgetingViewModel(
     savedStateHandle: SavedStateHandle,
     categoryRepository: CategoryRepository,
     private val budgetingRepository: BudgetingRepository
-): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow(BudgetingUiState())
     val uiState: StateFlow<BudgetingUiState> = _uiState.asStateFlow()
     val numberChanges: Int? = savedStateHandle[BudgetingDestination.budgetIdArg]
@@ -133,7 +128,10 @@ class BudgetingViewModel(
         return total
     }
 
-    fun calculateExpenseMonthAndYearCategory(budgeting: List<Transaction>, categories: Category?): Double {
+    fun calculateExpenseMonthAndYearCategory(
+        budgeting: List<Transaction>,
+        categories: Category?
+    ): Double {
         val currentMonth = getLocalMonthAndYear()
         var total = 0.0
 
@@ -148,7 +146,6 @@ class BudgetingViewModel(
     }
 
 
-
     fun getLocalMonthAndYear(): String {
         val currentDateTime = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("MM/yyyy")
@@ -158,7 +155,7 @@ class BudgetingViewModel(
     fun getMonthAndYearFromDateString(dateString: String): String {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val date = LocalDate.parse(dateString, formatter)
-        return String.format("%02d/%04d", date.monthValue,date.year)
+        return String.format("%02d/%04d", date.monthValue, date.year)
     }
 
 

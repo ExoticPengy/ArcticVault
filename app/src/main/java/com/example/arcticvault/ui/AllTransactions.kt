@@ -1,4 +1,4 @@
-package com.example.arcticvault
+package com.example.arcticvault.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,10 +50,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arcticvault.R
 import com.example.arcticvault.data.Category
 import com.example.arcticvault.data.Transaction
-import com.example.arcticvault.ui.AllTransactionsViewModel
-import com.example.arcticvault.ui.AppViewModelProvider
 import com.example.arcticvault.ui.theme.montserratFontFamily
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -144,7 +143,7 @@ fun AllTransactions(
                         ) {
                             Button(
                                 onClick = {
-                                        allTransactionsViewModel.changeTypeFilter(R.string.income)
+                                    allTransactionsViewModel.changeTypeFilter(R.string.income)
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
@@ -164,7 +163,7 @@ fun AllTransactions(
                             )
                             Button(
                                 onClick = {
-                                        allTransactionsViewModel.changeTypeFilter(R.string.expense)
+                                    allTransactionsViewModel.changeTypeFilter(R.string.expense)
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
@@ -186,7 +185,8 @@ fun AllTransactions(
                                 painter = painterResource(R.drawable.magnifyingglassicon),
                                 contentDescription = stringResource(R.string.magnifying_glass_desc),
                                 modifier = Modifier.size(25.dp)
-                            ) },
+                            )
+                        },
                         textStyle = TextStyle(
                             color = Color.Black,
                             fontFamily = montserratFontFamily
@@ -208,7 +208,7 @@ fun AllTransactions(
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent
-                                ),
+                            ),
                         modifier = Modifier
                             .height(50.dp)
                             .border(
@@ -255,9 +255,11 @@ fun AllTransactions(
                         )
                         if (allTransactionsViewModel.showFilterDialog) {
                             FilterDialog(
-                                allTransactionsViewModel = allTransactionsViewModel ,
+                                allTransactionsViewModel = allTransactionsViewModel,
                                 onSelect = { allTransactionsViewModel.selectedCategoryId = it },
-                                onDismissRequest = { allTransactionsViewModel.showFilterDialog = false }
+                                onDismissRequest = {
+                                    allTransactionsViewModel.showFilterDialog = false
+                                }
                             )
                         }
                     }
@@ -328,8 +330,12 @@ fun AllTransactions(
                         allTransactionsViewModel.checkTitleFilter(transaction.title) &&
                         allTransactionsViewModel.checkDateFilter(transaction.date) &&
                         allTransactionsViewModel.checkCategoryFilter(transaction.categoryId)
+                    )
+                        TransactionTexts(
+                            onTransactionClick = { onTransactionClick(it) },
+                            transaction = transaction,
+                            viewModel = allTransactionsViewModel
                         )
-                        TransactionTexts(onTransactionClick = { onTransactionClick(it) }, transaction = transaction, viewModel = allTransactionsViewModel)
                 }
             }
             Spacer(Modifier.height(10.dp))
@@ -518,7 +524,7 @@ fun FilterDialog(
                         .size(300.dp, 300.dp)
                         .background(color = Color.LightGray, shape = RoundedCornerShape(10))
                 ) {
-                    items(allTransactionsViewModel.categoryList) {category ->
+                    items(allTransactionsViewModel.categoryList) { category ->
                         Spacer(Modifier.height(20.dp))
                         Box {
                             Categories(category = category, categoryClick = { onSelect(it) })
@@ -546,7 +552,8 @@ fun FilterDialog(
                 ) {
                     TextButton(
                         onClick = {
-                            allTransactionsViewModel.selectedCategoryId = allTransactionsViewModel.selectedCategoryFilter
+                            allTransactionsViewModel.selectedCategoryId =
+                                allTransactionsViewModel.selectedCategoryFilter
                             onDismissRequest()
                         }
                     ) {
@@ -578,7 +585,8 @@ fun FilterDialog(
 
                     TextButton(
                         onClick = {
-                            allTransactionsViewModel.selectedCategoryFilter = allTransactionsViewModel.selectedCategoryId
+                            allTransactionsViewModel.selectedCategoryFilter =
+                                allTransactionsViewModel.selectedCategoryId
                             onDismissRequest()
                         }
                     ) {

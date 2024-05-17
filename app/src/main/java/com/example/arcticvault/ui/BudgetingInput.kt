@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme
+package com.example.arcticvault.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -39,15 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arcticvault.Model.BudgetingInputModel
+import com.example.arcticvault.model.BudgetingInputModel
 import com.example.arcticvault.R
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.BudgetingInputUiState
-import com.example.arcticvault.ui.theme.theme.BudgetingInputViewModel
-import com.example.arcticvault.ui.theme.theme.BudgetingViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
-
 import kotlinx.coroutines.launch
 
 object BudgetingInputDestination {
@@ -55,14 +48,15 @@ object BudgetingInputDestination {
     val budgetIdArg = "budgetId"
     val routeWithArgs = "$route/{$budgetIdArg}"
 }
+
 @Composable
 fun BudgetingInput(
-    onPreviousButton:() ->Unit,
-    onCancelButton:() -> Unit,
+    onPreviousButton: () -> Unit,
+    onCancelButton: () -> Unit,
     budgetingInputViewModel: BudgetingInputViewModel = viewModel(factory = AppViewModelProvider.Factory)
-){
+) {
     val budgetingInputUiState by budgetingInputViewModel.uiState.collectAsState()
-    val budgeting:BudgetingInputModel = budgetingInputUiState.budgeting
+    val budgeting: BudgetingInputModel = budgetingInputUiState.budgeting
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -80,16 +74,16 @@ fun BudgetingInput(
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercropped),
+            painter = painterResource(R.drawable.topbannercrop),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)
                 .fillMaxSize()
         )
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(top = 40.dp)
-        ){
+        ) {
             TextButton(onClick = { onPreviousButton() }) {
                 Image(
                     painter = painterResource(R.drawable.backbuttoncropped),
@@ -119,7 +113,7 @@ fun BudgetingInput(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        Column (
+        Column(
             Modifier.fillMaxSize(), Arrangement.Center, Alignment.CenterHorizontally
         ) {
             Text(
@@ -131,7 +125,13 @@ fun BudgetingInput(
             )
             TextField(
                 value = budgetingInputViewModel.formatAmount(budgeting.yearlyBudgeting),
-                onValueChange = { budgetingInputViewModel.updateUiState(budgeting.copy(yearlyBudgeting = budgetingInputViewModel.updateAmount(it))) },
+                onValueChange = {
+                    budgetingInputViewModel.updateUiState(
+                        budgeting.copy(
+                            yearlyBudgeting = budgetingInputViewModel.updateAmount(it)
+                        )
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Number
@@ -157,7 +157,7 @@ fun BudgetingInput(
         }
 
     }
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 120.dp),
@@ -165,20 +165,20 @@ fun BudgetingInput(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(150.dp))
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ){
+        ) {
             Button(onClick = { onCancelButton() }) {
                 Text(text = "Cancel")
             }
             Button(onClick = {
-                if(budgetingInputViewModel.validateInput(budgetingInputUiState)){
+                if (budgetingInputViewModel.validateInput(budgetingInputUiState)) {
                     coroutineScope.launch {
                         budgetingInputViewModel.saveBudgeting(budgeting)
                     }
                     onCancelButton()
-                }else{
+                } else {
                     errorMessage = "Please fill in all fields!"
                 }
             }) {
@@ -186,11 +186,11 @@ fun BudgetingInput(
             }
         }
     }
-    Column (
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Spacer(modifier = Modifier.height(320.dp))
         Column {
             Text(

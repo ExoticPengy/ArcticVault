@@ -27,7 +27,7 @@ import java.util.Locale
 class AllTransactionsViewModel(
     private val transactionRepository: TransactionsRepository,
     private val categoryRepository: CategoryRepository
-): ViewModel() {
+) : ViewModel() {
     private val firebaseDb = Firebase.firestore
     private val categoryRef = firebaseDb.collection("category")
     private val transactionRef = firebaseDb.collection("transaction")
@@ -82,21 +82,21 @@ class AllTransactionsViewModel(
     }
 
     fun checkTitleFilter(title: String): Boolean {
-        if(titleFilter != "") {
+        if (titleFilter != "") {
             return title.contains(titleFilter, ignoreCase = true)
         }
         return true
     }
 
     fun checkDateFilter(date: String): Boolean {
-        if(dateFilter != "Select a date") {
+        if (dateFilter != "Select a date") {
             return date == dateFilter
         }
         return true
     }
 
     fun checkCategoryFilter(categoryId: Int?): Boolean {
-        if(selectedCategoryFilter != 0) {
+        if (selectedCategoryFilter != 0) {
             return categoryId == selectedCategoryFilter
         }
         return true
@@ -111,7 +111,10 @@ class AllTransactionsViewModel(
     fun calculateTotal(transactions: List<Transaction>): String {
         var total = 0.0
         for (transaction in transactions) {
-            if (transaction.type == typeFilter && checkTitleFilter(transaction.title) && checkDateFilter(transaction.date)) {
+            if (transaction.type == typeFilter && checkTitleFilter(transaction.title) && checkDateFilter(
+                    transaction.date
+                )
+            ) {
                 total += transaction.amount
             }
         }
@@ -145,38 +148,38 @@ class AllTransactionsViewModel(
         for (category in categoryList) {
             var exists = false
             for (onlineCategory in onlineCategoryList) {
-                if(
+                if (
                     onlineCategory.title == category.title &&
                     onlineCategory.color == category.color &&
                     onlineCategory.id == category.id
-                    )
+                )
                     exists = true
             }
-            if(!exists)
+            if (!exists)
                 categoryRef.add(category.copy(inUse = 0))
         }
 
         for (transaction in transactionList) {
             var exists = false
             for (onlineTransaction in onlineTransactionList) {
-                if(onlineTransaction == transaction)
+                if (onlineTransaction == transaction)
                     exists = true
             }
-            if(!exists)
+            if (!exists)
                 transactionRef.add(transaction.copy(categoryId = null))
         }
 
         for (onlineCategory in onlineCategoryList) {
             var exists = false
             for (category in categoryList) {
-                if(
+                if (
                     onlineCategory.title == category.title &&
                     onlineCategory.color == category.color &&
                     onlineCategory.id == category.id
-                    )
+                )
                     exists = true
             }
-            if(!exists) {
+            if (!exists) {
                 viewModelScope.launch {
                     addCategory(onlineCategory.copy(inUse = 0))
                 }
@@ -186,11 +189,10 @@ class AllTransactionsViewModel(
         for (onlineTransaction in onlineTransactionList) {
             var exists = false
             for (transaction in transactionList) {
-                if(onlineTransaction == transaction)
+                if (onlineTransaction == transaction)
                     exists = true
             }
-            if(!exists)
-            {
+            if (!exists) {
                 viewModelScope.launch {
                     addTransaction(onlineTransaction.copy(categoryId = null))
                 }

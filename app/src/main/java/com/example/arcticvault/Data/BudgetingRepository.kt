@@ -1,5 +1,6 @@
-package com.example.arcticvault.Data
+package com.example.arcticvault.data
 
+import com.example.arcticvault.data.Budgeting
 import kotlinx.coroutines.flow.Flow
 
 interface BudgetingRepository {

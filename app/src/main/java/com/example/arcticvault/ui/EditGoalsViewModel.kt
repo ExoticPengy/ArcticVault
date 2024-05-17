@@ -1,22 +1,17 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.arcticvault.Data.Category
-import com.example.arcticvault.Data.CategoryRepository
-import com.example.arcticvault.Data.EditGoals
-import com.example.arcticvault.Data.EditGoalsRepository
-import com.example.arcticvault.ui.theme.EditGoalsDestination
-import kotlinx.coroutines.CoroutineScope
+import com.example.arcticvault.data.Category
+import com.example.arcticvault.data.CategoryRepository
+import com.example.arcticvault.data.EditGoalsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -27,7 +22,7 @@ class EditGoalsViewModel(
     savedStateHandle: SavedStateHandle,
     categoryRepository: CategoryRepository,
     private val editGoalsRepository: EditGoalsRepository
-) :ViewModel(){
+) : ViewModel() {
     private val _uiState = MutableStateFlow(EditGoalsUiState())
     val numberChanges: Int? = savedStateHandle[EditGoalsDestination.goalIdArg]
 

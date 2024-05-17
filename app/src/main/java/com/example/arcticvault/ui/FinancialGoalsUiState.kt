@@ -1,6 +1,6 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui
 
-import com.example.arcticvault.Data.EditGoals
+import com.example.arcticvault.data.EditGoals
 
 data class FinancialGoalsUiState(
     val financialGoalsList: List<EditGoals> = listOf(),

@@ -1,4 +1,4 @@
-package com.example.arcticvault
+package com.example.arcticvault.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,7 +41,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,10 +54,7 @@ import co.yml.charts.ui.barchart.models.BarPlotData
 import co.yml.charts.ui.barchart.models.BarStyle
 import co.yml.charts.ui.barchart.models.GroupBarChartData
 import co.yml.charts.ui.barchart.models.GroupSeparatorConfig
-import com.example.arcticvault.ui.AppViewModelProvider
-import com.example.arcticvault.ui.TransactionsAnalysisUiState
-import com.example.arcticvault.ui.TransactionsAnalysisViewModel
-import com.example.arcticvault.ui.theme.ArcticVaultTheme
+import com.example.arcticvault.R
 import com.example.arcticvault.ui.theme.montserratFontFamily
 
 object TransactionsAnalysisDestination {
@@ -67,7 +63,8 @@ object TransactionsAnalysisDestination {
 
 @Composable
 fun TransactionsAnalysis(
-    transactionsAnalysisViewModel: TransactionsAnalysisViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    transactionsAnalysisViewModel: TransactionsAnalysisViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onButtonClick: () -> Unit
 ) {
     val transactionsAnalysisUiState by transactionsAnalysisViewModel.uiState.collectAsState()
 
@@ -109,6 +106,7 @@ fun TransactionsAnalysis(
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
+                                    onButtonClick()
                                 }
                         )
                         Text(
@@ -276,7 +274,12 @@ fun TransactionsAnalysis(
                         modifier = Modifier
                     )
                 }
-                Checkbox(checked = transactionsAnalysisViewModel.yearOnly, onCheckedChange = { transactionsAnalysisViewModel.yearOnly = !transactionsAnalysisViewModel.yearOnly } )
+                Checkbox(
+                    checked = transactionsAnalysisViewModel.yearOnly,
+                    onCheckedChange = {
+                        transactionsAnalysisViewModel.yearOnly =
+                            !transactionsAnalysisViewModel.yearOnly
+                    })
             }
 
             Row(
@@ -307,7 +310,10 @@ fun TransactionsAnalysis(
                             )
                             DateDropdownBox(
                                 expand = transactionsAnalysisViewModel.date1YearExpand,
-                                expandChange = { transactionsAnalysisViewModel.date1YearExpand = !transactionsAnalysisViewModel.date1YearExpand },
+                                expandChange = {
+                                    transactionsAnalysisViewModel.date1YearExpand =
+                                        !transactionsAnalysisViewModel.date1YearExpand
+                                },
                                 value = transactionsAnalysisViewModel.date1Year,
                                 valueChange = { transactionsAnalysisViewModel.date1Year = it },
                                 options = transactionsAnalysisViewModel.findYearOptions()
@@ -326,7 +332,10 @@ fun TransactionsAnalysis(
                             )
                             DateDropdownBox(
                                 expand = transactionsAnalysisViewModel.date1MonthExpand,
-                                expandChange = { transactionsAnalysisViewModel.date1MonthExpand = !transactionsAnalysisViewModel.date1MonthExpand },
+                                expandChange = {
+                                    transactionsAnalysisViewModel.date1MonthExpand =
+                                        !transactionsAnalysisViewModel.date1MonthExpand
+                                },
                                 value = transactionsAnalysisViewModel.date1Month,
                                 valueChange = { transactionsAnalysisViewModel.date1Month = it },
                                 options = transactionsAnalysisViewModel.findMonthOptions()
@@ -364,7 +373,10 @@ fun TransactionsAnalysis(
                             )
                             DateDropdownBox(
                                 expand = transactionsAnalysisViewModel.date2YearExpand,
-                                expandChange = { transactionsAnalysisViewModel.date2YearExpand = !transactionsAnalysisViewModel.date2YearExpand },
+                                expandChange = {
+                                    transactionsAnalysisViewModel.date2YearExpand =
+                                        !transactionsAnalysisViewModel.date2YearExpand
+                                },
                                 value = transactionsAnalysisViewModel.date2Year,
                                 valueChange = { transactionsAnalysisViewModel.date2Year = it },
                                 options = transactionsAnalysisViewModel.findYearOptions()
@@ -383,7 +395,10 @@ fun TransactionsAnalysis(
                             )
                             DateDropdownBox(
                                 expand = transactionsAnalysisViewModel.date2MonthExpand,
-                                expandChange = { transactionsAnalysisViewModel.date2MonthExpand = !transactionsAnalysisViewModel.date2MonthExpand },
+                                expandChange = {
+                                    transactionsAnalysisViewModel.date2MonthExpand =
+                                        !transactionsAnalysisViewModel.date2MonthExpand
+                                },
                                 value = transactionsAnalysisViewModel.date2Month,
                                 valueChange = { transactionsAnalysisViewModel.date2Month = it },
                                 options = transactionsAnalysisViewModel.findMonthOptions()
@@ -425,7 +440,11 @@ fun DateDropdownBox(
             readOnly = true,
             value = value,
             onValueChange = { },
-            textStyle = TextStyle(fontFamily = montserratFontFamily, color = Color.White, fontSize = 20.sp),
+            textStyle = TextStyle(
+                fontFamily = montserratFontFamily,
+                color = Color.White,
+                fontSize = 20.sp
+            ),
             singleLine = true,
             colors = TextFieldDefaults
                 .colors(
@@ -482,7 +501,7 @@ fun GroupBarChart(
                 xLabel.add(category.title)
         }
     }
-    val yStepSize = if(maxRange < 10) 1 else 10
+    val yStepSize = if (maxRange < 10) 1 else 10
     val xAxisData = AxisData.Builder()
         .axisStepSize(30.dp)
         .bottomPadding(5.dp)
@@ -503,8 +522,7 @@ fun GroupBarChart(
                 colorPaletteList[i],
                 if (i == 0) {
                     "Date 1"
-                }
-                else "Date 2"
+                } else "Date 2"
             )
         )
     }
@@ -543,10 +561,10 @@ fun GroupBarChart(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewTransactionsAnalysis() {
-    ArcticVaultTheme {
-        TransactionsAnalysis()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewTransactionsAnalysis() {
+//    ArcticVaultTheme {
+//        TransactionsAnalysis()
+//    }
+//}

@@ -1,5 +1,7 @@
-package com.example.arcticvault
+package com.example.arcticvault.ui
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -52,16 +55,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arcticvault.Data.Category
-import com.example.arcticvault.Model.TransactionModel
-import com.example.arcticvault.ui.theme.DatePickerDialog
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.EditTransactionViewModel
+import com.example.arcticvault.R
+import com.example.arcticvault.data.Category
+import com.example.arcticvault.model.TransactionModel
+import com.example.arcticvault.ui.theme.montserratFontFamily
 import com.github.skydoves.colorpicker.compose.AlphaSlider
 import com.github.skydoves.colorpicker.compose.AlphaTile
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 object EditTransactionDestination {
@@ -77,6 +80,7 @@ fun EditTransaction(
     addNewIncome: Boolean = false,
     editTransactionViewModel: EditTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val context = LocalContext.current
     val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
     val transaction: TransactionModel = editTransactionUiState.transaction
     val coroutineScope = rememberCoroutineScope()
@@ -86,6 +90,7 @@ fun EditTransaction(
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxSize()
         ) {
@@ -127,24 +132,35 @@ fun EditTransaction(
                         //Title
                         Text(
                             text = "Edit Transaction",
-
+                            fontFamily = montserratFontFamily,
                             fontSize = 25.sp,
                             textAlign = TextAlign.Center
                         )
                         //Confirm Button
                         Image(
                             painter = painterResource(R.drawable.confirmicon),
-                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentDescription = stringResource(R.string.confirm_desc),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
-                                    coroutineScope.launch {
-                                        editTransactionViewModel.saveTransaction(
+                                    if (editTransactionViewModel.validateInput(
                                             editTransactionUiState
                                         )
+                                    ) {
+                                        coroutineScope.launch {
+                                            editTransactionViewModel.saveTransaction()
+                                        }
+                                        onButtonClick()
+                                    } else {
+                                        Toast
+                                            .makeText(
+                                                context,
+                                                "Please fill in all fields and pick a category!",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                            .show()
                                     }
-                                    onButtonClick()
                                 }
                         )
                     }
@@ -156,7 +172,11 @@ fun EditTransaction(
                     ) {
                         Image(
                             painter = painterResource(transaction.icon),
-                            contentDescription = stringResource(editTransactionViewModel.updateIconDesc(transaction.icon)),
+                            contentDescription = stringResource(
+                                editTransactionViewModel.updateIconDesc(
+                                    transaction.icon
+                                )
+                            ),
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
@@ -180,7 +200,7 @@ fun EditTransaction(
                         Text(
                             text = stringResource(transaction.type),
                             textAlign = TextAlign.Center,
-
+                            fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black,
                             modifier = Modifier.padding(start = 20.dp)
@@ -190,12 +210,18 @@ fun EditTransaction(
                     //Transaction title text field
                     TextField(
                         value = transaction.title,
-                        onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(title = it)) },
+                        onValueChange = {
+                            editTransactionViewModel.updateUiState(
+                                transaction.copy(
+                                    title = it
+                                )
+                            )
+                        },
                         placeholder = {
                             Text(
-                                text = "Transaction",
+                                text = stringResource(R.string.transaction_screen_title),
                                 textAlign = TextAlign.Center,
-    
+                                fontFamily = montserratFontFamily,
                                 fontSize = 20.sp,
                                 color = Color.Black,
                                 modifier = Modifier.padding(start = 20.dp)
@@ -204,7 +230,7 @@ fun EditTransaction(
                         trailingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.editicon),
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.edit_desc),
                                 modifier = Modifier.size(25.dp)
                             )
                         },
@@ -215,7 +241,7 @@ fun EditTransaction(
                             textAlign = TextAlign.Center,
                             fontSize = 20.sp,
                             color = Color.Black,
-                            
+                            fontFamily = montserratFontFamily
                         ),
                         singleLine = true,
                         colors = TextFieldDefaults
@@ -234,7 +260,13 @@ fun EditTransaction(
                     //Transaction amount text field
                     TextField(
                         value = editTransactionViewModel.formatAmount(transaction.amount),
-                        onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(amount = editTransactionViewModel.updateAmount(it))) },
+                        onValueChange = {
+                            editTransactionViewModel.updateUiState(
+                                transaction.copy(
+                                    amount = editTransactionViewModel.updateAmount(it)
+                                )
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Done
@@ -243,7 +275,7 @@ fun EditTransaction(
                             fontSize = 20.sp,
                             textAlign = TextAlign.Center,
                             color = Color.Black,
-                            
+                            fontFamily = montserratFontFamily
                         ),
                         singleLine = true,
                         colors = TextFieldDefaults
@@ -274,7 +306,7 @@ fun EditTransaction(
                     Box(contentAlignment = Alignment.Center) {
                         Image(
                             painter = painterResource(R.drawable.calendaricon),
-                            contentDescription = stringResource(R.string.percentage_card_desc),
+                            contentDescription = stringResource(R.string.calendar_desc),
                             modifier = Modifier
                                 .size(30.dp)
                                 .clickable {
@@ -285,7 +317,13 @@ fun EditTransaction(
                     //Date Picker
                     if (editTransactionViewModel.showDatePicker) {
                         DatePickerDialog(
-                            onDateSelected = { editTransactionViewModel.updateUiState(transaction.copy(date = it)) },
+                            onDateSelected = {
+                                editTransactionViewModel.updateUiState(
+                                    transaction.copy(
+                                        date = it
+                                    )
+                                )
+                            },
                             onDismiss = { editTransactionViewModel.showDatePicker = false },
                             dismissButtonText = R.string.cancel
                         )
@@ -293,7 +331,7 @@ fun EditTransaction(
                     Text(
                         text = transaction.date,
                         textAlign = TextAlign.Center,
-                        
+                        fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
                         color = Color.Black,
                         modifier = Modifier.padding(start = 20.dp)
@@ -304,7 +342,7 @@ fun EditTransaction(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TimePicker(transaction = transaction)
+                    com.example.arcticvault.ui.TimePicker(transaction = transaction)
                 }
 
                 //Category
@@ -313,13 +351,13 @@ fun EditTransaction(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.categoryicon),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.category_desc),
                         modifier = Modifier.size(30.dp)
                     )
                     Text(
-                        text = "Set Category",
+                        text = stringResource(R.string.set_category),
                         textAlign = TextAlign.Center,
-                        
+                        fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
                         color = Color.Black,
                         modifier = Modifier.padding(start = 20.dp)
@@ -330,10 +368,10 @@ fun EditTransaction(
                     Image(
                         painter = painterResource(R.drawable.bluecard),
                         contentScale = ContentScale.FillBounds,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.blue_desc),
                         modifier = Modifier.size(300.dp, 60.dp)
                     )
-                    Row (
+                    Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         LazyRow(
@@ -353,7 +391,7 @@ fun EditTransaction(
                                     if (transaction.categoryId == category.id) {
                                         Image(
                                             painter = painterResource(R.drawable.confirmicon),
-                                            contentDescription = stringResource(R.string.back_button_desc),
+                                            contentDescription = stringResource(R.string.confirm_desc),
                                             alpha = 0.5f,
                                             modifier = Modifier
                                                 .size(30.dp)
@@ -366,7 +404,7 @@ fun EditTransaction(
                         Spacer(Modifier.width(10.dp))
                         Image(
                             painter = painterResource(R.drawable.addbutton),
-                            contentDescription = stringResource(R.string.back_button_desc),
+                            contentDescription = stringResource(R.string.add_desc),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
@@ -378,17 +416,29 @@ fun EditTransaction(
                 }
 
                 if (editTransactionViewModel.showCategory) {
-                    CategoryDialog(
+                    com.example.arcticvault.ui.CategoryDialog(
                         category = editTransactionViewModel.category,
                         onDismissRequest = {
                             editTransactionViewModel.showCategory = false
                         },
                         onDelete = {
                             if (editTransactionViewModel.category.inUse == 0) {
-                                coroutineScope.launch {
+                                coroutineScope.launch() {
                                     editTransactionViewModel.deleteCategory(editTransactionViewModel.category)
                                 }
+                                Toast.makeText(
+                                    context,
+                                    "Deleted Successfully, Please Refresh.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "This category is in use by another transaction!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
+                            editTransactionViewModel.updateUiState(transaction)
                         },
                         onSelect = {
                             editTransactionViewModel.setCategoryInUse(transaction.categoryId)
@@ -398,55 +448,41 @@ fun EditTransaction(
                 }
 
                 if (editTransactionViewModel.showCreateCategory) {
+                    editTransactionViewModel.resetCategory()
                     CreateCategoryDialog(
                         editTransactionViewModel = editTransactionViewModel,
+                        coroutineScope = coroutineScope,
                         onDismissRequest = {
                             editTransactionViewModel.showCreateCategory = false
-                            },
-                        onOk = { coroutineScope.launch {
-                            editTransactionViewModel.addCategory(it)
-                        }
-                            editTransactionViewModel.updateUiState(transaction)
-                        }
+                        },
+                        context = context,
+                        transaction = transaction
                     )
                 }
 
-                //Attachment button
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.attachmenticon),
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )
-                    Text(
-                        text = "Attachments",
-                        textAlign = TextAlign.Center,
-                        
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        modifier = Modifier.padding(start = 20.dp)
-                    )
-                }
-                
                 //Description Box
                 Box {
                     Image(
                         painter = painterResource(R.drawable.bluecard),
                         contentScale = ContentScale.FillBounds,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.blue_desc),
                         modifier = Modifier
                             .size(300.dp, 60.dp)
                     )
                     TextField(
                         value = transaction.description,
-                        onValueChange = { editTransactionViewModel.updateUiState(transaction.copy(description = it)) },
+                        onValueChange = {
+                            editTransactionViewModel.updateUiState(
+                                transaction.copy(
+                                    description = it
+                                )
+                            )
+                        },
                         placeholder = {
                             Text(
-                                text = "Description",
+                                text = stringResource(R.string.description),
                                 textAlign = TextAlign.Center,
-    
+                                fontFamily = montserratFontFamily,
                                 fontSize = 20.sp,
                                 color = Color.Black,
                                 modifier = Modifier.padding(start = 20.dp)
@@ -458,7 +494,7 @@ fun EditTransaction(
                         textStyle = TextStyle(
                             fontSize = 20.sp,
                             color = Color.Black,
-                            
+                            fontFamily = montserratFontFamily
                         ),
                         singleLine = true,
                         colors = TextFieldDefaults
@@ -487,12 +523,14 @@ fun EditTransaction(
                     //Delete button
                     Image(
                         painter = painterResource(R.drawable.trashicon),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.trash_desc),
                         modifier = Modifier
                             .size(30.dp)
                             .clickable {
                                 coroutineScope.launch {
-                                    editTransactionViewModel.deleteTransaction(editTransactionUiState)
+                                    editTransactionViewModel.deleteTransaction(
+                                        editTransactionUiState
+                                    )
                                 }
                                 onButtonClick()
                             }
@@ -501,7 +539,7 @@ fun EditTransaction(
                     //Refresh button
                     Image(
                         painter = painterResource(R.drawable.refreshbutton),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.refresh_desc),
                         modifier = Modifier
                             .size(35.dp)
                             .clickable {
@@ -528,7 +566,7 @@ fun TimePicker(
 
     Image(
         painter = painterResource(R.drawable.clockicon),
-        contentDescription = null,
+        contentDescription = stringResource(R.string.clock_desc),
         modifier = Modifier
             .size(30.dp)
             .clickable {
@@ -538,46 +576,53 @@ fun TimePicker(
     Text(
         text = transaction.time,
         textAlign = TextAlign.Center,
-        
+        fontFamily = montserratFontFamily,
         fontSize = 20.sp,
         color = Color.Black,
         modifier = Modifier.padding(start = 20.dp)
     )
 
     if (editTransactionViewModel.showTimePicker) {
-        TimePickerDialog(
-            onDismissRequest = {  },
+        com.example.arcticvault.ui.TimePickerDialog(
+            onDismissRequest = { },
             confirmButton = {
                 TextButton(
                     onClick = {
                         editTransactionViewModel.updateUiState(
                             transaction.copy(
-                                time = timePickerState.hour.toString() + ":" + if(timePickerState.minute == 0){"00"} else timePickerState.minute.toString()
-                            ))
+                                time = timePickerState.hour.toString() + ":" + if (timePickerState.minute == 0) {
+                                    "00"
+                                } else timePickerState.minute.toString()
+                            )
+                        )
                         editTransactionViewModel.showTimePicker = false
                     }
-                ) { Text(
-                    text = "OK",
-                    textAlign = TextAlign.Center,
-                    
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    modifier = Modifier.padding(start = 20.dp)
-                ) }
+                ) {
+                    Text(
+                        text = stringResource(R.string.ok),
+                        textAlign = TextAlign.Center,
+                        fontFamily = montserratFontFamily,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
+                }
             },
             dismissButton = {
                 TextButton(
                     onClick = {
                         editTransactionViewModel.showTimePicker = false
                     }
-                ) { Text(
-                    text = "Cancel",
-                    textAlign = TextAlign.Center,
-                    
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    modifier = Modifier.padding(start = 20.dp)
-                ) }
+                ) {
+                    Text(
+                        text = stringResource(R.string.cancel),
+                        textAlign = TextAlign.Center,
+                        fontFamily = montserratFontFamily,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
+                }
             }
         )
         {
@@ -588,7 +633,7 @@ fun TimePicker(
 
 @Composable
 fun TimePickerDialog(
-    title: String = "Select Time",
+    title: String = stringResource(R.string.select_time),
     onDismissRequest: () -> Unit,
     confirmButton: @Composable (() -> Unit),
     dismissButton: @Composable (() -> Unit),
@@ -613,7 +658,7 @@ fun TimePickerDialog(
                 Text(
                     text = title,
                     textAlign = TextAlign.Center,
-                    
+                    fontFamily = montserratFontFamily,
                     fontSize = 20.sp,
                     color = Color.Black,
                     modifier = Modifier.padding(start = 20.dp)
@@ -638,7 +683,7 @@ fun DisplayCategory(category: Category, categoryClick: () -> Unit) {
     Text(
         text = category.title,
         textAlign = TextAlign.Center,
-        
+        fontFamily = montserratFontFamily,
         fontSize = 20.sp,
         color = Color.Black,
         modifier = Modifier
@@ -651,8 +696,10 @@ fun DisplayCategory(category: Category, categoryClick: () -> Unit) {
 @Composable
 fun CreateCategoryDialog(
     editTransactionViewModel: EditTransactionViewModel,
-    onDismissRequest: () -> Unit,
-    onOk: (Category) -> Unit
+    coroutineScope: CoroutineScope,
+    context: Context,
+    transaction: TransactionModel,
+    onDismissRequest: () -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -673,9 +720,9 @@ fun CreateCategoryDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Add new category",
+                    text = stringResource(R.string.add_new_category),
                     textAlign = TextAlign.Center,
-                    
+                    fontFamily = montserratFontFamily,
                     fontSize = 20.sp,
                     color = Color.Black
                 )
@@ -687,9 +734,9 @@ fun CreateCategoryDialog(
                     onValueChange = { editTransactionViewModel.categoryTitle = it },
                     placeholder = {
                         Text(
-                            text = "Category",
+                            text = stringResource(R.string.category),
                             textAlign = TextAlign.Start,
-
+                            fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black,
                             modifier = Modifier.padding(start = 20.dp)
@@ -701,7 +748,7 @@ fun CreateCategoryDialog(
                     textStyle = TextStyle(
                         fontSize = 20.sp,
                         color = Color.Black,
-                        
+                        fontFamily = montserratFontFamily
                     ),
                     singleLine = true,
                     colors = TextFieldDefaults
@@ -727,9 +774,9 @@ fun CreateCategoryDialog(
                         }
                     ) {
                         Text(
-                            text = "Pick Color",
+                            text = stringResource(R.string.pick_color),
                             textAlign = TextAlign.Center,
-
+                            fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black
                         )
@@ -758,9 +805,9 @@ fun CreateCategoryDialog(
                         }
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             textAlign = TextAlign.Center,
-
+                            fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black
                         )
@@ -770,15 +817,43 @@ fun CreateCategoryDialog(
 
                     TextButton(
                         onClick = {
-                            onOk(Category(title = editTransactionViewModel.categoryTitle, color = editTransactionViewModel.colorPicked, inUse = 0))
-                            editTransactionViewModel.resetCategory()
-                            onDismissRequest()
+                            if (editTransactionViewModel.validateCategory(
+                                    Category(
+                                        title = editTransactionViewModel.categoryTitle,
+                                        color = editTransactionViewModel.colorPicked,
+                                        inUse = 0
+                                    )
+                                )
+                            ) {
+                                coroutineScope.launch {
+                                    editTransactionViewModel.addCategory(
+                                        Category(
+                                            title = editTransactionViewModel.categoryTitle,
+                                            color = editTransactionViewModel.colorPicked,
+                                            inUse = 0
+                                        )
+                                    )
+                                }
+                                Toast.makeText(
+                                    context,
+                                    "Created Successfully, Please Refresh.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                onDismissRequest()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Please enter a category title!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            editTransactionViewModel.updateUiState(transaction)
                         }
                     ) {
                         Text(
-                            text = "Ok",
+                            text = stringResource(R.string.ok),
                             textAlign = TextAlign.Center,
-
+                            fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black
                         )
@@ -817,7 +892,7 @@ fun CategoryDialog(
                 Text(
                     text = category.title,
                     textAlign = TextAlign.Center,
-                    
+                    fontFamily = montserratFontFamily,
                     fontSize = 20.sp,
                     color = Color.Black,
                     modifier = Modifier
@@ -845,7 +920,7 @@ fun CategoryDialog(
                         Text(
                             text = stringResource(R.string.delete),
                             textAlign = TextAlign.Center,
-
+                            fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black
                         )
@@ -860,7 +935,7 @@ fun CategoryDialog(
                         Text(
                             text = stringResource(R.string.select),
                             textAlign = TextAlign.Center,
-
+                            fontFamily = montserratFontFamily,
                             fontSize = 20.sp,
                             color = Color.Black,
                             modifier = Modifier.width(80.dp)
@@ -930,6 +1005,7 @@ fun ColorPicker(
             Text(
                 text = stringResource(R.string.ok),
                 textAlign = TextAlign.Center,
+                fontFamily = montserratFontFamily,
                 fontSize = 20.sp,
                 color = Color.Black
             )

@@ -1,6 +1,6 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui
 
-import com.example.arcticvault.Model.EditGoalsInputModel
+import com.example.arcticvault.model.EditGoalsInputModel
 
 data class EditGoalsInputUiState(
     val editGoalsInput: EditGoalsInputModel = EditGoalsInputModel(),

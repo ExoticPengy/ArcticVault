@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 class TransactionsAnalysisViewModel(
     private val transactionRepository: TransactionsRepository,
     private val categoryRepository: CategoryRepository
-    ): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow(TransactionsAnalysisUiState())
 
     val uiState: StateFlow<TransactionsAnalysisUiState> = _uiState.asStateFlow()
@@ -58,9 +58,16 @@ class TransactionsAnalysisViewModel(
     var date2Month by mutableStateOf("Mon")
     var maxRange by mutableIntStateOf(0)
 
-    fun updateUiState(transactionsList: List<Transaction>, categoryList: List<Category>, selectedCategoryList: List<Int>, groupBarList: List<GroupBar>, maxRange: Int) {
+    fun updateUiState(
+        transactionsList: List<Transaction>,
+        categoryList: List<Category>,
+        selectedCategoryList: List<Int>,
+        groupBarList: List<GroupBar>,
+        maxRange: Int
+    ) {
         _uiState.value = TransactionsAnalysisUiState(
-            transactionsList, categoryList, selectedCategoryList, groupBarList, maxRange)
+            transactionsList, categoryList, selectedCategoryList, groupBarList, maxRange
+        )
     }
 
     fun getMonthBackground(): Int {
@@ -109,28 +116,27 @@ class TransactionsAnalysisViewModel(
 
     private fun filterByDate1(transactionListByCategory: List<List<Transaction>>): List<List<Transaction>> {
         val filteredByDate1 = mutableListOf<List<Transaction>>()
-       for (transactionLists in transactionListByCategory) {
-           val date1List = mutableListOf<Transaction>()
-           for (transaction in transactionLists) {
-               var year = transaction.date
-               var month = transaction.date
-               year = year.replaceBeforeLast("/", "")
-               year = year.replace("/", "")
-               if(!yearOnly) {
-                   month = month.replaceBefore("/", "")
-                   month = month.replaceAfterLast("/", "")
-                   month = month.replace("/", "")
-                   month = monthName(month)
-               }
-               if(yearOnly && year == date1Year) {
-                   date1List.add(transaction)
-               }
-               else if(year == date1Year && month == date1Month) {
-                   date1List.add(transaction)
-               }
-           }
-           filteredByDate1.add(date1List)
-       }
+        for (transactionLists in transactionListByCategory) {
+            val date1List = mutableListOf<Transaction>()
+            for (transaction in transactionLists) {
+                var year = transaction.date
+                var month = transaction.date
+                year = year.replaceBeforeLast("/", "")
+                year = year.replace("/", "")
+                if (!yearOnly) {
+                    month = month.replaceBefore("/", "")
+                    month = month.replaceAfterLast("/", "")
+                    month = month.replace("/", "")
+                    month = monthName(month)
+                }
+                if (yearOnly && year == date1Year) {
+                    date1List.add(transaction)
+                } else if (year == date1Year && month == date1Month) {
+                    date1List.add(transaction)
+                }
+            }
+            filteredByDate1.add(date1List)
+        }
         return filteredByDate1
     }
 
@@ -143,16 +149,15 @@ class TransactionsAnalysisViewModel(
                 var month = transaction.date
                 year = year.replaceBeforeLast("/", "")
                 year = year.replace("/", "")
-                if(!yearOnly) {
+                if (!yearOnly) {
                     month = month.replaceBefore("/", "")
                     month = month.replaceAfterLast("/", "")
                     month = month.replace("/", "")
                     month = monthName(month)
                 }
-                if(yearOnly && year == date2Year) {
+                if (yearOnly && year == date2Year) {
                     date2List.add(transaction)
-                }
-                else if(year == date2Year && month == date2Month) {
+                } else if (year == date2Year && month == date2Month) {
                     date2List.add(transaction)
                 }
             }
@@ -161,19 +166,22 @@ class TransactionsAnalysisViewModel(
         return filteredByDate2
     }
 
-    private fun makeGroupedBarchartList(date1Data: List<List<Transaction>>, date2Data: List<List<Transaction>>): List<GroupBar> {
+    private fun makeGroupedBarchartList(
+        date1Data: List<List<Transaction>>,
+        date2Data: List<List<Transaction>>
+    ): List<GroupBar> {
         val totalTransactionAmountList = mutableListOf<Double>()
-        for(list in date1Data) {
+        for (list in date1Data) {
             var totalTransactionAmount = 0.0
-            for(data in list) {
+            for (data in list) {
                 totalTransactionAmount += data.amount
             }
             totalTransactionAmountList.add(totalTransactionAmount)
         }
         val totalTransactionAmountList2 = mutableListOf<Double>()
-        for(list in date2Data) {
+        for (list in date2Data) {
             var totalTransactionAmount2 = 0.0
-            for(data in list) {
+            for (data in list) {
                 totalTransactionAmount2 += data.amount
             }
             totalTransactionAmountList2.add(totalTransactionAmount2)
@@ -181,13 +189,14 @@ class TransactionsAnalysisViewModel(
         findMaxRange(totalTransactionAmountList, totalTransactionAmountList2)
 
         val groupBarList = mutableListOf<GroupBar>()
-        for(i in 0 until selectedCategoryList.size) {
+        for (i in 0 until selectedCategoryList.size) {
             val barList = mutableListOf<BarData>()
-            for(j in 0 until 2) {
-                val barValue = if (j == 0) totalTransactionAmountList[i] else totalTransactionAmountList2[i]
+            for (j in 0 until 2) {
+                val barValue =
+                    if (j == 0) totalTransactionAmountList[i] else totalTransactionAmountList2[i]
                 var label = ""
                 for (category in categoryList) {
-                    if (selectedCategoryList[i] == category.id )
+                    if (selectedCategoryList[i] == category.id)
                         label = category.title
                 }
                 barList.add(
@@ -227,7 +236,7 @@ class TransactionsAnalysisViewModel(
 
     fun findYearOptions(): List<String> {
         val yearList = mutableListOf<String>()
-        for(transaction in transactionsList) {
+        for (transaction in transactionsList) {
             var date = transaction.date
             date = date.replaceBeforeLast("/", "")
             date = date.replace("/", "")
@@ -240,7 +249,7 @@ class TransactionsAnalysisViewModel(
 
     fun findMonthOptions(): List<String> {
         val monthList = mutableListOf<String>()
-        for(transaction in transactionsList) {
+        for (transaction in transactionsList) {
             var date = transaction.date
             date = date.replaceBefore("/", "")
             date = date.replaceAfterLast("/", "")

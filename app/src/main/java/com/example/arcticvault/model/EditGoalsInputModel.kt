@@ -1,4 +1,4 @@
-package com.example.arcticvault.Model
+package com.example.arcticvault.model
 
 data class EditGoalsInputModel(
     val id: Int = 0,

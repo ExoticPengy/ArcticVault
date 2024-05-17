@@ -1,4 +1,4 @@
-package com.example.arcticvault.Data
+package com.example.arcticvault.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

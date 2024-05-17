@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme
+package com.example.arcticvault.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,9 +15,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,38 +23,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arcticvault.Data.Category
-import com.example.arcticvault.Data.EditGoals
 import com.example.arcticvault.R
-
-import com.example.arcticvault.ui.TransactionsViewModel
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.EditGoalsViewModel
-import com.example.arcticvault.ui.theme.theme.EditTransactionViewModel
+import com.example.arcticvault.data.Category
+import com.example.arcticvault.data.EditGoals
+import com.example.arcticvault.ui.theme.montserratFontFamily
 
 object EditGoalsDestination {
     val route = "EditGoals"
     val goalIdArg = "goalId"
     val routeWithArgs = "$route/{$goalIdArg}"
 }
+
 @Composable
 fun Edit_Goals(
-    onPreviousButton:() -> Unit,
+    onPreviousButton: () -> Unit,
     onEditGoalsButton: (Int) -> Unit,
-    onTransactionsButton:() -> Unit,
+    onTransactionsButton: () -> Unit,
     editGoalsViewModel: EditGoalsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     transactionsViewModel: TransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     editTransactionViewModel: EditTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
-)  {
+) {
     val transactionsUiState by transactionsViewModel.transactionsUiState.collectAsState()
     val editGoalsUiState by editGoalsViewModel.editGoalsUiState.collectAsState()
     val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
@@ -65,16 +57,16 @@ fun Edit_Goals(
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercropped),
+            painter = painterResource(R.drawable.topbannercrop),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)
                 .fillMaxSize()
         )
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(top = 40.dp)
-        ){
+        ) {
             Image(
                 painter = painterResource(R.drawable.backbuttoncropped),
                 contentDescription = null,
@@ -108,9 +100,9 @@ fun Edit_Goals(
             startDate = editGoalsList[0].startDate,
             endDate = editGoalsList[0].endDate,
             amountGetDivided = editGoalsViewModel.formatAmount(editGoalsList[0].amountGetDivided),
-            dateOfDivided =  editGoalsList[0].dateOfDivided,
+            dateOfDivided = editGoalsList[0].dateOfDivided,
         )
-    }else if (editGoalsViewModel.numberChanges == 1 && editGoalsList.getOrNull(1) != null){
+    } else if (editGoalsViewModel.numberChanges == 1 && editGoalsList.getOrNull(1) != null) {
         AllEditGoals(
             title = editGoalsList[1].title,
             amount = editGoalsViewModel.formatAmount(editGoalsList[1].amount),
@@ -118,9 +110,9 @@ fun Edit_Goals(
             startDate = editGoalsList[1].startDate,
             endDate = editGoalsList[1].endDate,
             amountGetDivided = editGoalsViewModel.formatAmount(editGoalsList[1].amountGetDivided),
-            dateOfDivided =  editGoalsList[1].dateOfDivided,
+            dateOfDivided = editGoalsList[1].dateOfDivided,
         )
-    }else if (editGoalsViewModel.numberChanges == 2 && editGoalsList.getOrNull(2) != null){
+    } else if (editGoalsViewModel.numberChanges == 2 && editGoalsList.getOrNull(2) != null) {
         AllEditGoals(
             title = editGoalsList[2].title,
             amount = editGoalsViewModel.formatAmount(editGoalsList[2].amount),
@@ -128,16 +120,16 @@ fun Edit_Goals(
             startDate = editGoalsList[2].startDate,
             endDate = editGoalsList[2].endDate,
             amountGetDivided = editGoalsViewModel.formatAmount(editGoalsList[2].amountGetDivided),
-            dateOfDivided =  editGoalsList[2].dateOfDivided,
+            dateOfDivided = editGoalsList[2].dateOfDivided,
         )
     }
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(end = 50.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.End
-    ){
+    ) {
         Spacer(modifier = Modifier.height(100.dp))
         Image(
             painter = painterResource(R.drawable.edit),
@@ -156,7 +148,7 @@ fun Edit_Goals(
         Spacer(modifier = Modifier.height(60.dp))
         Row {
             Image(
-                painter = painterResource(R.drawable.categoryicon), 
+                painter = painterResource(R.drawable.categoryicon),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(start = 60.dp)
@@ -172,14 +164,14 @@ fun Edit_Goals(
             )
         }
     }
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Spacer(modifier = Modifier.height(200.dp))
-        Box{
+        Box {
             Image(
                 painter = painterResource(R.drawable.bluecard),
                 contentDescription = null,
@@ -187,20 +179,20 @@ fun Edit_Goals(
                     .size(300.dp)
             )
 
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.height(300.dp))
-                LazyRow (
+                LazyRow(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .size(240.dp, 60.dp)
                 ) {
                     val categoryList: List<Category> = editGoalsViewModel.categoryList
-                    items(categoryList.size) {index ->
+                    items(categoryList.size) { index ->
                         Spacer(Modifier.width(20.dp))
                         Box {
-                            DisplayCategory(
+                            DisplayGoalCategory(
                                 category = categoryList[index],
                                 categoryClick = {
                                     editGoalsViewModel.selectedCategoryId = it
@@ -217,7 +209,7 @@ fun Edit_Goals(
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
-    )  {
+    ) {
         Spacer(modifier = Modifier.height(290.dp))
         Text(
             text = "Related Transactions:",
@@ -229,11 +221,11 @@ fun Edit_Goals(
         )
     }
     val transactionList = transactionsUiState.transactionList
-    Column (
+    Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         Spacer(modifier = Modifier.height(480.dp))
         for (items in 0..12) {
             if (transactionList.getOrNull(items)?.categoryId == editGoalsViewModel.selectedCategoryId) {
@@ -255,7 +247,7 @@ fun Edit_Goals(
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
-    )  {
+    ) {
         Spacer(modifier = Modifier.height(720.dp))
         Image(
             painter = painterResource(R.drawable.viewallrelatedtransactions),
@@ -270,24 +262,24 @@ fun Edit_Goals(
 
 @Composable
 fun AllEditGoals(
-    title:String,
+    title: String,
     amount: String,
-    milestones:Int,
-    startDate:String,
-    endDate:String,
+    milestones: Int,
+    startDate: String,
+    endDate: String,
     amountGetDivided: String,
-    dateOfDivided:String,
-){
-    Column (
+    dateOfDivided: String,
+) {
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Spacer(modifier = Modifier.height(60.dp))
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-        ){
+        ) {
             Image(
                 painter = painterResource(R.drawable.milestones_bigger),
                 contentDescription = null,
@@ -296,13 +288,13 @@ fun AllEditGoals(
         }
     }
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 70.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
-    ){
+    ) {
         Spacer(modifier = Modifier.height(140.dp))
         Column {
             Text(
@@ -339,12 +331,12 @@ fun AllEditGoals(
             )
         }
     }
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.End
-    ){
+    ) {
         Spacer(modifier = Modifier.height(135.dp))
         Text(
             text = "Date:",
@@ -371,13 +363,13 @@ fun AllEditGoals(
                 .padding(end = 65.dp)
         )
     }
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 55.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
-    ){
+    ) {
         Spacer(modifier = Modifier.height(195.dp))
         Image(
             painter = painterResource(R.drawable.milestones),
@@ -385,13 +377,13 @@ fun AllEditGoals(
             modifier = Modifier.size(300.dp)
         )
     }
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 70.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
-    ){
+    ) {
         Spacer(modifier = Modifier.height(300.dp))
         Column {
             Text(
@@ -426,12 +418,12 @@ fun AllEditGoals(
             )
         }
     }
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.End
-    ){
+    ) {
         Spacer(modifier = Modifier.height(340.dp))
         Text(
             text = dateOfDivided,
@@ -445,76 +437,19 @@ fun AllEditGoals(
 }
 
 @Composable
-fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String, date: String, amount: String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .padding(top = 8.dp, bottom = 8.dp)
-            .width(310.dp)
-    ) {
-        Image(
-            painter = painterResource(icon),
-            contentDescription = stringResource(iconDesc),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .size(35.dp)
-        )
-        Column(
-            modifier = Modifier.width(150.dp)
-        ) {
-            Text(
-                text = title,
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                color = Color.Black,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = "$time - $date",
-                textAlign = TextAlign.Center,
-                fontSize = 10.sp,
-                color = Color.Black
-            )
-        }
-        Text(
-            text = amount,
-            textAlign = TextAlign.Right,
-            fontSize = 16.sp,
-            color = Color.Black,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .width(110.dp)
-        )
-    }
-    Divider(
-        color = Color.Gray,
-        thickness = 1.dp,
-        modifier = Modifier
-            .width(350.dp)
-            .height(1.dp)
-            .padding(start = 40.dp)
-    )
-}
-
-@Composable
-fun DisplayCategory(category: Category, categoryClick: (Int) -> Unit) {
+fun DisplayGoalCategory(category: Category, categoryClick: (Int) -> Unit) {
     Text(
         text = category.title,
         textAlign = TextAlign.Center,
+        fontFamily = montserratFontFamily,
         fontSize = 20.sp,
         color = Color.Black,
         modifier = Modifier
-            .background(color = Color(category.color.toULong()), shape = RoundedCornerShape(50.dp))
+            .background(color = Color(category.color.toULong()), shape = RoundedCornerShape(50))
             .padding(5.dp)
             .clickable { categoryClick(category.id) }
     )
 }
-
-
 
 
 

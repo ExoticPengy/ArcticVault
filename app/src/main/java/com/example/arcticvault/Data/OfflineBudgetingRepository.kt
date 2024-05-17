@@ -1,9 +1,8 @@
-package com.example.arcticvault.Data
+package com.example.arcticvault.data
 
 import kotlinx.coroutines.flow.Flow
 
-class OfflineBudgetingRepository (private val budgetingDao: BudgetingDao):BudgetingRepository
-{
+class OfflineBudgetingRepository(private val budgetingDao: BudgetingDao) : BudgetingRepository {
     override suspend fun insertBudgeting(budgeting: Budgeting) = budgetingDao.insert(budgeting)
 
     override suspend fun updateBudgeting(budgeting: Budgeting) = budgetingDao.update(budgeting)

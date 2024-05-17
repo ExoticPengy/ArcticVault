@@ -37,6 +37,43 @@ object AppViewModelProvider {
                 arcticVaultApplication().container.categoryRepository
             )
         }
+
+        initializer {
+            EditGoalsInputViewModel(
+                this.createSavedStateHandle(),
+                arcticVaultApplication().container.editGoalsRepository
+            )
+        }
+
+        initializer {
+            EditGoalsViewModel(
+                this.createSavedStateHandle(),
+                arcticVaultApplication().container.categoryRepository,
+                arcticVaultApplication().container.editGoalsRepository,
+
+                )
+        }
+
+        initializer {
+            BudgetingViewModel(
+                this.createSavedStateHandle(),
+                arcticVaultApplication().container.categoryRepository,
+                arcticVaultApplication().container.budgetingRepository
+            )
+        }
+
+        initializer {
+            BudgetingInputViewModel(
+                this.createSavedStateHandle(),
+                arcticVaultApplication().container.budgetingRepository
+            )
+        }
+
+        initializer {
+            FinancialGoalsViewModel(
+                arcticVaultApplication().container.editGoalsRepository
+            )
+        }
     }
 }
 

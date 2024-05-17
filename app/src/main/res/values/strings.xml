@@ -54,5 +54,6 @@
     //Title Strings
     <string name="transaction_screen_title">Transactions</string>
     <string name="transaction_analysis_screen_title">Transactions Analysis</string>
+    <string name="Goal">Goals</string>
 
 </resources>

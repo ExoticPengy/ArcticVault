@@ -1,18 +1,14 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui
 
-import androidx.compose.material3.Text
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.arcticvault.Data.Budgeting
-import com.example.arcticvault.Data.BudgetingRepository
-import com.example.arcticvault.Model.BudgetingInputModel
-import com.example.arcticvault.ui.theme.BudgetingDestination
+import com.example.arcticvault.data.Budgeting
+import com.example.arcticvault.data.BudgetingRepository
+import com.example.arcticvault.model.BudgetingInputModel
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,14 +22,14 @@ class BudgetingInputViewModel(
     savedStateHandle: SavedStateHandle,
     private val budgetingRepository: BudgetingRepository,
 
-) : ViewModel() {
+    ) : ViewModel() {
     private val firebaseDb = Firebase.firestore
     private val budgetingRef = firebaseDb.collection("budgeting")
     val budgetingList = mutableListOf<Budgeting>()
 
     init {
-        budgetingRef.get().addOnSuccessListener{documents ->
-            for(document in documents){
+        budgetingRef.get().addOnSuccessListener { documents ->
+            for (document in documents) {
                 budgetingList.add(document.toObject<BudgetingInputModel>().budgetToData())
             }
         }
@@ -97,7 +93,7 @@ class BudgetingInputViewModel(
                 budgetingRepository.updateBudgeting(budgetingData)
             } else
                 budgetingRepository.insertBudgeting(budgetingData)
-                budgetingRef.add(budgetingData)
+            budgetingRef.add(budgetingData)
         }
     }
 

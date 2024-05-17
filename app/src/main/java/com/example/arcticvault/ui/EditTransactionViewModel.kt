@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.arcticvault.EditTransactionDestination
 import com.example.arcticvault.R
 import com.example.arcticvault.data.Category
 import com.example.arcticvault.data.CategoryRepository
@@ -29,8 +28,9 @@ class EditTransactionViewModel(
     savedStateHandle: SavedStateHandle,
     private val transactionsRepository: TransactionsRepository,
     private val categoryRepository: CategoryRepository
-): ViewModel() {
-    private val transactionId: Int = savedStateHandle[EditTransactionDestination.transactionIdArg] ?: -1
+) : ViewModel() {
+    private val transactionId: Int =
+        savedStateHandle[EditTransactionDestination.transactionIdArg] ?: -1
 
     private val _uiState = MutableStateFlow(EditTransactionUiState())
 
@@ -65,7 +65,7 @@ class EditTransactionViewModel(
 
     var showCreateCategory by mutableStateOf(false)
     var showCategory by mutableStateOf(false)
-    var category by mutableStateOf(Category(0,"",0, 0))
+    var category by mutableStateOf(Category(0, "", 0, 0))
 
     var showColorPicker by mutableStateOf(false)
 
@@ -85,12 +85,13 @@ class EditTransactionViewModel(
             }
         }
         _uiState.value = EditTransactionUiState(
-            transaction = transactionModel, categoryList)
+            transaction = transactionModel, categoryList
+        )
     }
 
     fun setCategoryInUse(categoryId: Int?) {
-        var currentCategory by mutableStateOf(Category(0,"",0, 0))
-        for(category in categoryList) {
+        var currentCategory by mutableStateOf(Category(0, "", 0, 0))
+        for (category in categoryList) {
             if (categoryId == category.id) {
                 currentCategory = category
             }
@@ -107,14 +108,23 @@ class EditTransactionViewModel(
         }
     }
 
-    fun checkType(transactionModel: TransactionModel, isExpense: Boolean, isIncome: Boolean){
+    fun checkType(transactionModel: TransactionModel, isExpense: Boolean, isIncome: Boolean) {
         var transaction = transactionModel
         if (isExpense && firstCheck) {
-            transaction = transactionModel.copy(icon = R.drawable.expense, type = R.string.expense, time = "Time", date = "Date")
+            transaction = transactionModel.copy(
+                icon = R.drawable.expense,
+                type = R.string.expense,
+                time = "Time",
+                date = "Date"
+            )
             firstCheck = false
-        }
-        else if (isIncome && firstCheck) {
-            transaction = transactionModel.copy(icon = R.drawable.income, type = R.string.income, time = "Time", date = "Date")
+        } else if (isIncome && firstCheck) {
+            transaction = transactionModel.copy(
+                icon = R.drawable.income,
+                type = R.string.income,
+                time = "Time",
+                date = "Date"
+            )
             firstCheck = false
         }
         updateUiState(transaction)
@@ -144,19 +154,20 @@ class EditTransactionViewModel(
     fun validateInput(uiState: EditTransactionUiState): Boolean {
         return with(uiState) {
             transaction.id.toString().isNotBlank() &&
-            transaction.icon.toString().isNotBlank() &&
-            transaction.type.toString().isNotBlank() &&
-            transaction.title.isNotBlank() &&
-            transaction.time.isNotBlank() &&
-            transaction.time != "Time" &&
-            transaction.date.isNotBlank() &&
-            transaction.date != "Date" &&
-            transaction.amount != 0.00
+                    transaction.icon.toString().isNotBlank() &&
+                    transaction.type.toString().isNotBlank() &&
+                    transaction.title.isNotBlank() &&
+                    transaction.time.isNotBlank() &&
+                    transaction.time != "Time" &&
+                    transaction.date.isNotBlank() &&
+                    transaction.date != "Date" &&
+                    transaction.amount != 0.00
         }
     }
 
     fun validateCategory(category: Category): Boolean {
-        return category.id.toString().isNotBlank() && category.title.isNotBlank() && category.color.toString().isNotBlank()
+        return category.id.toString()
+            .isNotBlank() && category.title.isNotBlank() && category.color.toString().isNotBlank()
     }
 
     private fun TransactionModel.transactionToData(): Transaction = Transaction(

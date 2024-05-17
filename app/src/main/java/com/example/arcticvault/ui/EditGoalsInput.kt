@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme
+package com.example.arcticvault.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -49,10 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arcticvault.Model.EditGoalsInputModel
+import com.example.arcticvault.model.EditGoalsInputModel
 import com.example.arcticvault.R
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.EditGoalsInputViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -63,15 +61,15 @@ import java.util.Locale
 object EditGoalsInputDestination {
     val route = "EditGoalsInput"
     val goalIdArg = "goalId"
-    val routeWithArgs = "${EditGoalsInputDestination.route}/{$goalIdArg}"
+    val routeWithArgs = "$route/{$goalIdArg}"
 }
 
 @Composable
 fun EditGoalsInput(
     editGoalsInputViewModel: EditGoalsInputViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onPreviousButton:() -> Unit,
-    onCancelButton:() -> Unit,
-){
+    onPreviousButton: () -> Unit,
+    onCancelButton: () -> Unit,
+) {
     val editGoalsInputUiState by editGoalsInputViewModel.uiState.collectAsState()
     val editGoals: EditGoalsInputModel = editGoalsInputUiState.editGoalsInput
     val coroutineScope = rememberCoroutineScope()
@@ -91,16 +89,16 @@ fun EditGoalsInput(
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercropped),
+            painter = painterResource(R.drawable.topbannercrop),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)
                 .fillMaxSize()
         )
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(top = 40.dp)
-        ){
+        ) {
             TextButton(onClick = { onPreviousButton() }) {
                 Image(
                     painter = painterResource(R.drawable.backbuttoncropped),
@@ -188,7 +186,7 @@ fun EditGoalsInput(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             Spacer(modifier = Modifier.height(350.dp)) // Adjusted spacer height
             Text(
                 modifier = Modifier.padding(start = 30.dp), // Adjusted padding to add space between text and TextField
@@ -200,7 +198,15 @@ fun EditGoalsInput(
             )
             TextField(
                 value = editGoalsInputViewModel.formatAmount(editGoals.amount),
-                onValueChange = { editGoalsInputViewModel.updateUiState(editGoals.copy(amount = editGoalsInputViewModel.updateAmount(it))) },
+                onValueChange = {
+                    editGoalsInputViewModel.updateUiState(
+                        editGoals.copy(
+                            amount = editGoalsInputViewModel.updateAmount(
+                                it
+                            )
+                        )
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Number
@@ -247,13 +253,20 @@ fun EditGoalsInput(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(200.dp))
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-        ){
-            TextButton(onClick = { if(editGoals.milestones > 1){
-                editGoalsInputViewModel.updateUiState(editGoals.copy(milestones = editGoals.milestones.minus(1)))
-            }
+        ) {
+            TextButton(onClick = {
+                if (editGoals.milestones > 1) {
+                    editGoalsInputViewModel.updateUiState(
+                        editGoals.copy(
+                            milestones = editGoals.milestones.minus(
+                                1
+                            )
+                        )
+                    )
+                }
             }) {
                 Image(
                     painter = painterResource(R.drawable.minus),
@@ -277,7 +290,15 @@ fun EditGoalsInput(
                     color = Color.White,
                 )
             }
-            TextButton(onClick = { editGoalsInputViewModel.updateUiState(editGoals.copy(milestones = editGoals.milestones.plus(1))) }) {
+            TextButton(onClick = {
+                editGoalsInputViewModel.updateUiState(
+                    editGoals.copy(
+                        milestones = editGoals.milestones.plus(
+                            1
+                        )
+                    )
+                )
+            }) {
                 Image(
                     painter = painterResource(R.drawable.plus),
                     contentDescription = null,
@@ -294,7 +315,7 @@ fun EditGoalsInput(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(300.dp))
-        Column (
+        Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -323,12 +344,12 @@ fun EditGoalsInput(
                 onBackClicked = { editGoalsInputViewModel.showDatePicker = false }
             )
         }
-        Row (
+        Row(
 
         ) {
             Column {
                 Text(
-                    text = "Start Date" + "\n" +editGoalsInputUiState.editGoalsInput.startDate ,
+                    text = "Start Date" + "\n" + editGoalsInputUiState.editGoalsInput.startDate,
                     textAlign = TextAlign.Center,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
@@ -346,7 +367,7 @@ fun EditGoalsInput(
             }
             Column {
                 Text(
-                    text ="End Date" + "\n" + editGoalsInputUiState.editGoalsInput.endDate,
+                    text = "End Date" + "\n" + editGoalsInputUiState.editGoalsInput.endDate,
                     textAlign = TextAlign.Center,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
@@ -357,7 +378,7 @@ fun EditGoalsInput(
     }
     editGoalsInputViewModel.updateUiState(editGoals.copy(amountGetDivided = editGoals.amount / editGoals.milestones))
     //Save Button And Cancel Button
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 120.dp),
@@ -365,20 +386,20 @@ fun EditGoalsInput(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(200.dp))
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ){
+        ) {
             Button(onClick = { onCancelButton() }) {
                 Text(text = "Cancel")
             }
             Button(onClick = {
-                if(editGoalsInputViewModel.validateInput(editGoalsInputUiState)){
+                if (editGoalsInputViewModel.validateInput(editGoalsInputUiState)) {
                     coroutineScope.launch {
                         editGoalsInputViewModel.saveEditGoals(editGoals)
                     }
                     onCancelButton()
-                }else{
+                } else {
                     errorMessage = "Please fill in all fields!"
                 }
             }) {
@@ -412,15 +433,17 @@ fun DateRangePickerDialog(
         }
     }
     // Calculate number of days between start and end dates
-    val startDate = selectedStartDate?.let { LocalDate.parse(it, DateTimeFormatter.ofPattern("dd-MM-yyyy")) }
-    val endDate = selectedEndDate?.let { LocalDate.parse(it, DateTimeFormatter.ofPattern("dd-MM-yyyy")) }
+    val startDate =
+        selectedStartDate?.let { LocalDate.parse(it, DateTimeFormatter.ofPattern("dd-MM-yyyy")) }
+    val endDate =
+        selectedEndDate?.let { LocalDate.parse(it, DateTimeFormatter.ofPattern("dd-MM-yyyy")) }
     if (startDate != null && endDate != null) {
         val daysBetween = calculateDaysBetween(startDate, endDate)
-        val dateGetDivided = daysBetween/editGoals.milestones
+        val dateGetDivided = daysBetween / editGoals.milestones
         // Calculate the new date by adding dateGetDivided days to the startDate
         val newDate = startDate.plusDays(dateGetDivided)
         val formattedDate = newDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-    editGoalsInputViewModel.updateUiState(editGoals.copy(dateOfDivided = formattedDate))
+        editGoalsInputViewModel.updateUiState(editGoals.copy(dateOfDivided = formattedDate))
     }
     DatePickerDialog(
         onDismissRequest = { onBackClicked() },
@@ -428,7 +451,12 @@ fun DateRangePickerDialog(
             Button(
                 onClick = {
                     onSaveClicked()
-                    editGoalsInputViewModel.updateUiState(editGoals.copy(startDate = selectedStartDate ?: "Start Date" , endDate = selectedEndDate ?: "End Date"))
+                    editGoalsInputViewModel.updateUiState(
+                        editGoals.copy(
+                            startDate = selectedStartDate ?: "Start Date",
+                            endDate = selectedEndDate ?: "End Date"
+                        )
+                    )
                 },
             ) {
                 Text(

@@ -1,4 +1,4 @@
-package com.example.arcticvault
+package com.example.arcticvault.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
@@ -33,9 +35,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arcticvault.Data.Transaction
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.TransactionsViewModel
+import com.example.arcticvault.R
+import com.example.arcticvault.data.Transaction
+import com.example.arcticvault.ui.theme.montserratFontFamily
 
 object TransactionsDestination {
     val route = "Transactions"
@@ -46,13 +48,16 @@ fun Transactions(
     onAddExpenseClick: () -> Unit,
     onAddIncomeClick: () -> Unit,
     onViewAllClick: () -> Unit,
+    onBackButtonClick: () -> Unit,
     transactionsViewModel: TransactionsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val transactionsUiState by transactionsViewModel.transactionsUiState.collectAsState()
+    val transactionList: List<Transaction> = transactionsUiState.transactionList
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
             //top banner and transactions card
             Box(
@@ -83,11 +88,12 @@ fun Transactions(
                             modifier = Modifier
                                 .size(35.dp)
                                 .clickable {
-
+                                    onBackButtonClick()
                                 }
                         )
                         Text(
                             text = stringResource(R.string.transaction_screen_title),
+                            fontFamily = montserratFontFamily,
                             fontSize = 30.sp,
                             textAlign = TextAlign.Center
                         )
@@ -119,7 +125,7 @@ fun Transactions(
                         Column {
                             Text(
                                 text = "Pengu Company",
-                                
+                                fontFamily = montserratFontFamily,
                                 color = Color.White,
                                 modifier = Modifier
                                     .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
@@ -135,9 +141,9 @@ fun Transactions(
                                     .padding(top = 35.dp)
                             ) {
                                 Text(
-                                    text = "Add\nTransactions",
+                                    text = stringResource(R.string.add_transactions),
                                     textAlign = TextAlign.Center,
-                                    
+                                    fontFamily = montserratFontFamily,
                                     color = Color.White,
                                     modifier = Modifier
                                         .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
@@ -167,9 +173,9 @@ fun Transactions(
                                             }
                                     )
                                     Text(
-                                        text = "Income",
+                                        text = stringResource(R.string.income),
                                         textAlign = TextAlign.Center,
-                                        
+                                        fontFamily = montserratFontFamily,
                                         fontSize = 10.sp,
                                         color = Color.White,
                                         modifier = Modifier
@@ -193,9 +199,9 @@ fun Transactions(
                                             }
                                     )
                                     Text(
-                                        text = "Expense",
+                                        text = stringResource(R.string.expense),
                                         textAlign = TextAlign.Center,
-                                        
+                                        fontFamily = montserratFontFamily,
                                         fontSize = 10.sp,
                                         color = Color.White,
                                         modifier = Modifier
@@ -225,27 +231,28 @@ fun Transactions(
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth()
                 ) {
-                    Spacer(Modifier.width(10.dp))
                     CircularProgressIndicator(
-                        progress = 0.7f,
+                        progress = (transactionsViewModel.calculateProfit(
+                            transactionList,
+                            false
+                        ) / 100).toFloat(),
                         color = Color.Green,
                         trackColor = Color.DarkGray,
                         modifier = Modifier
                             .size(30.dp)
                     )
-                    Spacer(Modifier.width(10.dp))
                     Text(
-                        text = "Income",
+                        text = stringResource(R.string.income),
                         textAlign = TextAlign.Center,
-                        
+                        fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
                         color = Color.White
                     )
-                    Spacer(Modifier.width(20.dp))
                     Divider(
                         color = Color.White,
                         thickness = 1.dp,
@@ -253,27 +260,40 @@ fun Transactions(
                             .width(1.dp)
                             .height(20.dp)
                     )
-                    Spacer(Modifier.width(20.dp))
                     Column {
                         Text(
-                            text = "RM8901",
+                            text = transactionsViewModel.formatAmount(
+                                transactionsViewModel.calculateProfit(transactionList, true)
+                            ),
                             textAlign = TextAlign.Center,
-                            
+                            fontFamily = montserratFontFamily,
                             fontSize = 16.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
                             color = Color.White
                         )
                         Row {
                             Text(
-                                text = "+78%",
+                                text = "${
+                                    transactionsViewModel.positiveOrNegative(
+                                        transactionsViewModel.profitIsPositive
+                                    )
+                                }${transactionsViewModel.calculateProfit(transactionList, false)}%",
                                 textAlign = TextAlign.Center,
-                                
+                                fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
-                                color = Color.Green
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                color = transactionsViewModel.changeColor(
+                                    transactionsViewModel.profitIsPositive,
+                                    true
+                                ),
+                                modifier = Modifier.width(65.dp)
                             )
                             Text(
-                                text = " vs last year",
+                                text = stringResource(R.string.vs),
                                 textAlign = TextAlign.Center,
-                                
+                                fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
                                 color = Color.White
                             )
@@ -301,27 +321,28 @@ fun Transactions(
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth()
                 ) {
-                    Spacer(Modifier.width(10.dp))
                     CircularProgressIndicator(
-                        progress = 0.7f,
+                        progress = (transactionsViewModel.calculateLoss(
+                            transactionList,
+                            false
+                        ) / 100).toFloat(),
                         color = Color.Red,
                         trackColor = Color.DarkGray,
                         modifier = Modifier
                             .size(30.dp)
                     )
-                    Spacer(Modifier.width(10.dp))
                     Text(
-                        text = "Expense",
+                        text = stringResource(R.string.expense),
                         textAlign = TextAlign.Center,
-                        
+                        fontFamily = montserratFontFamily,
                         fontSize = 20.sp,
                         color = Color.White
                     )
-                    Spacer(Modifier.width(10.dp))
                     Divider(
                         color = Color.White,
                         thickness = 1.dp,
@@ -329,27 +350,43 @@ fun Transactions(
                             .width(1.dp)
                             .height(20.dp)
                     )
-                    Spacer(Modifier.width(20.dp))
                     Column {
                         Text(
-                            text = "RM3678",
+                            text = transactionsViewModel.formatAmount(
+                                transactionsViewModel.calculateLoss(
+                                    transactionList,
+                                    true
+                                )
+                            ),
                             textAlign = TextAlign.Center,
-                            
+                            fontFamily = montserratFontFamily,
                             fontSize = 16.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
                             color = Color.White
                         )
                         Row {
                             Text(
-                                text = "-27%",
+                                text = "${
+                                    transactionsViewModel.positiveOrNegative(
+                                        transactionsViewModel.lossIsPositive
+                                    )
+                                }${transactionsViewModel.calculateLoss(transactionList, false)}%",
                                 textAlign = TextAlign.Center,
-                                
+                                fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
-                                color = Color.Red
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                color = transactionsViewModel.changeColor(
+                                    transactionsViewModel.lossIsPositive,
+                                    false
+                                ),
+                                modifier = Modifier.width(65.dp)
                             )
                             Text(
-                                text = " vs last year",
+                                text = stringResource(R.string.vs),
                                 textAlign = TextAlign.Center,
-                                
+                                fontFamily = montserratFontFamily,
                                 fontSize = 12.sp,
                                 color = Color.White
                             )
@@ -360,16 +397,15 @@ fun Transactions(
 
             //Transactions Section
             Text(
-                text = "Recent transactions",
+                text = stringResource(R.string.recent),
                 textAlign = TextAlign.Center,
-                
+                fontFamily = montserratFontFamily,
                 fontSize = 12.sp,
                 color = Color.Black,
                 modifier = Modifier.padding(start = 40.dp, top = 20.dp)
             )
 
             //3 Recent Transactions
-            val transactionList: List<Transaction> = transactionsUiState.transactionList
             for (items in 0..2) {
                 if (transactionList.getOrNull(items) != null) {
                     RecentTransactionTexts(
@@ -387,7 +423,7 @@ fun Transactions(
 
             Image(
                 painter = painterResource(R.drawable.viewalltransactionsbutton),
-                contentDescription = stringResource(R.string.expense_desc),
+                contentDescription = stringResource(R.string.view_all_transactions_desc),
                 modifier = Modifier
                     .height(45.dp)
                     .width(250.dp)
@@ -401,7 +437,14 @@ fun Transactions(
 }
 
 @Composable
-fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String, date: String, amount: String) {
+fun RecentTransactionTexts(
+    icon: Int,
+    iconDesc: Int,
+    title: String,
+    time: String,
+    date: String,
+    amount: String
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -422,7 +465,7 @@ fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String
             Text(
                 text = title,
                 textAlign = TextAlign.Center,
-                
+                fontFamily = montserratFontFamily,
                 fontSize = 14.sp,
                 color = Color.Black,
                 maxLines = 1,
@@ -431,7 +474,7 @@ fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String
             Text(
                 text = "$time - $date",
                 textAlign = TextAlign.Center,
-                
+                fontFamily = montserratFontFamily,
                 fontSize = 10.sp,
                 color = Color.Black
             )
@@ -439,7 +482,7 @@ fun RecentTransactionTexts(icon: Int, iconDesc: Int, title: String, time: String
         Text(
             text = amount,
             textAlign = TextAlign.Right,
-            
+            fontFamily = montserratFontFamily,
             fontSize = 16.sp,
             color = Color.Black,
             maxLines = 1,

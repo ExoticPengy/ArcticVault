@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme
+package com.example.arcticvault.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -19,6 +19,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,23 +32,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arcticvault.Data.EditGoals
 import com.example.arcticvault.R
-import com.example.arcticvault.ui.theme.theme.AppViewModelProvider
-import com.example.arcticvault.ui.theme.theme.FinancialGoalsViewModel
+import com.example.arcticvault.data.EditGoals
 
 object FinancialGoalsDestination {
     val route = "FinancialGoals"
 }
+
 @Composable
 fun Finance(
     onGoalClick: (Int) -> Unit,
-    onEditGoalsButton:() -> Unit,
-    onPreviousButton:() -> Unit,
+    onEditGoalsButton: () -> Unit,
+    onPreviousButton: () -> Unit,
     financialGoalsViewModel: FinancialGoalsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val financialGoalsUiState by financialGoalsViewModel.financialGoalsUiState.collectAsState()
@@ -68,16 +67,16 @@ fun Finance(
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercropped),
+            painter = painterResource(R.drawable.topbannercrop),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)
                 .fillMaxSize()
         )
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(top = 40.dp)
-        ){
+        ) {
             TextButton(onClick = { onPreviousButton() }) {
                 Image(
                     painter = painterResource(R.drawable.backbuttoncropped),
@@ -105,7 +104,7 @@ fun Finance(
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         Text(
             text = "Milestones achieved",
             fontSize = 20.sp,
@@ -117,7 +116,7 @@ fun Finance(
         PercentageBar(
             percentage = percentage
         )
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -131,7 +130,7 @@ fun Finance(
             Spacer(modifier = Modifier.width(9.dp))
             Box(
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Image(
                     painter = painterResource(R.drawable.milestonesbackground),
                     contentDescription = null,
@@ -149,7 +148,7 @@ fun Finance(
                 )
             }
         }
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -163,7 +162,7 @@ fun Finance(
             Spacer(modifier = Modifier.width(9.dp))
             Box(
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Image(
                     painter = painterResource(R.drawable.milestonesbackground),
                     contentDescription = null,
@@ -186,7 +185,10 @@ fun Finance(
                 onClick = {
                     if (financialGoalsList1.size >= 3) {
                         errorMessage = "Cannot add more goals, already have 3 goals!"
-                    } else if (financialGoalsList1.getOrNull(0) == null || financialGoalsList1.getOrNull(1) == null || financialGoalsList1.getOrNull(2) == null) {
+                    } else if (financialGoalsList1.getOrNull(0) == null || financialGoalsList1.getOrNull(
+                            1
+                        ) == null || financialGoalsList1.getOrNull(2) == null
+                    ) {
                         onEditGoalsButton()
                     }
                 },
@@ -201,7 +203,7 @@ fun Finance(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         Text(
             text = "Goals Edit",
             fontSize = 20.sp,
@@ -211,51 +213,54 @@ fun Finance(
         )
     }
     val financialGoalsList: List<EditGoals> = financialGoalsUiState.financialGoalsList
-    Column (
+    Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(100.dp))
-        if(financialGoalsList.getOrNull(0) != null){
+        if (financialGoalsList.getOrNull(0) != null) {
             AllFinancialGoals(
                 onGoalClick = { onGoalClick(it) },
                 goalNumber = 0,
                 title = financialGoalsList[0].title,
                 amount = financialGoalsViewModel.formatAmount(financialGoalsList[0].amount),
-                milestones = financialGoalsList[0].milestones )
+                milestones = financialGoalsList[0].milestones
+            )
         }
     }
 
-    Column (
+    Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(320.dp))
-        if(financialGoalsList.getOrNull(1) != null){
+        if (financialGoalsList.getOrNull(1) != null) {
             AllFinancialGoals(
                 onGoalClick = { onGoalClick(it) },
                 goalNumber = 1,
                 title = financialGoalsList[1].title,
                 amount = financialGoalsViewModel.formatAmount(financialGoalsList[1].amount),
-                milestones = financialGoalsList[1].milestones )
+                milestones = financialGoalsList[1].milestones
+            )
         }
     }
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
-    )  {
+    ) {
         Spacer(modifier = Modifier.height(550.dp))
-        if(financialGoalsList.getOrNull(2) != null){
+        if (financialGoalsList.getOrNull(2) != null) {
             AllFinancialGoals(
                 onGoalClick = { onGoalClick(it) },
                 goalNumber = 2,
                 title = financialGoalsList[2].title,
                 amount = financialGoalsViewModel.formatAmount(financialGoalsList[2].amount),
-                milestones = financialGoalsList[2].milestones )
+                milestones = financialGoalsList[2].milestones
+            )
         }
 
     }
@@ -275,7 +280,8 @@ fun PercentageBar(percentage: Float) {
                 .size(10.dp)
         )
         Spacer(modifier = Modifier.width(13.dp)) // Add space between LinearProgressIndicator and Text
-        Text(text = "0%",
+        Text(
+            text = "0%",
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
@@ -288,10 +294,10 @@ fun PercentageBar(percentage: Float) {
 fun AllFinancialGoals(
     onGoalClick: (Int) -> Unit,
     goalNumber: Int,
-    title:String,
-    amount:String,
-    milestones:Int
-){
+    title: String,
+    amount: String,
+    milestones: Int
+) {
     Box() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

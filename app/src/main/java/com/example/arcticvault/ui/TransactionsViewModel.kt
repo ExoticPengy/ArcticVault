@@ -20,7 +20,7 @@ import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.absoluteValue
 
-class TransactionsViewModel(transactionsRepository: TransactionsRepository): ViewModel() {
+class TransactionsViewModel(transactionsRepository: TransactionsRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(TransactionsUiState())
 
     companion object {

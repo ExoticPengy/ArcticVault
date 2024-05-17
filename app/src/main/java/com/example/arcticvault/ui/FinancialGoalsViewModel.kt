@@ -1,21 +1,20 @@
-package com.example.arcticvault.ui.theme.theme
+package com.example.arcticvault.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.arcticvault.Data.EditGoals
-import com.example.arcticvault.Data.EditGoalsRepository
+import com.example.arcticvault.data.EditGoals
+import com.example.arcticvault.data.EditGoalsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.text.NumberFormat
 import java.util.Locale
 
 class FinancialGoalsViewModel(
-        editGoalsRepository: EditGoalsRepository
-) : ViewModel(){
+    editGoalsRepository: EditGoalsRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FinancialGoalsUiState())
 
     companion object {
@@ -37,7 +36,8 @@ class FinancialGoalsViewModel(
     fun calculateTotal(editGaols: List<EditGoals>): Int {
         var total = 0
         for (editGoals in editGaols) {
-            total += editGoals.milestones }
-        return total
+            total += editGoals.milestones
         }
+        return total
+    }
 }
