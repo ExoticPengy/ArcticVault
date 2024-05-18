@@ -41,13 +41,15 @@ import com.example.arcticvault.R
 import com.example.arcticvault.data.Reminder
 
 @Composable
-fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminder) -> Unit, onDelete: () -> Unit){
+fun EditScreenDialog(reminder: Reminder,
+                     onDismiss: () -> Unit,
+                     onSave: (Reminder) -> Unit,
+                     onDelete: () -> Unit){
 
     var title by remember { mutableStateOf(reminder.title) }
     var amount by remember { mutableStateOf(reminder.amount.toString()) }
     var date by remember { mutableStateOf(reminder.date) }
     var desc by remember { mutableStateOf(reminder.desc) }
-    var category by remember { mutableStateOf(reminder.category) }
     var status by remember { mutableStateOf(reminder.status) }
     var deleteConfimation by remember { mutableStateOf(false) }
 
@@ -74,16 +76,19 @@ fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminde
                 TextField(value = amount, onValueChange = { amount = it }, label = { Text("Amount") })
                 Spacer(modifier = Modifier.height(8.dp))
 
-                TextField(value = date, onValueChange = { date = it }, label = { Text("Date") })
+
+                Row {
+                    Surface(
+                        color = Color(220, 227, 233),
+                    ) {
+                        DatePickerField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = date,
+                            onDateSelected = { selectedDate -> date = selectedDate }
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(8.dp))
-
-                TextField(value = category, onValueChange = { category = it }, label = { Text("Category") })
-                Spacer(modifier = Modifier.height(8.dp))
-
-
-                TextField(value = status, onValueChange = { status = it }, label = { Text("Status") })
-                Spacer(modifier = Modifier.height(8.dp))
-
 
                 Row(modifier = Modifier.padding(top = 20.dp)) {
                     Button(colors = ButtonDefaults.buttonColors(Color.Red),
@@ -99,7 +104,6 @@ fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminde
                             amount = amount.toDoubleOrNull() ?: 0.0,
                             date = date,
                             desc = desc,
-                            category = category,
                             status = status
                         )
                         onSave(updatedReminder)
@@ -111,7 +115,7 @@ fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminde
                     Spacer(modifier = Modifier.width(4.dp))
 
                     //Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = onDismiss) {
+                    Button(onClick = { onDismiss() })  {
                         Text("Cancel")
                     }
                 }
@@ -144,12 +148,14 @@ fun DeleteConfirmationBox(onConfirm: () -> Unit, onDismiss: () -> Unit){
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Text(text = "Confirm Deletion", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Are you sure you want to delete this reminder?")
                 Spacer(modifier = Modifier.height(16.dp))
                 Row {
                     Button(onClick = onConfirm) {
+
                         Text("Yes")
                     }
                     Spacer(modifier = Modifier.width(16.dp))

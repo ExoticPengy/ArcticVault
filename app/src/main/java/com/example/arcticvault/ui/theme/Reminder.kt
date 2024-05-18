@@ -117,7 +117,7 @@ fun ReminderTopUi(/*navController: NavController*/){
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //search bar
-                TextField(
+                /*TextField(
                     value = search,
                     onValueChange = { search = it },
                     placeholder = { Text("Search...", fontSize = 10.sp) },
@@ -126,9 +126,10 @@ fun ReminderTopUi(/*navController: NavController*/){
                         .weight(1f)
                         .clip(RoundedCornerShape(40.dp))
                         .size(45.dp)
-                )
+                )*/
                 Spacer(modifier = Modifier.width(30.dp))
-                Button(modifier = Modifier.height (45.dp), onClick = { showDialog = true },
+                Button(modifier = Modifier.height (45.dp)
+                    .padding(bottom = 10.dp), onClick = { showDialog = true },
                     colors = ButtonDefaults.buttonColors(Color(199, 234, 255))) {
                     Text("+ Add Reminder", color = Color.Black)
                 }
@@ -169,10 +170,10 @@ fun BillScreen(reminderViewModel: ReminderViewModel = viewModel(factory = AppVie
 
     Surface(modifier = Modifier
         .padding(horizontal = 30.dp)
-        .padding(top = 10.dp)) {
+        ) {
         LazyColumn {
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Text("Upcoming:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
             items(
@@ -240,7 +241,7 @@ fun ReminderItem(reminder: Reminder, onClick: (Reminder) -> Unit) {
     }
 
     Card(
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(30.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
@@ -250,7 +251,7 @@ fun ReminderItem(reminder: Reminder, onClick: (Reminder) -> Unit) {
             modifier = Modifier
                 .background(color = color)
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(14.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -258,14 +259,15 @@ fun ReminderItem(reminder: Reminder, onClick: (Reminder) -> Unit) {
             ) {
                 Text(
                     reminder.title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.ExtraBold,
                     textAlign = TextAlign.Start
                 )
                 Text(
                     "RM${reminder.amount}",
                     fontSize = 16.sp,
-                    textAlign = TextAlign.End
+                    textAlign = TextAlign.End,
+                    fontWeight = FontWeight.ExtraBold
                 )
 
             }
@@ -273,17 +275,22 @@ fun ReminderItem(reminder: Reminder, onClick: (Reminder) -> Unit) {
             if (reminder.status == "Done") {
                 Text("Next Payment:", fontSize = 14.sp)
             } else {
-                Text("Due:", fontSize = 14.sp)
+                Text("Due:", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold)
             }
 
             Row (horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()){
-                Text(reminder.date, fontSize = 14.sp)
-                if (reminder.status == "Done") {
-                    Checkbox(checked = true, onCheckedChange = null)
-                } else {
-                    Checkbox(checked = false, onCheckedChange = null)
+                Text(reminder.date, fontSize = 14.sp, fontWeight = FontWeight.ExtraBold)
+                Row {
+                    if (reminder.status == "Done") {
+                        Checkbox(checked = true, onCheckedChange = null)
+                    } else {
+                        Checkbox(checked = false, onCheckedChange = null)
+                    }
+                    Text(text = "Done", fontSize = 16.sp, fontWeight = FontWeight.ExtraBold,)
                 }
+
+
             }
 
         }

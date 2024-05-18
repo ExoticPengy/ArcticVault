@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -52,7 +53,7 @@ fun BillDetailsDialog(reminder: Reminder,
                 .padding(16.dp)
                 .fillMaxWidth()) {
                 Row{
-                    Text(text = reminder.title, fontSize = 20.sp)
+                    Text(text = reminder.title, fontSize = 25.sp, fontWeight = FontWeight.ExtraBold)
                     Column (modifier = Modifier.fillMaxWidth()){
                         Image(painter = painterResource(R.drawable.editicon),
 
@@ -68,13 +69,16 @@ fun BillDetailsDialog(reminder: Reminder,
                 }
                 Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
 
-                Text(text = reminder.amount.toString())
-                TextField(value = "Desc...", onValueChange = { },
+                Text(text = reminder.amount.toString(), fontWeight = FontWeight.ExtraBold)
+                TextField(value = reminder.desc, onValueChange = { },
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
                         .height(90.dp)
                         .fillMaxWidth()
-                        .padding(top = 10.dp))
+                        .padding(top = 10.dp)
+                )
+
+
 
 
 
@@ -86,12 +90,18 @@ fun BillDetailsDialog(reminder: Reminder,
 
                 }
                 Column(modifier = Modifier.padding(top = 10.dp)) {
-                    Text(text = "Repeats:")
-                    //bill.repeat
-                }
-                Text(text = "Category :", modifier = Modifier.padding(top = 15.dp))
+                    Row {
+                        Text(text = "Repeats:")
+                        Text(text = reminder.repeat)
+                    }
 
-                Text(text = "Status :", modifier = Modifier.padding(top = 15.dp))
+                }
+                Row(modifier = Modifier.padding(top = 10.dp),
+                    ) {
+                    Text(text = "Status :")
+                    Text(text = reminder.status)
+                }
+
 
                 Row(modifier = Modifier
                     .padding(top = 20.dp)
@@ -100,11 +110,7 @@ fun BillDetailsDialog(reminder: Reminder,
                         Text("View Related Transactions")
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Checkbox(
-                        checked = (reminder.status == "Done"),
-                        onCheckedChange = {  }
-                    )
-                    //Text(text = "Done")
+
                 }
             }
         }

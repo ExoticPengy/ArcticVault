@@ -128,13 +128,17 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
                     nextDate = getNextDate(nextDate, repeatFrequency)
                 }
             }
+
             ""
         } else {
             validationMessage
         }
     }
 
-
+    suspend fun deleteReminder(reminder: Reminder) {
+        // You can perform any validation or checks here before deleting
+        reminderRepository.deleteReminder(reminder)
+    }
 
     suspend fun deleteReminder(uiState: ReminderEntryUiState) {
         if (validateInput(uiState).isEmpty()) {

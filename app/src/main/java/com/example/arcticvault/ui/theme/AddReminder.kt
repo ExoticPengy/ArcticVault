@@ -158,6 +158,7 @@ fun ReminderDialog(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Date: ", fontWeight = FontWeight.ExtraBold)
+
                     DatePickerField(
                         value = reminder.date,
                         onDateSelected = { newDate ->
