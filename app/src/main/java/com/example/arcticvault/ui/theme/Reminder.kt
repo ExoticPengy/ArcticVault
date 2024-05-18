@@ -272,7 +272,7 @@ fun ReminderItem(reminder: Reminder, onClick: (Reminder) -> Unit) {
 
             }
             Divider(color = Color.White, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
-            if (reminder.status == "Done") {
+            if (reminder.status == "Completed") {
                 Text("Next Payment:", fontSize = 14.sp)
             } else {
                 Text("Due:", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold)
@@ -282,7 +282,7 @@ fun ReminderItem(reminder: Reminder, onClick: (Reminder) -> Unit) {
                 modifier = Modifier.fillMaxWidth()){
                 Text(reminder.date, fontSize = 14.sp, fontWeight = FontWeight.ExtraBold)
                 Row {
-                    if (reminder.status == "Done") {
+                    if (reminder.status == "Completed") {
                         Checkbox(checked = true, onCheckedChange = null)
                     } else {
                         Checkbox(checked = false, onCheckedChange = null)

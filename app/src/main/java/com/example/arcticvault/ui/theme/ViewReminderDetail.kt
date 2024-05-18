@@ -78,10 +78,6 @@ fun BillDetailsDialog(reminder: Reminder,
                         .padding(top = 10.dp)
                 )
 
-
-
-
-
                 Row(modifier = Modifier.padding(top = 20.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
                         DatePickerField(value = reminder.date, onDateSelected = {  })

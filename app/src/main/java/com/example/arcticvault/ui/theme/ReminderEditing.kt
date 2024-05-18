@@ -47,7 +47,6 @@ import com.example.arcticvault.model.ReminderEntryModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
                      reminder: Reminder,
@@ -55,6 +54,8 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
                      onSave: (Reminder) -> Unit,
                      onDelete: () -> Unit){
 
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     var title by remember { mutableStateOf(reminder.title) }
     var amount by remember { mutableStateOf(reminder.amount.toString()) }
@@ -142,8 +143,14 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
                             desc = desc,
                             status = status
                         )
-                        onSave(updatedReminder)
-                        onDismiss()
+                        val validationMessage = validateReminder(updatedReminder)
+                        if (validationMessage.isEmpty()) {
+                            onSave(updatedReminder)
+                            onDismiss()
+                        } else {
+                            errorMessage = validationMessage
+                            showErrorDialog = true
+                        }
                     }, modifier = Modifier.padding(start = 70.dp)) {
                         Text("Save")
                     }
@@ -170,7 +177,25 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
         )
     }
 
+    if (showErrorDialog) {
+        ErrorDialog(message = errorMessage) {
+            showErrorDialog = false
+        }
+    }
+
 }
+
+fun validateReminder(reminder: Reminder): String {
+    return when {
+        reminder.title.isBlank() -> "Title is required"
+        reminder.desc.isBlank() -> "Description is required"
+        reminder.amount <= 0 -> "Amount must be greater than zero"
+        reminder.date.isBlank() -> "Date is required"
+        reminder.repeat.isBlank() -> "Repeat frequency is required"
+        else -> ""
+    }
+}
+
 @Composable
 fun DeleteConfirmationBox(reminder: Reminder,
                           reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
