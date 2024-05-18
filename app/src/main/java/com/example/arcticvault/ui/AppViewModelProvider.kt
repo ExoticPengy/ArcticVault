@@ -74,6 +74,17 @@ object AppViewModelProvider {
                 arcticVaultApplication().container.editGoalsRepository
             )
         }
+
+        initializer {
+            ReminderEntryViewModel(
+                this.createSavedStateHandle(),
+                arcticVaultApplication().container.reminderRepository
+            )
+        }
+
+        initializer {
+            ReminderViewModel(arcticVaultApplication().container.reminderRepository)
+        }
     }
 }
 

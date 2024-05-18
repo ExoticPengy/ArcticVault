@@ -2,7 +2,7 @@ package com.example.arcticvault.data
 
 import kotlinx.coroutines.flow.Flow
 
-class OfflineCategoryRepository(private val categoryDao: CategoryDao) : CategoryRepository {
+class OfflineCategoryRepository(private val categoryDao: CategoryDao): CategoryRepository {
     override suspend fun insertCategory(category: Category) = categoryDao.insert(category)
 
     override suspend fun updateCategory(category: Category) = categoryDao.update(category)
