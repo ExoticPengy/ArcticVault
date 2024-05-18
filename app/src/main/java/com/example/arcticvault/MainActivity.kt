@@ -23,24 +23,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArcticVaultTheme {
-                val sampleReminder = Reminder(
-                    title = "Sample Title",
-                    amount = 100.0,
-                    date = "2024-05-31",
-                    desc = "Sample Description",
-                    category = "Sample Category",
-                    status = "Sample Status",
-                    repeat = ""
-                )
 
-                //MainScreen()
-                ReminderScreen()
-                /*EditScreenDialog(
-                    reminder = sampleReminder,
-                    onDismiss = {    },
-                    onSave = { updatedReminder ->    },
-                    onDelete = {   }
-                )*/
+
+                MainScreen()
+
             }
         }
     }
@@ -53,7 +39,7 @@ fun MainScreen() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { HomeScreen(navController, Modifier, "James") }
-        composable("reminder") { ReminderScreen(/*navController*/) }
+        composable("reminder") { ReminderScreen(navController) }
     }
 }
 
@@ -69,7 +55,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     ArcticVaultTheme {
-        ReminderScreen()
         //MainScreen()
         //ReminderScreen()
         //Greeting("Android")

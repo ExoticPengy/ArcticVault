@@ -118,7 +118,11 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
                         status = if (isChecked){
                             "Completed"
                         }else{
-                            ""
+                            if (isDateBeforeToday(date)) {
+                                "Late"
+                            } else {
+                                "Upcoming"
+                            }
                         }}
                     )
                     Text(text = "Done")

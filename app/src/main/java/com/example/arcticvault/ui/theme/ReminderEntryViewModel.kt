@@ -57,7 +57,6 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
                 amount <= 0 -> "Amount must be greater than zero"
                 date.isBlank() -> "Date is required"
                 repeat.isBlank() -> "Repeat frequency is required"
-                // category.isBlank() -> "Category is required" // Uncomment if category validation is needed
                 else -> ""
             }
         }
@@ -136,20 +135,9 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
     }
 
     suspend fun deleteReminder(reminder: Reminder) {
-        reminderRepository.deleteReminder(reminder) //_debtUiState.value.debtDetails.debtToData()
+        reminderRepository.deleteReminder(reminder)
     }
-    /*suspend fun deleteReminder(uiState: ReminderEntryUiState) {
-        if (validateInput(uiState).isEmpty()) {
-            if (reminderId != -1)
-                reminderRepository.deleteReminder(_uiState.value.reminder.reminderToData())
-        }
-    }*/
 
-    /*fun deleteReminder(id: Int){
-        viewModelScope.launch(Dispatchers.IO) {
-            reminderDao.deleteReminder(id)
-        }
-    }*/
 
 
 }

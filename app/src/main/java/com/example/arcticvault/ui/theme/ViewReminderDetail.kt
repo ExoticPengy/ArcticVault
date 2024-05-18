@@ -69,7 +69,11 @@ fun BillDetailsDialog(reminder: Reminder,
                 }
                 Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
 
-                Text(text = reminder.amount.toString(), fontWeight = FontWeight.ExtraBold)
+                Text(
+                    text = "RM ${reminder.amount}",
+                    fontWeight = FontWeight.ExtraBold
+                )
+
                 TextField(value = reminder.desc, onValueChange = { },
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
@@ -86,17 +90,35 @@ fun BillDetailsDialog(reminder: Reminder,
 
                 }
                 Column(modifier = Modifier.padding(top = 10.dp)) {
-                    Row {
-                        Text(text = "Repeats:")
-                        Text(text = reminder.repeat)
+                    Row(
+                        modifier = Modifier.padding(bottom = 10.dp)
+                    ) {
+                        Text(
+                            text = "Repeats: ",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = reminder.repeat,
+                            fontWeight = FontWeight.Normal
+                        )
                     }
 
-                }
-                Row(modifier = Modifier.padding(top = 10.dp),
+                    Row(
+                        modifier = Modifier.padding(top = 10.dp)
                     ) {
-                    Text(text = "Status :")
-                    Text(text = reminder.status)
+                        Text(
+                            text = "Status: ",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = reminder.status,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
                 }
+
 
 
                 Row(modifier = Modifier

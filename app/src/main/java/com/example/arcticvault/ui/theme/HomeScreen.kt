@@ -178,6 +178,7 @@ fun UpcomingBills(reminderViewModel: ReminderViewModel = viewModel(factory = App
     val uiState by reminderViewModel.uiState.collectAsState()
 
     val upcomingReminders = uiState.upcomingReminders
+    val lateReminders = uiState.lateReminders
 
     Surface(
         modifier = Modifier
@@ -195,6 +196,15 @@ fun UpcomingBills(reminderViewModel: ReminderViewModel = viewModel(factory = App
 
             LazyColumn {
                 items(
+                    count = lateReminders.size,
+                    key = { index -> lateReminders[index].id },
+                    itemContent = { index ->
+                        val reminder = lateReminders[index]
+                        ReminderCard(reminder)
+                    }
+                )
+                items(
+
                     count = upcomingReminders.size,
                     key = { index -> upcomingReminders[index].id },
                     itemContent = { index ->
@@ -202,6 +212,7 @@ fun UpcomingBills(reminderViewModel: ReminderViewModel = viewModel(factory = App
                         ReminderCard(reminder)
                     }
                 )
+
             }
         }
     }
@@ -209,6 +220,8 @@ fun UpcomingBills(reminderViewModel: ReminderViewModel = viewModel(factory = App
 
 @Composable
 fun ReminderCard(reminder: Reminder) {
+    val textColor = if (reminder.status == "Late") Color.Red else Color.Black
+
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
@@ -228,11 +241,11 @@ fun ReminderCard(reminder: Reminder) {
         ) {
             Column (modifier = Modifier
                 ) {
-                Text(text = reminder.title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(text = reminder.title, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textColor)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = reminder.date, fontSize = 14.sp, color = Color.Gray)
             }
-            Text(text = "RM ${reminder.amount}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = "RM ${reminder.amount}", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textColor )
         }
     }
 }
