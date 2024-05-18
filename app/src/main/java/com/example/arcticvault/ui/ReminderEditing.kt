@@ -36,7 +36,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.R
 import com.example.arcticvault.data.Reminder
-import com.example.arcticvault.ui.theme.ReminderEntryViewModel
 import kotlinx.coroutines.launch
 
 @Composable

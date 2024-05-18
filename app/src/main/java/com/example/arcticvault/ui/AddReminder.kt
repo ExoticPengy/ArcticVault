@@ -56,7 +56,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.R
 import com.example.arcticvault.model.ReminderEntryModel
-import com.example.arcticvault.ui.theme.ReminderEntryViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar

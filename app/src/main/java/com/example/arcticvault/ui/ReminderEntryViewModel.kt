@@ -1,4 +1,4 @@
-package com.example.arcticvault.ui.theme
+package com.example.arcticvault.ui
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.arcticvault.data.Reminder
 import com.example.arcticvault.data.ReminderRepository
 import com.example.arcticvault.model.ReminderEntryModel
-import com.example.arcticvault.ui.AddReminderDestination
+import com.example.arcticvault.ui.theme.ReminderEntryUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
