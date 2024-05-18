@@ -32,7 +32,7 @@ class ReminderViewModel(private val reminderRepository: ReminderRepository): Vie
 
     fun updateUiState(reminderList: List<Reminder>) {
         val upcomingReminders = reminderList.filter { it.status == "Upcoming" }
-        val completedReminders = reminderList.filter { it.status == "Done" }
+        val completedReminders = reminderList.filter { it.status == "Completed" }
         val lateReminders = reminderList.filter { it.status == "Late" }
         _uiState.value = ReminderUiState(
             upcomingReminders = upcomingReminders,

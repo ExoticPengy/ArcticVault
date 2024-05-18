@@ -236,7 +236,7 @@ fun ReminderItem(reminder: Reminder, onClick: (Reminder) -> Unit) {
 
     val color = when (reminder.status) {
         "Upcoming" -> Color(118, 180, 255)
-        "Done" -> Color(126, 217, 87)
+        "Completed" -> Color(126, 217, 87)
         else -> Color(255, 172, 177)
     }
 

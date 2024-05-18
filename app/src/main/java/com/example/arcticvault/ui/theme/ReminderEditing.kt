@@ -19,6 +19,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -46,6 +47,7 @@ import com.example.arcticvault.model.ReminderEntryModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
                      reminder: Reminder,
@@ -60,6 +62,8 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
     var desc by remember { mutableStateOf(reminder.desc) }
     var status by remember { mutableStateOf(reminder.status) }
     var deleteConfimation by remember { mutableStateOf(false) }
+    var completed by remember { mutableStateOf(reminder.status == "Completed") }
+
 
     Dialog(onDismissRequest = onDismiss){
         Surface(
@@ -67,6 +71,14 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier.padding(10.dp)
         ){
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Image(painter = painterResource(R.drawable.closeicon),
+                    contentDescription = "Close",
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .size(40.dp)
+                        .clickable(onClick = onDismiss))
+            }
             Column(modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()) {
@@ -98,13 +110,29 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(modifier = Modifier.padding(top = 20.dp)) {
-                    Button(colors = ButtonDefaults.buttonColors(Color.Red),
+                Row (verticalAlignment = Alignment.CenterVertically){
+                    Checkbox(
+                        checked = completed,
+                        onCheckedChange = { isChecked -> completed = isChecked
+                        status = if (isChecked){
+                            "Completed"
+                        }else{
+                            ""
+                        }}
+                    )
+                    Text(text = "Done")
+                }
+
+
+                Row(modifier = Modifier.padding(top = 10.dp)) {
+                    Button(modifier = Modifier.padding(start = 10.dp),colors = ButtonDefaults.buttonColors(Color.Red),
                         onClick = { deleteConfimation = true }) {
                         Text("Delete")
                     }
 
                     Spacer(modifier = Modifier.width(5.dp))
+
+
 
                     Button( onClick = {
                         val updatedReminder = reminder.copy(
@@ -116,17 +144,13 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
                         )
                         onSave(updatedReminder)
                         onDismiss()
-                    }) {
+                    }, modifier = Modifier.padding(start = 70.dp)) {
                         Text("Save")
                     }
 
                     Spacer(modifier = Modifier.width(4.dp))
 
-                    //Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = { onDismiss() })  {
-                        onDismiss()
-                        Text("Cancel")
-                    }
+
                 }
             }
         }
@@ -141,13 +165,16 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
                 deleteConfimation = false
                 onDismiss()
             },
-            onDismiss = { deleteConfimation = false }
+            onDismiss = { deleteConfimation = false },
+            onEditScreenDismiss = onDismiss
         )
     }
 
 }
 @Composable
-fun DeleteConfirmationBox(reminder: Reminder, reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),onConfirm: () -> Unit, onDismiss: () -> Unit){
+fun DeleteConfirmationBox(reminder: Reminder,
+                          reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
+                          onConfirm: () -> Unit, onDismiss: () -> Unit, onEditScreenDismiss: () -> Unit){
     val coroutineScope = rememberCoroutineScope()
     val reminderUiState by reminderEntryViewModel.uiState.collectAsState()
     //val reminder: ReminderEntryModel = reminderUiState.reminder
@@ -176,6 +203,7 @@ fun DeleteConfirmationBox(reminder: Reminder, reminderEntryViewModel: ReminderEn
                             reminderEntryViewModel.deleteReminder(reminder)
                         }
                         onDismiss()
+                        onEditScreenDismiss()
                 }) {
 
                         Text("Yes")

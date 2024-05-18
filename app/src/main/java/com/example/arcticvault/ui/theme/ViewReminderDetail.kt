@@ -118,8 +118,7 @@ fun BillDetailsDialog(reminder: Reminder,
         selectedBill?.let {
             EditScreenDialog(
                 reminder = reminder,
-                onDismiss = {
-                },
+                onDismiss = onDismiss,
                 onSave = {
                     reminderViewModel.updateReminder(it)
                     onDismiss()
