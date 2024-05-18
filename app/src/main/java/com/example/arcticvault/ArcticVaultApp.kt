@@ -93,7 +93,8 @@ fun ArcticVaultApp() {
                 onAnalysisClick = { navController.navigate(TransactionsAnalysisDestination.route) },
                 onGoalClick = { navController.navigate(FinancialGoalsDestination.route) },
                 onReminderClick = {navController.navigate("reminder") },
-                onDebtClick = { navController.navigate(DebtDestination.route) }
+                onDebtClick = { navController.navigate(DebtDestination.route) },
+                onSettingsClick = { navController.navigate(AccountSettingDestination.route) }
             )
         }
 

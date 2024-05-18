@@ -47,6 +47,7 @@ fun HomeScreen(
     onGoalClick: () -> Unit,
     onReminderClick: () -> Unit,
     onDebtClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
     name: String = "User"
 ) {
@@ -74,7 +75,7 @@ fun HomeScreen(
                 )
             }
         }
-        GreetingMessage(modifier = Modifier, name = name)
+        GreetingMessage(onSettingsClick = {onSettingsClick()}, modifier = Modifier, name = name)
         HomeScreenUI(
             onTransactionClick = { onTransactionClick() },
             onBudgetClick = { onBudgetClick() },
@@ -91,6 +92,7 @@ fun HomeScreen(
 //User profile and user name
 @Composable
 fun GreetingMessage(
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
     name: String
 ) {
@@ -100,7 +102,7 @@ fun GreetingMessage(
             .fillMaxWidth(),
         color = Color(231, 245, 255)
     ) {
-        Row(modifier = modifier.fillMaxWidth())
+        Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween)
         {
             Image(
                 painter = painterResource(R.drawable.default_profile_pic),
@@ -115,15 +117,27 @@ fun GreetingMessage(
                     modifier = Modifier
                         .padding(vertical = 10.dp),
                     text = "Welcome ",
-                    fontSize = 40.sp
+                    textAlign = TextAlign.Center,
+                    fontSize = 32.sp
                 )
                 Text(
                     modifier = Modifier
                         .padding(),
                     text = " $name",
-                    fontSize = 40.sp
+                    fontSize = 32.sp
                 )
             }
+
+            Image(
+                painter = painterResource(R.drawable.settingsicon),
+                contentDescription = "Settings Icon",
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(top = 10.dp, end = 10.dp)
+                    .clickable {
+                        onSettingsClick()
+                    }
+            )
 
         }
     }
