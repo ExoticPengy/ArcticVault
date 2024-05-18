@@ -23,6 +23,7 @@ import com.example.arcticvault.ui.Finance
 import com.example.arcticvault.ui.FinancialGoalsDestination
 import com.example.arcticvault.ui.HomeDestination
 import com.example.arcticvault.ui.HomeScreen
+import com.example.arcticvault.ui.ReminderScreen
 import com.example.arcticvault.ui.Transactions
 import com.example.arcticvault.ui.TransactionsAnalysis
 import com.example.arcticvault.ui.TransactionsAnalysisDestination
@@ -43,10 +44,15 @@ fun ArcticVaultApp() {
                 onBudgetClick = { navController.navigate(BudgetingDestination.route) },
                 onAnalysisClick = { navController.navigate(TransactionsAnalysisDestination.route) },
                 onGoalClick = { navController.navigate(FinancialGoalsDestination.route) },
-                onReminderClick = { },
+                onReminderClick = {navController.navigate("reminder") },
                 onDebtClick = { }
             )
         }
+
+        composable("reminder") {
+            ReminderScreen(onBackButtonClick = { navController.navigateUp() } )
+        }
+
         /* ============================TRANSACTIONS NAVIGATION============================ */
         composable(route = TransactionsDestination.route) {
             Transactions(

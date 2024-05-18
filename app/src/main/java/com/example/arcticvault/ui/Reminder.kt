@@ -40,21 +40,20 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.arcticvault.R
 import com.example.arcticvault.data.Reminder
 import com.example.arcticvault.data.ReminderRepository
 
 @Composable
-fun ReminderScreen(navController: NavController) {
+fun ReminderScreen(onBackButtonClick: () -> Unit) {
     Column {
-        ReminderTopUi(navController)
+        ReminderTopUi(onBackButtonClick = { onBackButtonClick() } )
         BillScreen()
     }
 }
 
 @Composable
-fun ReminderTopUi(navController: NavController){
+fun ReminderTopUi(onBackButtonClick: () -> Unit){
     var search by remember { mutableStateOf("") }
 
     var showDialog by remember {
@@ -63,7 +62,7 @@ fun ReminderTopUi(navController: NavController){
 
     Surface() {
         Image(
-            painter = painterResource(R.drawable.topbanner),
+            painter = painterResource(R.drawable.topbannercropped),
             contentDescription = "Top Banner",
             modifier = Modifier
                 .fillMaxWidth(),
@@ -83,7 +82,7 @@ fun ReminderTopUi(navController: NavController){
                     contentDescription = "back",
                     modifier = Modifier
                         .size(30.dp)
-                        .clickable { navController.navigate("home") }
+                        .clickable { onBackButtonClick() }
                 )
                 Text(
                     text = "Bills and Payments",
