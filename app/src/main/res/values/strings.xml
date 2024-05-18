@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">ArcticVault</string>
+    <string name="Goal">Goals</string>
+
+    //Image Descriptions
+    <string name="blue_topbanner_desc">Blue Top Banner</string>
+    <string name="back_button_desc">Back Button</string>
+    <string name="income_desc">Income Icon</string>
+    <string name="expense_desc">Expense Icon</string>
+    <string name="transaction_card_desc">Transaction Card</string>
+    <string name="percentage_card_desc">Percentage Card</string>
+
+    //Transaction
+    <string name="income">Income</string>
+    <string name="expense">Expense</string>
+
+    //Button Texts
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="delete">Delete</string>
+    <string name="select">Select</string>
+    <string name="ok">OK</string>
+
+    //Title Strings
+    <string name="transaction_screen_title">Transactions</string>
+</resources>

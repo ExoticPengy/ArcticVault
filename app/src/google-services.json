@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "618102579146",
+    "project_id": "login-register-firebase-a415a",
+    "storage_bucket": "login-register-firebase-a415a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618102579146:android:b150a12ecfe55f44e7b933",
+        "android_client_info": {
+          "package_name": "com.example.arcticvault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDtmzBUl8p2AH7YJ3yO6KbO6L9d7CCWBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618102579146:android:1c8ac6fb063398bee7b933",
+        "android_client_info": {
+          "package_name": "com.example.assignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDtmzBUl8p2AH7YJ3yO6KbO6L9d7CCWBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
