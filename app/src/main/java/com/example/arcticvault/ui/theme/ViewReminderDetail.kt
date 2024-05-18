@@ -74,13 +74,23 @@ fun BillDetailsDialog(reminder: Reminder,
                     fontWeight = FontWeight.ExtraBold
                 )
 
-                TextField(value = reminder.desc, onValueChange = { },
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .height(90.dp)
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                )
+                Column(modifier = Modifier.padding(top = 20.dp)
+                ) {
+
+                    Surface (color = Color(220, 227, 233),shape = RoundedCornerShape(20.dp), modifier = Modifier.fillMaxWidth()) {
+
+                        Row(modifier = Modifier.padding(10.dp)
+                            .padding(bottom = 60.dp)) {
+                            Text(
+                                text = reminder.desc,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                    }
+
+
+
 
                 Row(modifier = Modifier.padding(top = 20.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
@@ -89,35 +99,52 @@ fun BillDetailsDialog(reminder: Reminder,
                     Spacer(modifier = Modifier.width(10.dp))
 
                 }
-                Column(modifier = Modifier.padding(top = 10.dp)) {
+
+                Column(modifier = Modifier.padding(top = 20.dp)
+                    ) {
+
+                        Surface (color = Color(220, 227, 233),shape = RoundedCornerShape(20.dp), modifier = Modifier.fillMaxWidth()){
+                            Column {
+                                Row (modifier = Modifier.padding(10.dp)){
+                                    Text(
+                                        text = "Status: ",
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                    Text(
+                                        text = reminder.status,
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                }
+
+                                Row (modifier = Modifier.padding(10.dp)){
+                                    Text(
+                                        text = "Repeats: ",
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                    Text(
+                                        text = reminder.repeat,
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                }
+                            }
+
+
+
+
+                        }
+
                     Row(
                         modifier = Modifier.padding(bottom = 10.dp)
                     ) {
-                        Text(
-                            text = "Repeats: ",
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text(
-                            text = reminder.repeat,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
 
-                    Row(
-                        modifier = Modifier.padding(top = 10.dp)
-                    ) {
-                        Text(
-                            text = "Status: ",
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text(
-                            text = reminder.status,
-                            fontWeight = FontWeight.Normal
-                        )
                     }
                 }
+
+
+
+
 
 
 
@@ -146,5 +173,6 @@ fun BillDetailsDialog(reminder: Reminder,
             }
         }
     }
+}
 }
 

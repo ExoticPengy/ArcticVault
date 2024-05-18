@@ -105,7 +105,14 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
                         DatePickerField(
                             modifier = Modifier.fillMaxWidth(),
                             value = date,
-                            onDateSelected = { selectedDate -> date = selectedDate }
+                            onDateSelected = { selectedDate ->
+                                date = selectedDate
+                                status = if (isDateBeforeToday(selectedDate)) {
+                                    "Late"
+                                } else {
+                                    "Upcoming"
+                                }
+                            }
                         )
                     }
                 }
@@ -186,7 +193,6 @@ fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(
             showErrorDialog = false
         }
     }
-
 }
 
 fun validateReminder(reminder: Reminder): String {
@@ -206,7 +212,6 @@ fun DeleteConfirmationBox(reminder: Reminder,
                           onConfirm: () -> Unit, onDismiss: () -> Unit, onEditScreenDismiss: () -> Unit){
     val coroutineScope = rememberCoroutineScope()
     val reminderUiState by reminderEntryViewModel.uiState.collectAsState()
-    //val reminder: ReminderEntryModel = reminderUiState.reminder
 
 
     Dialog(onDismissRequest = onDismiss){

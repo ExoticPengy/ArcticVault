@@ -1,5 +1,6 @@
 package com.example.arcticvault.ui.theme
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -112,13 +113,15 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
         return if (validationMessage.isEmpty() && validateAmount(_uiState.value.reminder.amount)) {
             val reminderData = _uiState.value.reminder.reminderToData()
             val repeatFrequency = _uiState.value.reminder.repeat
+            Log.d("ReminderViewModel", "Saving reminder")
 
             if (reminderId == 0) {
                 reminderRepository.insertReminder(reminderData)
+                Log.d("ReminderViewModel", "Saved")
             } else {
                 reminderRepository.updateReminder(reminderData)
             }
-
+            Log.d("ReminderViewModel", "Yo")
             if (repeatFrequency != "Once") {
                 var nextDate = getNextDate(reminderData.date, repeatFrequency)
                 repeat(4) {
