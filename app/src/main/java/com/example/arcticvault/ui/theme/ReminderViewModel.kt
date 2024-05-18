@@ -23,26 +23,33 @@ class ReminderViewModel(private val reminderRepository: ReminderRepository): Vie
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            reminderRepository.getAllReminderStream().collect {reminders ->
-                val upcoming = reminders.filter { it.status == "upcoming" }
-                val completed = reminders.filter { it.status == "completed" }
-                val late = reminders.filter { it.status == "late" }
-                _uiState.value = ReminderUiState(upcoming, completed, late)
+            reminderRepository.getAllReminderStream().collect {
+                updateUiState(it)
             }
         }
     }
+
+
+    fun updateUiState(reminderList: List<Reminder>) {
+        val upcomingReminders = reminderList.filter { it.status == "Upcoming" }
+        val completedReminders = reminderList.filter { it.status == "Done" }
+        val lateReminders = reminderList.filter { it.status == "Late" }
+        _uiState.value = ReminderUiState(
+            upcomingReminders = upcomingReminders,
+            completedReminders = completedReminders,
+            lateReminders = lateReminders
+        )
+    }
+
+
 
     data class ReminderUiState(
         val upcomingReminders: List<Reminder> = listOf(),
         val completedReminders: List<Reminder> = listOf(),
         val lateReminders: List<Reminder> = listOf()
     )
-
-    fun updateUiState(reminderList: List<Reminder>) {
-        _uiState.value = ReminderUiState(reminderList)
-    }
-    fun getRemindersByStatus(status: String): Flow<List<Reminder>> {
-        return reminderRepository.getRemindersByStatus(status)
+    fun getRemindersByStatus(status: String): List<Reminder> {
+        return reminderList.filter { it.status == status }
     }
 
     fun updateReminder(reminder: Reminder) {

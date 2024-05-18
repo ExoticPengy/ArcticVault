@@ -40,7 +40,7 @@ import com.example.arcticvault.R
 import com.example.arcticvault.data.Reminder
 
 @Composable
-fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminder) -> Unit){
+fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminder) -> Unit, onDelete: () -> Unit){
 
     var title by remember { mutableStateOf(reminder.title) }
     var amount by remember { mutableStateOf(reminder.amount.toString()) }
@@ -48,6 +48,7 @@ fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminde
     var desc by remember { mutableStateOf(reminder.desc) }
     var category by remember { mutableStateOf(reminder.category) }
     var status by remember { mutableStateOf(reminder.status) }
+    var deleteConfimation by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = onDismiss){
         Surface(
@@ -75,16 +76,12 @@ fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminde
                 TextField(value = date, onValueChange = { date = it }, label = { Text("Date") })
                 Spacer(modifier = Modifier.height(8.dp))
 
-                TextField(value = category, onValueChange = { category = it }, label = { Text("Category") })
-                Spacer(modifier = Modifier.height(8.dp))
-
                 TextField(value = status, onValueChange = { status = it }, label = { Text("Status") })
                 Spacer(modifier = Modifier.height(8.dp))
 
-
                 Row(modifier = Modifier.padding(top = 20.dp)) {
                     Button(colors = ButtonDefaults.buttonColors(Color.Red),
-                        onClick = {  }) {
+                        onClick = { deleteConfimation = true }) {
                         Text("Delete")
                     }
 
@@ -115,5 +112,46 @@ fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminde
             }
         }
     }
+    if (deleteConfimation) {
+        DeleteConfirmationBox(
+            onConfirm = {
+                onDelete()
+                deleteConfimation = false
+                onDismiss()
+            },
+            onDismiss = { deleteConfimation = false }
+        )
+    }
 
+}
+@Composable
+fun DeleteConfirmationBox(onConfirm: () -> Unit, onDismiss: () -> Unit){
+    Dialog(onDismissRequest = onDismiss){
+        Surface(
+            color = Color.White,
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.padding(10.dp)
+        ){
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Confirm Deletion", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Are you sure you want to delete this reminder?")
+                Spacer(modifier = Modifier.height(16.dp))
+                Row {
+                    Button(onClick = onConfirm) {
+                        Text("Yes")
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Button(onClick = onDismiss) {
+                        Text("No")
+                    }
+                }
+            }
+        }
+    }
 }

@@ -153,7 +153,7 @@ fun BillScreen(/*reminderViewModel: ReminderViewModel = viewModel(factory = AppV
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Upcoming:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
-            items(3) {
+            item {
                 BillItem(Bill("Payroll", 10000.00, "1 March 2024", "Upcoming")) {
                     selectedBill = it
                 }

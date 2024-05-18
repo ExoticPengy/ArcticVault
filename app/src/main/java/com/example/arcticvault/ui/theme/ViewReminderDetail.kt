@@ -38,7 +38,7 @@ import com.example.arcticvault.data.Reminder
 fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
     Dialog(onDismissRequest = onDismiss){
         Surface(
-            color = Color(157, 228, 245),
+            color = Color(184, 245, 226),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier.padding(10.dp)
         ){
@@ -68,28 +68,21 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
                         .padding(top = 10.dp))
 
 
+
                 Row(modifier = Modifier.padding(top = 20.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Date:")
                         DatePickerField(value = bill.dueDate, onDateSelected = {  })
                     }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Repeats:")
-                        //DropDownMenu()
-                    }
-                }
-                Text(text = "Set Category", modifier = Modifier.padding(top = 15.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-                    .background(color = Color(231, 245, 255))
-                    .padding(vertical = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                    CategoryButton("Utility", "", onCategorySelected = {  })
-                    CategoryButton("Payroll", "selectedCategory", onCategorySelected = {  })
-                    CategoryButton("Taxes", "selectedCategory", onCategorySelected = {  })
                 }
+                Column(modifier = Modifier.padding(top = 10.dp)) {
+                    Text(text = "Repeats:")
+                    //bill.repeat
+                }
+                Text(text = "Category :", modifier = Modifier.padding(top = 15.dp))
+
+                Text(text = "Status :", modifier = Modifier.padding(top = 15.dp))
 
                 Row(modifier = Modifier
                     .padding(top = 20.dp)

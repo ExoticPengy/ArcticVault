@@ -3,6 +3,7 @@ package com.example.arcticvault.ui.theme
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +32,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,7 +62,9 @@ import com.example.arcticvault.R
 import com.example.arcticvault.model.ReminderEntryModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 object AddReminderDestination {
     val route = "AddReminder"
@@ -73,11 +77,8 @@ fun ReminderDialog(
     onDismiss: () -> Unit,
     reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    var title by remember { mutableStateOf("") }
-    var desc by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf("") }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
     val reminderEntryUiState by reminderEntryViewModel.uiState.collectAsState()
@@ -88,6 +89,7 @@ fun ReminderDialog(
         Surface(
             color = Color(199, 234, 255),
             shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(2.dp, Color.Black),
             modifier = Modifier.padding(10.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -101,20 +103,20 @@ fun ReminderDialog(
             Column (modifier = Modifier.padding(10.dp)){
 
                 Text(
-                    "New Reminder", fontSize = 20.sp, fontWeight = FontWeight.Bold,
+                    "New Reminder", fontSize = 20.sp, fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
 
                 )
-                Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+                Divider(color = Color.Gray, thickness = 2.dp, modifier = Modifier.padding(vertical = 10.dp))
 
                 Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    Text(text = "Title: ")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "Title: ", fontWeight = FontWeight.ExtraBold)
                     TextField(value = reminder.title,
                         onValueChange = { reminderEntryViewModel.updateUiState(reminder.copy(title = it)) },
                         modifier = Modifier
                             .weight(1f)
-                            .clip(RoundedCornerShape(40.dp))
+                            .clip(RoundedCornerShape(10.dp))
                             .size(45.dp)
                             .background(color = Color(231, 245, 255)),
                         textStyle = TextStyle(fontSize = 12.sp)
@@ -124,27 +126,28 @@ fun ReminderDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row {
-                    Text(text = "Desc: ")
+                Row (verticalAlignment = Alignment.CenterVertically){
+                    Text(text = "Desc: ", fontWeight = FontWeight.ExtraBold)
                     TextField(value = reminder.desc,
                         onValueChange = { reminderEntryViewModel.updateUiState(reminder.copy(desc = it)) },
                         modifier = Modifier
                             .weight(1f)
-                            .clip(RoundedCornerShape(20.dp))
+                            .clip(RoundedCornerShape(10.dp))
                             .size(60.dp),
                         textStyle = TextStyle(fontSize = 12.sp))
+
 
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Amount
-                Row {
-                    Text(text = "Amount: ")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "Amount: ", fontWeight = FontWeight.ExtraBold)
                     TextField(value = reminder.amount.toString(),
                         onValueChange = { reminderEntryViewModel.updateUiState(reminder.copy(amount = it.toDouble())) },
                         modifier = Modifier
                             .weight(1f)
-                            .clip(RoundedCornerShape(40.dp))
+                            .clip(RoundedCornerShape(10.dp))
                             .size(45.dp),
                         textStyle = TextStyle(fontSize = 12.sp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -153,17 +156,23 @@ fun ReminderDialog(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row {
-                    Text(text = "Date: ")
-                    DatePickerField(value = reminder.date, onDateSelected = { newDate -> reminderEntryViewModel.updateUiState(reminder.copy(date = newDate)) })
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "Date: ", fontWeight = FontWeight.ExtraBold)
+                    DatePickerField(
+                        value = reminder.date,
+                        onDateSelected = { newDate ->
+                            reminderEntryViewModel.updateUiState(reminder.copy(date = newDate))
+                        },
+                        reminderEntryViewModel = reminderEntryViewModel
+                    )
 
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row {
-                    Text(text = "Repeat: ")
+                Row (verticalAlignment = Alignment.CenterVertically){
+                    Text(text = "Repeat: ", fontWeight = FontWeight.ExtraBold)
                     DropDownMenu(
-                        suggestions = listOf("Once", "Daily", "Monthly", "Yearly"),
+                        suggestions = listOf("Once", "Weekly", "Monthly", "Yearly"),
                         onItemSelected = { selectedValue ->
                             reminderEntryViewModel.updateUiState(reminder.copy(repeat = selectedValue))
                         }
@@ -171,50 +180,28 @@ fun ReminderDialog(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                
-                Text(text = "Set Category")
-
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-                    .background(color = Color(231, 245, 255))
-                    .padding(vertical = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-
-                ) {
-                    CategoryButton("Utility", selectedCategory, onCategorySelected = { selectedCategory = it })
-                    CategoryButton("Payroll", selectedCategory, onCategorySelected = { selectedCategory = it })
-                    CategoryButton("Taxes", selectedCategory, onCategorySelected = { selectedCategory = it })
-                    CategoryButton("Subscriptions", selectedCategory, onCategorySelected = { selectedCategory = it })
-                    CategoryButton("Rent", selectedCategory, onCategorySelected = { selectedCategory = it })
-                    Button(
-                        onClick = {  },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(199, 234, 255)),
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .height(40.dp)
-                    ) {
-                        Text("+", color = Color.Black, fontSize = 12.sp)
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
                     onClick = {
-                        //Log.i("Add Button","Before If")
-                        if(reminderEntryViewModel.validateInput(reminderEntryUiState)) {
-                            reminderEntryViewModel.updateUiState(reminder.copy(status = "Upcoming"))
-                            coroutineScope.launch {
-                                reminderEntryViewModel.saveReminder()
-                                //Log.i("Add Button Click","Add been clicked")
+                        coroutineScope.launch {
+                            val validationMessage = reminderEntryViewModel.saveReminder()
+                            if (validationMessage.isEmpty()) {
+                                onDismiss()
+                            } else {
+                                errorMessage = validationMessage
+                                showErrorDialog = true
                             }
-                            onDismiss()
                         }
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text("+ ADD")
+                }
+
+                if (showErrorDialog) {
+                    ErrorDialog(message = errorMessage) {
+                        showErrorDialog = false
+                    }
                 }
             }
         }
@@ -222,22 +209,30 @@ fun ReminderDialog(
 }
 
 @Composable
-fun CategoryButton(category: String, selectedCategory: String, onCategorySelected: (String) -> Unit) {
-    Button(
-        onClick = { onCategorySelected(category) },
-        colors = ButtonDefaults.buttonColors(
-            containerColor =
-            if (category == selectedCategory) Color(118, 180, 255)
-            else Color(199, 234, 255)
-        ),
-        shape = RoundedCornerShape(20.dp),
-        modifier = Modifier
-            .padding(horizontal = 4.dp)
-            .height(40.dp)
-    ) {
-        Text(category, color = Color.Black, fontSize = 12.sp)
+fun ErrorDialog(message: String, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = Color.White,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Error", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = message, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onDismiss) {
+                    Text("OK")
+                }
+            }
+        }
     }
 }
+
+
 
 //repeat frequency option function
 @Composable
@@ -247,7 +242,7 @@ fun DropDownMenu(
     modifier: Modifier = Modifier) {
 
     var expanded by remember { mutableStateOf(false) }
-    val suggestions = listOf("Once", "Daily", "Monthly", "Yearly")
+    val suggestions = listOf("Once", "Weekly", "Monthly", "Yearly")
     var selectedText by remember { mutableStateOf("") }
     var textfieldSize by remember { mutableStateOf(Size.Zero)}
 
@@ -296,7 +291,8 @@ fun DropDownMenu(
 
 //date picker function
 @Composable
-fun DatePickerField(modifier: Modifier = Modifier, value: String, onDateSelected: (String) -> Unit) {
+fun DatePickerField(modifier: Modifier = Modifier, value: String, onDateSelected: (String) -> Unit,
+                    reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
@@ -304,7 +300,14 @@ fun DatePickerField(modifier: Modifier = Modifier, value: String, onDateSelected
         DatePickerDialog(
             context,
             { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                onDateSelected("$dayOfMonth/${month + 1}/$year")
+                val newDate = "$dayOfMonth/${month + 1}/$year"
+                onDateSelected(newDate)
+                if (isDateBeforeToday(newDate)) {
+                    reminderEntryViewModel.updateUiState(reminderEntryViewModel.uiState.value.reminder.copy(status = "Late"))
+                }
+                else
+                    reminderEntryViewModel.updateUiState(reminderEntryViewModel.uiState.value.reminder.copy(status = "Upcoming"))
+
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -328,4 +331,11 @@ fun DatePickerField(modifier: Modifier = Modifier, value: String, onDateSelected
             )
         }
     )
+}
+
+fun isDateBeforeToday(dateString: String): Boolean {
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val selectedDate = dateFormat.parse(dateString)
+    val today = Calendar.getInstance().time
+    return selectedDate?.before(today) == true
 }

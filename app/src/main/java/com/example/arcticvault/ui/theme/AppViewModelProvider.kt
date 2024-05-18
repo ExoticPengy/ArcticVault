@@ -17,34 +17,6 @@ object AppViewModelProvider {
             )
         }
 
-
-        /*initializer {
-            TransactionsViewModel(
-                arcticVaultApplication().container.transactionsRepository
-            )
-        }
-
-        initializer {
-            AllTransactionsViewModel(
-                arcticVaultApplication().container.transactionsRepository,
-                arcticVaultApplication().container.categoryRepository
-            )
-        }
-
-        initializer {
-            EditTransactionViewModel(
-                this.createSavedStateHandle(),
-                arcticVaultApplication().container.transactionsRepository,
-                arcticVaultApplication().container.categoryRepository
-            )
-        }
-
-        initializer {
-            TransactionsAnalysisViewModel(
-                arcticVaultApplication().container.transactionsRepository,
-                arcticVaultApplication().container.categoryRepository
-            )
-        }*/
     }
 }
 

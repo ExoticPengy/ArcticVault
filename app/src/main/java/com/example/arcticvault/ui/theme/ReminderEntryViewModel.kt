@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
@@ -21,6 +23,8 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
     private val _uiState = MutableStateFlow(ReminderEntryUiState())
     val uiState: StateFlow<ReminderEntryUiState> = _uiState.asStateFlow()
     private val reminderId: Int = savedStateHandle[AddReminderDestination.reminderIdArg] ?: -1
+
+    private var reminderList: List<Reminder> = listOf()
 
     init {
         if (reminderId != -1) {
@@ -33,18 +37,29 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
                 )
             }
         }
+        viewModelScope.launch(Dispatchers.IO) {
+            reminderRepository.getAllReminderStream().collect{
+                reminderList = it
+            }
+        }
+    }
+
+    fun validateAmount(amount: Double): Boolean {
+        return amount > 0
     }
 
 
-    fun validateInput(uiState: ReminderEntryUiState): Boolean{
-        return with(uiState){
-            reminder.id.toString().isNotBlank() &&
-                    reminder.title.isNotBlank() &&
-                    reminder.desc.isNotBlank() &&
-                    reminder.amount.toString().isNotBlank() &&
-                    reminder.date.isNotBlank()
-                    //reminder.repeat.isNotBlank() &&
-                    //reminder.category.isNotBlank()
+    fun validateInput(uiState: ReminderEntryUiState): String{
+        return with(uiState.reminder){
+            when{
+                title.isBlank() -> "Title is required"
+                desc.isBlank() -> "Description is required"
+                amount <= 0 -> "Amount must be greater than zero"
+                date.isBlank() -> "Date is required"
+                repeat.isBlank() -> "Repeat frequency is required"
+                // category.isBlank() -> "Category is required" // Uncomment if category validation is needed
+                else -> ""
+            }
         }
     }
 
@@ -76,30 +91,53 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
         status = status
     )
 
-    suspend fun saveReminder(){
-        if (validateInput(_uiState.value)){
-            if (reminderId == 0){
-                reminderRepository.insertReminder(_uiState.value.reminder.reminderToData())
+    private fun getNextDate(currentDate: String, repeat: String): String {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val calendar = Calendar.getInstance().apply {
+            time = dateFormat.parse(currentDate)!!
+        }
+
+        when (repeat) {
+            "Weekly" -> calendar.add(Calendar.DAY_OF_YEAR, 7)
+            "Monthly" -> calendar.add(Calendar.MONTH, 1)
+            "Yearly" -> calendar.add(Calendar.YEAR, 1)
+        }
+
+        return dateFormat.format(calendar.time)
+    }
+
+    suspend fun saveReminder(): String {
+        val validationMessage = validateInput(_uiState.value)
+        return if (validationMessage.isEmpty() && validateAmount(_uiState.value.reminder.amount)) {
+            val reminderData = _uiState.value.reminder.reminderToData()
+            val repeatFrequency = _uiState.value.reminder.repeat
+
+            if (reminderId == 0) {
+                reminderRepository.insertReminder(reminderData)
+            } else {
+                reminderRepository.updateReminder(reminderData)
             }
-            else
-                reminderRepository.updateReminder(_uiState.value.reminder.reminderToData())
+
+            if (repeatFrequency != "Once") {
+                var nextDate = getNextDate(reminderData.date, repeatFrequency)
+                repeat(4) {
+                    val repeatedReminder = reminderData.copy(date = nextDate)
+                    reminderRepository.insertReminder(repeatedReminder)
+                    nextDate = getNextDate(nextDate, repeatFrequency)
+                }
+            }
+            ""
+        } else {
+            validationMessage
         }
     }
 
     suspend fun deleteReminder(uiState: ReminderEntryUiState) {
-        if (validateInput(uiState)) {
+        if (validateInput(uiState).isEmpty()) {
             if (reminderId != -1)
                 reminderRepository.deleteReminder(_uiState.value.reminder.reminderToData())
         }
     }
 
-    /*fun formatAmount(amount: Double): String {
-        return NumberFormat.getCurrencyInstance(Locale("en", "MY")).format(amount)
-    }
-    fun updateAmount(newAmount: String): Double {
-        var doubleAmount = newAmount.replace("RM", "")
-        doubleAmount = doubleAmount.replace(",", "")
-        return doubleAmount.toDoubleOrNull() ?: 0.0
-    }*/
 
 }
