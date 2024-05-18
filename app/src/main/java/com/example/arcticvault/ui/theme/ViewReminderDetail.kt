@@ -1,9 +1,7 @@
 package com.example.arcticvault.ui.theme
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,26 +14,34 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Checkbox
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.R
 import com.example.arcticvault.data.Reminder
 
+
 @Composable
-fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
+fun BillDetailsDialog(reminder: Reminder,
+                      onDismiss: () -> Unit){
+
+    var selectedBill by remember { mutableStateOf<Boolean?>(null) }
+    val reminderViewModel: ReminderViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
     Dialog(onDismissRequest = onDismiss){
         Surface(
             color = Color(184, 245, 226),
@@ -46,12 +52,15 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
                 .padding(16.dp)
                 .fillMaxWidth()) {
                 Row{
-                    Text(text = bill.name, fontSize = 20.sp)
+                    Text(text = reminder.title, fontSize = 20.sp)
                     Column (modifier = Modifier.fillMaxWidth()){
                         Image(painter = painterResource(R.drawable.editicon),
+
                             contentDescription = "Edit",
                             modifier = Modifier
-                                .clickable { }
+                                .clickable {
+                                    selectedBill = true
+                                }
                                 .align(Alignment.End)
                                 .size(20.dp))
                     }
@@ -59,7 +68,7 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
                 }
                 Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
 
-                Text(text = bill.amount.toString())
+                Text(text = reminder.amount.toString())
                 TextField(value = "Desc...", onValueChange = { },
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
@@ -71,7 +80,7 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
 
                 Row(modifier = Modifier.padding(top = 20.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
-                        DatePickerField(value = bill.dueDate, onDateSelected = {  })
+                        DatePickerField(value = reminder.date, onDateSelected = {  })
                     }
                     Spacer(modifier = Modifier.width(10.dp))
 
@@ -92,16 +101,27 @@ fun BillDetailsDialog(bill: Bill, onDismiss: () -> Unit){
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Checkbox(
-                        checked = (bill.status == "Done"),
+                        checked = (reminder.status == "Done"),
                         onCheckedChange = {  }
                     )
                     //Text(text = "Done")
                 }
             }
         }
+
+        selectedBill?.let {
+            EditScreenDialog(
+                reminder = reminder,
+                onDismiss = {
+                },
+                onSave = {
+                    reminderViewModel.updateReminder(it)
+                    onDismiss()
+                }
+            ) {
+
+            }
+        }
     }
 }
 
-fun EditReminder(){
-
-}

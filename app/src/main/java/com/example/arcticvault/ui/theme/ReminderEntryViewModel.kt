@@ -91,6 +91,8 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
         status = status
     )
 
+
+
     private fun getNextDate(currentDate: String, repeat: String): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val calendar = Calendar.getInstance().apply {
@@ -131,6 +133,8 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
             validationMessage
         }
     }
+
+
 
     suspend fun deleteReminder(uiState: ReminderEntryUiState) {
         if (validateInput(uiState).isEmpty()) {

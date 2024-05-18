@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -69,15 +70,20 @@ fun EditScreenDialog(reminder: Reminder, onDismiss: () -> Unit, onSave: (Reminde
                 TextField(value = desc, onValueChange = { desc = it }, label = { Text("Description") })
                 Spacer(modifier = Modifier.height(8.dp))
 
-                
+
                 TextField(value = amount, onValueChange = { amount = it }, label = { Text("Amount") })
                 Spacer(modifier = Modifier.height(8.dp))
 
                 TextField(value = date, onValueChange = { date = it }, label = { Text("Date") })
                 Spacer(modifier = Modifier.height(8.dp))
 
+                TextField(value = category, onValueChange = { category = it }, label = { Text("Category") })
+                Spacer(modifier = Modifier.height(8.dp))
+
+
                 TextField(value = status, onValueChange = { status = it }, label = { Text("Status") })
                 Spacer(modifier = Modifier.height(8.dp))
+
 
                 Row(modifier = Modifier.padding(top = 20.dp)) {
                     Button(colors = ButtonDefaults.buttonColors(Color.Red),

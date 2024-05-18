@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,13 +39,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.arcticvault.R
+import com.example.arcticvault.data.Reminder
+import com.example.arcticvault.data.ReminderRepository
 
+@Preview(showBackground = true)
 @Composable
 fun ReminderScreen(/*navController: NavController*/) {
     Column {
@@ -137,13 +141,31 @@ fun ReminderTopUi(/*navController: NavController*/){
     }
 }
 
-@Composable
-fun BillScreen(/*reminderViewModel: ReminderViewModel = viewModel(factory = AppViewModelProvider.Factory)*/) {
-    var selectedBill by remember { mutableStateOf<Bill?>(null) }
+class ReminderViewModelFactory(private val reminderRepository: ReminderRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ReminderViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ReminderViewModel(reminderRepository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
 
-    /*val upcomingReminders = reminderViewModel.getRemindersByStatus("Upcoming")
-    val completedReminders = reminderViewModel.getRemindersByStatus("Done")
-    val lateReminders = reminderViewModel.getRemindersByStatus("Late")*/
+@Composable
+fun BillScreen(reminderViewModel: ReminderViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+    var selectedBill by remember { mutableStateOf<Reminder?>(null) }
+
+
+    val uiState by reminderViewModel.uiState.collectAsState()
+
+    val upcomingReminders = uiState.upcomingReminders
+    val completedReminders = uiState.completedReminders
+    val lateReminders = uiState.lateReminders
+
+    val upcomingRemindersCount = upcomingReminders.size
+    val completedRemindersCount = completedReminders.size
+    val lateRemindersCount = lateReminders.size
+
 
     Surface(modifier = Modifier
         .padding(horizontal = 30.dp)
@@ -153,31 +175,49 @@ fun BillScreen(/*reminderViewModel: ReminderViewModel = viewModel(factory = AppV
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Upcoming:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
-            item {
-                BillItem(Bill("Payroll", 10000.00, "1 March 2024", "Upcoming")) {
-                    selectedBill = it
+            items(
+                count = upcomingRemindersCount,
+                key = { index -> upcomingReminders[index].id },
+                itemContent = { index ->
+                    val reminder = upcomingReminders[index]
+                    ReminderItem(reminder = reminder) {
+                        selectedBill = it
+                    }
                 }
-            }
+            )
+
             item {
                 Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Completed:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
-            item {
-                BillItem(Bill("Electricity Bills", 150.00, "1 March 2024", "Done")) {
-                    selectedBill = it
+            items(
+                count = completedRemindersCount,
+                key = { index -> completedReminders[index].id },
+                itemContent = { index ->
+                    val reminder = completedReminders[index]
+                    ReminderItem(reminder = reminder) {
+                        selectedBill = it
+                    }
                 }
-            }
+            )
+
             item {
                 Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Late:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
-            item {
-                BillItem(Bill("House Rent", 1050.00, "1 March 2024", "Late")) {
-                    selectedBill = it
+            items(
+                count = lateRemindersCount,
+                key = { index -> lateReminders[index].id },
+                itemContent = { index ->
+                    val reminder = lateReminders[index]
+                    ReminderItem(reminder = reminder) {
+                        selectedBill = it
+                    }
                 }
-            }
+            )
+
             item {
                 Divider(color = Color.Black, thickness = 1.5.dp, modifier = Modifier.padding(vertical = 5.dp))
             }
@@ -185,21 +225,15 @@ fun BillScreen(/*reminderViewModel: ReminderViewModel = viewModel(factory = AppV
     }
 
     selectedBill?.let {
-        BillDetailsDialog(bill = it, onDismiss = { selectedBill = null })
+        BillDetailsDialog(reminder = it, onDismiss = { selectedBill = null })
     }
 }
 
-data class Bill(
-    val name: String,
-    val amount: Double,
-    val dueDate: String,
-    val status: String
-)
 
 @Composable
-fun BillItem(bill: Bill, onClick: (Bill) -> Unit) {
+fun ReminderItem(reminder: Reminder, onClick: (Reminder) -> Unit) {
 
-    val color = when (bill.status) {
+    val color = when (reminder.status) {
         "Upcoming" -> Color(118, 180, 255)
         "Done" -> Color(126, 217, 87)
         else -> Color(255, 172, 177)
@@ -210,7 +244,7 @@ fun BillItem(bill: Bill, onClick: (Bill) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { onClick(bill) }
+            .clickable { onClick(reminder) }
     ) {
         Column(
             modifier = Modifier
@@ -223,20 +257,20 @@ fun BillItem(bill: Bill, onClick: (Bill) -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    bill.name,
+                    reminder.title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start
                 )
                 Text(
-                    "RM${bill.amount}",
+                    "RM${reminder.amount}",
                     fontSize = 16.sp,
                     textAlign = TextAlign.End
                 )
 
             }
             Divider(color = Color.White, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
-            if (bill.status == "Done") {
+            if (reminder.status == "Done") {
                 Text("Next Payment:", fontSize = 14.sp)
             } else {
                 Text("Due:", fontSize = 14.sp)
@@ -244,8 +278,8 @@ fun BillItem(bill: Bill, onClick: (Bill) -> Unit) {
 
             Row (horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()){
-                Text(bill.dueDate, fontSize = 14.sp)
-                if (bill.status == "Done") {
+                Text(reminder.date, fontSize = 14.sp)
+                if (reminder.status == "Done") {
                     Checkbox(checked = true, onCheckedChange = null)
                 } else {
                     Checkbox(checked = false, onCheckedChange = null)
