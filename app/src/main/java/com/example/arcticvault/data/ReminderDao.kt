@@ -2,6 +2,7 @@ package com.example.arcticvault.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,7 +17,7 @@ interface ReminderDao {
     @Update(onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(reminder: Reminder)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Delete
     suspend fun delete(reminder: Reminder)
 
     @Query ("SELECT * FROM reminder ORDER BY id ASC")
@@ -27,5 +28,7 @@ interface ReminderDao {
 
     @Query("SELECT * FROM reminder WHERE status = :status ORDER BY date ASC")
     fun getRemindersByStatus(status: String): Flow<List<Reminder>>
+
+
 
 }

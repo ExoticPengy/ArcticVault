@@ -136,16 +136,20 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
     }
 
     suspend fun deleteReminder(reminder: Reminder) {
-        // You can perform any validation or checks here before deleting
-        reminderRepository.deleteReminder(reminder)
+        reminderRepository.deleteReminder(reminder) //_debtUiState.value.debtDetails.debtToData()
     }
-
-    suspend fun deleteReminder(uiState: ReminderEntryUiState) {
+    /*suspend fun deleteReminder(uiState: ReminderEntryUiState) {
         if (validateInput(uiState).isEmpty()) {
             if (reminderId != -1)
                 reminderRepository.deleteReminder(_uiState.value.reminder.reminderToData())
         }
-    }
+    }*/
+
+    /*fun deleteReminder(id: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            reminderDao.deleteReminder(id)
+        }
+    }*/
 
 
 }

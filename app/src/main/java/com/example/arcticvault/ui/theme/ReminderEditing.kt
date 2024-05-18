@@ -23,9 +23,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,14 +39,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.arcticvault.R
 import com.example.arcticvault.data.Reminder
+import com.example.arcticvault.model.ReminderEntryModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun EditScreenDialog(reminder: Reminder,
+fun EditScreenDialog(reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
+                     reminder: Reminder,
                      onDismiss: () -> Unit,
                      onSave: (Reminder) -> Unit,
                      onDelete: () -> Unit){
+
 
     var title by remember { mutableStateOf(reminder.title) }
     var amount by remember { mutableStateOf(reminder.amount.toString()) }
@@ -116,14 +124,18 @@ fun EditScreenDialog(reminder: Reminder,
 
                     //Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = { onDismiss() })  {
+                        onDismiss()
                         Text("Cancel")
                     }
                 }
             }
         }
     }
+
+
     if (deleteConfimation) {
         DeleteConfirmationBox(
+            reminder = reminder,
             onConfirm = {
                 onDelete()
                 deleteConfimation = false
@@ -135,7 +147,12 @@ fun EditScreenDialog(reminder: Reminder,
 
 }
 @Composable
-fun DeleteConfirmationBox(onConfirm: () -> Unit, onDismiss: () -> Unit){
+fun DeleteConfirmationBox(reminder: Reminder, reminderEntryViewModel: ReminderEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),onConfirm: () -> Unit, onDismiss: () -> Unit){
+    val coroutineScope = rememberCoroutineScope()
+    val reminderUiState by reminderEntryViewModel.uiState.collectAsState()
+    //val reminder: ReminderEntryModel = reminderUiState.reminder
+
+
     Dialog(onDismissRequest = onDismiss){
         Surface(
             color = Color.White,
@@ -154,7 +171,12 @@ fun DeleteConfirmationBox(onConfirm: () -> Unit, onDismiss: () -> Unit){
                 Text(text = "Are you sure you want to delete this reminder?")
                 Spacer(modifier = Modifier.height(16.dp))
                 Row {
-                    Button(onClick = onConfirm) {
+                    Button(onClick = { onConfirm()
+                        coroutineScope.launch {
+                            reminderEntryViewModel.deleteReminder(reminder)
+                        }
+                        onDismiss()
+                }) {
 
                         Text("Yes")
                     }
