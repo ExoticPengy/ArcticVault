@@ -85,6 +85,12 @@ object AppViewModelProvider {
         initializer {
             ReminderViewModel(arcticVaultApplication().container.reminderRepository)
         }
+
+        initializer {
+            DebtEntryViewModel(
+                arcticVaultApplication().container.debtRepository
+            )
+        }
     }
 }
 

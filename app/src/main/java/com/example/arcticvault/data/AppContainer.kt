@@ -8,6 +8,7 @@ interface AppContainer {
     val editGoalsRepository : EditGoalsRepository
     val budgetingRepository: BudgetingRepository
     val reminderRepository: ReminderRepository
+    val debtRepository: DebtRepository
 }
 
 class AppDataContainer(private val context: Context): AppContainer {
@@ -25,5 +26,8 @@ class AppDataContainer(private val context: Context): AppContainer {
     }
     override val reminderRepository: ReminderRepository by lazy {
         OfflineReminderRepository(ArcticVaultDatabase.getDatabase(context).reminderDao())
+    }
+    override val debtRepository: DebtRepository by lazy {
+        OfflineDebtRepository(ArcticVaultDatabase.getDatabase(context).debtDao())
     }
 }

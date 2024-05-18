@@ -119,11 +119,12 @@ fun TransactionsAnalysis(
 
                         )
                         Image(
-                            painter = painterResource(R.drawable.backbutton),
-                            contentDescription = stringResource(R.string.back_button_desc),
+                            painter = painterResource(R.drawable.default_profile_pic),
+                            contentDescription = "Profile Picture",
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
+                                .clip(RoundedCornerShape(50))
                         )
                     }
                 }

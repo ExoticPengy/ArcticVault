@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -80,7 +81,7 @@ fun HomeScreen(
             onAnalysisClick = { onAnalysisClick() },
             onGoalClick = { onGoalClick() },
             onReminderClick = { onReminderClick() },
-            onDebtClick = {}
+            onDebtClick = { onDebtClick() }
         )
         UpcomingBills()
     }
@@ -102,8 +103,11 @@ fun GreetingMessage(
         Row(modifier = modifier.fillMaxWidth())
         {
             Image(
-                painter = painterResource(R.drawable.profilepic),
-                contentDescription = "Profile Picture"
+                painter = painterResource(R.drawable.default_profile_pic),
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .size(150.dp)
             )
 
             Column {

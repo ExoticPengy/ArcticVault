@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -26,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -98,11 +100,12 @@ fun Transactions(
                             textAlign = TextAlign.Center
                         )
                         Image(
-                            painter = painterResource(R.drawable.backbutton),
-                            contentDescription = stringResource(R.string.back_button_desc),
+                            painter = painterResource(R.drawable.default_profile_pic),
+                            contentDescription = "Profile Picture",
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
+                                .clip(RoundedCornerShape(50))
                         )
                     }
 

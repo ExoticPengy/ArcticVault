@@ -38,6 +38,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -116,11 +117,12 @@ fun AllTransactions(
                             textAlign = TextAlign.Center
                         )
                         Image(
-                            painter = painterResource(R.drawable.backbutton),
-                            contentDescription = stringResource(R.string.back_button_desc),
+                            painter = painterResource(R.drawable.default_profile_pic),
+                            contentDescription = "Profile Picture",
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(35.dp)
+                                .clip(RoundedCornerShape(50))
                         )
                     }
                     Spacer(Modifier.height(20.dp))

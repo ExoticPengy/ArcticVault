@@ -22,7 +22,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -83,11 +85,12 @@ fun Edit_Goals(
                 fontWeight = FontWeight.Bold
             )
             Image(
-                painter = painterResource(R.drawable.backbuttoncropped),
-                contentDescription = null,
+                painter = painterResource(R.drawable.default_profile_pic),
+                contentDescription = "Profile Picture",
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .size(35.dp)
-                    .clickable { }
+                    .clip(RoundedCornerShape(50))
             )
         }
     }
