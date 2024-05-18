@@ -74,13 +74,13 @@ fun Budgeting(
     } else {
         0.0
     }
-
+    //Top Banner
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercrop),
+            painter = painterResource(R.drawable.topbanner),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)
@@ -141,6 +141,7 @@ fun Budgeting(
                 .clickable { onBudgetingInputButton() }
         )
     }
+    //Yearly Budgeting And Expense
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -156,9 +157,11 @@ fun Budgeting(
         )
 
         val yearlyExpenses: Double = budgetingViewModel.calculateExpenseYear(transactionList)
-        val percentageOfYearly: Double = percentageOfLinear(yearlyExpenses, yearlyBudgeting)
-        PercentageBarForBudgeting(percentage = percentageOfYearly ?: 0.0)
-
+        val percentageOfYearly: Double = if(yearlyExpenses > yearlyBudgeting){
+            -percentageOfLinear(yearlyExpenses, yearlyBudgeting)
+        }else
+            percentageOfLinear(yearlyExpenses, yearlyBudgeting)
+        PercentageBarForBudgeting(percentage = percentageOfYearly )
         Row {
             Text(
                 text = "${budgetingViewModel.calculateTotal(transactionList)} of " +
@@ -172,8 +175,13 @@ fun Budgeting(
 
     val monthlyBudgeting: Double = monthly(yearlyBudgeting)
     val monthlyExpense: Double = budgetingViewModel.calculateExpenseMonthAndYear(transactionList)
-    val percentageOfMonthly: Double = percentageOfLinear(monthlyExpense, monthlyBudgeting)
 
+    val percentageOfMonthly: Double = if (monthlyExpense > monthlyBudgeting) {
+        -percentageOfLinear(monthlyExpense, monthlyBudgeting)
+    } else {
+        percentageOfLinear(monthlyExpense, monthlyBudgeting)
+    }
+    //Monthly Budgeting And Expense
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -197,7 +205,7 @@ fun Budgeting(
             )
         }
     }
-
+    //Pie Chart For Monthly Budgeting
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -227,6 +235,7 @@ fun Budgeting(
             PieChart(data = pieChartData)
         }
     }
+    //Pie Chart For Yearly Budgeting
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

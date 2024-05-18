@@ -74,7 +74,7 @@ fun BudgetingInput(
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercrop),
+            painter = painterResource(R.drawable.topbanner),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)
@@ -108,6 +108,7 @@ fun BudgetingInput(
             }
         }
     }
+    //Text Field To Input Yearly Budget
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,

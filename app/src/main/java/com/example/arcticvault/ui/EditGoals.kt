@@ -52,12 +52,13 @@ fun Edit_Goals(
     val transactionsUiState by transactionsViewModel.transactionsUiState.collectAsState()
     val editGoalsUiState by editGoalsViewModel.editGoalsUiState.collectAsState()
     val editTransactionUiState by editTransactionViewModel.uiState.collectAsState()
+    //Top Banner
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercrop),
+            painter = painterResource(R.drawable.topbanner),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)
@@ -90,7 +91,7 @@ fun Edit_Goals(
             )
         }
     }
-
+    //Display The Content Of The Goals
     val editGoalsList: List<EditGoals> = editGoalsUiState.editGoalsList
     if (editGoalsViewModel.numberChanges == 0 && editGoalsList.getOrNull(0) != null) {
         AllEditGoals(
@@ -164,6 +165,7 @@ fun Edit_Goals(
             )
         }
     }
+    //Transaction And Category
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -204,6 +206,7 @@ fun Edit_Goals(
             }
         }
     }
+    //Display Transaction And Category
     Column(
         modifier = Modifier
             .fillMaxSize(),

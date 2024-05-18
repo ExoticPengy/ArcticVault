@@ -83,13 +83,13 @@ fun EditGoalsInput(
             errorMessage = null
         }
     }
-
+    //Top Banner
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercrop),
+            painter = painterResource(R.drawable.topbanner),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)

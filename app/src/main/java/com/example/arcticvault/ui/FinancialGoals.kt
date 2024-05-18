@@ -61,13 +61,13 @@ fun Finance(
             errorMessage = null
         }
     }
-
+    //Top Banner
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.topbannercrop),
+            painter = painterResource(R.drawable.topbanner),
             contentDescription = null,
             modifier = Modifier
                 .requiredHeight(330.dp)
@@ -101,6 +101,7 @@ fun Finance(
             }
         }
     }
+    //Milestones Achieved
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
@@ -180,6 +181,7 @@ fun Finance(
                 )
             }
         }
+        //Create A New Goals
         Column {
             Button(
                 onClick = {
@@ -212,6 +214,7 @@ fun Finance(
             modifier = Modifier.padding(bottom = 40.dp)
         )
     }
+    //Edit The Goals
     val financialGoalsList: List<EditGoals> = financialGoalsUiState.financialGoalsList
     Column(
         verticalArrangement = Arrangement.Center,
