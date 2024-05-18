@@ -167,7 +167,7 @@ fun Budgeting(
         PercentageBarForBudgeting(percentage = percentageOfYearly )
         Row {
             Text(
-                text = "${budgetingViewModel.calculateTotal(transactionList)} of " +
+                text = "RM${"%.2f".format(budgetingViewModel.calculateExpenseYear(transactionList))} of " +
                         "RM${"%.2f".format(yearlyBudgeting)}",
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
