@@ -173,7 +173,7 @@ fun ReminderDialog(
                 Row (verticalAlignment = Alignment.CenterVertically){
                     Text(text = "Repeat: ", fontWeight = FontWeight.ExtraBold)
                     DropDownMenu(
-                        suggestions = listOf("Once", "Weekly", "Monthly", "Yearly"),
+                        frequency = listOf("Once", "Weekly", "Monthly", "Yearly"),
                         onItemSelected = { selectedValue ->
                             reminderEntryViewModel.updateUiState(reminder.copy(repeat = selectedValue))
                         }
@@ -187,6 +187,7 @@ fun ReminderDialog(
                         coroutineScope.launch {
                             val validationMessage = reminderEntryViewModel.saveReminder()
                             if (validationMessage.isEmpty()) {
+                                reminderEntryViewModel.resetUiState()
                                 onDismiss()
                             } else {
                                 errorMessage = validationMessage
@@ -238,12 +239,12 @@ fun ErrorDialog(message: String, onDismiss: () -> Unit) {
 //repeat frequency option function
 @Composable
 fun DropDownMenu(
-    suggestions: List<String>,
+    frequency: List<String>,
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier) {
 
     var expanded by remember { mutableStateOf(false) }
-    val suggestions = listOf("Once", "Weekly", "Monthly", "Yearly")
+    val frequency = listOf("Once", "Weekly", "Monthly", "Yearly")
     var selectedText by remember { mutableStateOf("") }
     var textfieldSize by remember { mutableStateOf(Size.Zero)}
 
@@ -276,7 +277,7 @@ fun DropDownMenu(
             modifier = Modifier
                 .width(with(LocalDensity.current){textfieldSize.width.toDp()})
         ) {
-            suggestions.forEach { label ->
+            frequency.forEach { label ->
 
                 DropdownMenuItem(text = { Text(text = label) }, onClick = {
                     selectedText = label

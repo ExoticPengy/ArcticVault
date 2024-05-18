@@ -84,7 +84,8 @@ fun GreetingMessage(modifier: Modifier = Modifier, name:String){
                     modifier = Modifier
                         .padding(vertical = 10.dp),
                     text = "Welcome ",
-                    fontSize = 40.sp
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.ExtraBold
                 )
                 Text(
                     modifier = Modifier
@@ -114,6 +115,7 @@ fun HomeScreenUI(navController: NavController) {
             Text(
                 text = "Features",
                 fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             Row(
@@ -190,7 +192,7 @@ fun UpcomingBills(reminderViewModel: ReminderViewModel = viewModel(factory = App
             Text(
                 text = "Reminders",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 

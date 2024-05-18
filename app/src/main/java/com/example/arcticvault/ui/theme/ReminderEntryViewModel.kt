@@ -108,6 +108,21 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
         return dateFormat.format(calendar.time)
     }
 
+    fun resetUiState() {
+        _uiState.value = _uiState.value.copy(
+            reminder = ReminderEntryModel(
+                id = 0,
+                title = "",
+                desc = "",
+                amount = 0.0,
+                date = "",
+                repeat = "",
+                status = ""
+            )
+        )
+    }
+
+
     suspend fun saveReminder(): String {
         val validationMessage = validateInput(_uiState.value)
         return if (validationMessage.isEmpty() && validateAmount(_uiState.value.reminder.amount)) {
@@ -121,7 +136,6 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
             } else {
                 reminderRepository.updateReminder(reminderData)
             }
-            Log.d("ReminderViewModel", "Yo")
             if (repeatFrequency != "Once") {
                 var nextDate = getNextDate(reminderData.date, repeatFrequency)
                 repeat(4) {

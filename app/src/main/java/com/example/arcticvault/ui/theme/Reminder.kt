@@ -95,6 +95,7 @@ fun ReminderTopUi(navController: NavController){
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
                     lineHeight = 40.sp,
+                    fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier
                         .padding(horizontal = 30.dp)
                         .width(IntrinsicSize.Min)
