@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
-        composable("home") { HomeScreen(navController, Modifier, "James") }
+        composable("home") { HomeScreen(navController, Modifier, "User") }
         composable("reminder") { ReminderScreen(navController) }
     }
 }

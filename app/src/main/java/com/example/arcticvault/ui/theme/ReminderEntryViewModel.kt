@@ -130,16 +130,19 @@ class ReminderEntryViewModel(savedStateHandle: SavedStateHandle,
             val repeatFrequency = _uiState.value.reminder.repeat
             Log.d("ReminderViewModel", "Saving reminder")
 
-            if (reminderId == 0) {
+            if (reminderId != -1) {
+                reminderRepository.updateReminder(reminderData)
+            } else {
+
                 reminderRepository.insertReminder(reminderData)
                 Log.d("ReminderViewModel", "Saved")
-            } else {
-                reminderRepository.updateReminder(reminderData)
             }
             if (repeatFrequency != "Once") {
                 var nextDate = getNextDate(reminderData.date, repeatFrequency)
                 repeat(4) {
-                    val repeatedReminder = reminderData.copy(date = nextDate)
+                    val isBeforeToday = isDateBeforeToday(nextDate)
+                    val status = if (isBeforeToday) "Late" else "Upcoming"
+                    val repeatedReminder = reminderData.copy(date = nextDate, status = status)
                     reminderRepository.insertReminder(repeatedReminder)
                     nextDate = getNextDate(nextDate, repeatFrequency)
                 }

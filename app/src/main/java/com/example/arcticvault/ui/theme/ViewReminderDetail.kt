@@ -148,7 +148,7 @@ fun BillDetailsDialog(reminder: Reminder,
 
 
 
-                Row(modifier = Modifier
+                /*Row(modifier = Modifier
                     .padding(top = 20.dp)
                     .padding(horizontal = 10.dp)) {
                     Button(onClick = {  }) {
@@ -156,7 +156,7 @@ fun BillDetailsDialog(reminder: Reminder,
                     }
                     Spacer(modifier = Modifier.weight(1f))
 
-                }
+                }*/
             }
         }
 
